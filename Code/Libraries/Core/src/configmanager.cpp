@@ -56,7 +56,7 @@ void ConfigManager::DeleteInstance()
 void ConfigManager::Load( const IDataStream& Stream )
 {
 	uint Pos = Stream.GetPos();
-	if( 'FCCD' == Stream.ReadUInt32() )
+	if( 'FCCD' == (uint)Stream.ReadUInt32() )
 	{
 		uint NumContexts = Stream.ReadUInt32();
 		for( uint ContextIndex = 0; ContextIndex < NumContexts; ++ContextIndex )
