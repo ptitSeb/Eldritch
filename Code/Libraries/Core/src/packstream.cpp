@@ -140,10 +140,10 @@ PackStream::~PackStream()
 			SPackageFileEntry* FileEntry = new SPackageFileEntry;
 
 			FileEntry->m_Filename			= NewPackageFile.m_Stream->ReadString();
-			FileEntry->m_OffsetToFile		= NewPackageFile.m_Stream->ReadUInt32();
-			FileEntry->m_CompressedSize		= NewPackageFile.m_Stream->ReadUInt32();
-			FileEntry->m_DecompressedSize	= NewPackageFile.m_Stream->ReadUInt32();
-			FileEntry->m_Compressed			= NewPackageFile.m_Stream->ReadUInt32();
+			FileEntry->m_OffsetToFile		= (uint)NewPackageFile.m_Stream->ReadUInt32();
+			FileEntry->m_CompressedSize		= (uint)NewPackageFile.m_Stream->ReadUInt32();
+			FileEntry->m_DecompressedSize	= (uint)NewPackageFile.m_Stream->ReadUInt32();
+			FileEntry->m_Compressed			= (uint)NewPackageFile.m_Stream->ReadUInt32();
 
 			NewPackageFile.m_Entries.PushBack( FileEntry );
 		}
