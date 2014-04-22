@@ -477,11 +477,15 @@ SimpleString SimpleString::ToLower() const
 {
 	va_list Args;
 	va_start( Args, FormatString );
-
 	int Length = VSPRINTF_COUNT( FormatString, Args ) + 1;
+	va_end( Args );
+	
 	char* pBuffer = Allocate( Length );
+	
+	va_start( Args, FormatString );
 	VSPRINTF( pBuffer, Length, FormatString, Args );
-
+	va_end( Args );
+	
 	SimpleString RetVal( pBuffer );
 	SafeDeleteArray( pBuffer );
 
