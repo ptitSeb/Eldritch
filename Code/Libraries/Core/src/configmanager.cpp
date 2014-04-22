@@ -61,7 +61,7 @@ void ConfigManager::Load( const IDataStream& Stream )
 		uint NumContexts = Stream.ReadUInt32();
 		for( uint ContextIndex = 0; ContextIndex < NumContexts; ++ContextIndex )
 		{
-			HashedString ContextKey( Stream.ReadUInt32() );
+			HashedString ContextKey( (uint)Stream.ReadUInt32() );
 			uint NumVars = Stream.ReadUInt32();
 
 			VarMap& VarMap = GetInstance()->m_Vars[ ContextKey ];
@@ -69,7 +69,7 @@ void ConfigManager::Load( const IDataStream& Stream )
 			for( uint VarIndex = 0; VarIndex < NumVars; ++VarIndex )
 			{
 				ConfigVar ConfigVar;
-				HashedString Key( Stream.ReadUInt32() );
+				HashedString Key( (uint)Stream.ReadUInt32() );
 				ConfigVar.m_Type = ( ConfigVar::EVarType )Stream.ReadUInt8();
 
 				switch( ConfigVar.m_Type )
@@ -93,7 +93,7 @@ void ConfigManager::Load( const IDataStream& Stream )
 						StringManager::AddString( StringManager::ESL_Permanent, pString );
 
 						ConfigVar.m_String = pString;
-						ConfigVar.m_Hash = Stream.ReadUInt32();
+						ConfigVar.m_Hash = (uint)Stream.ReadUInt32();
 
 						if( ReverseHash::IsEnabled() )
 						{
