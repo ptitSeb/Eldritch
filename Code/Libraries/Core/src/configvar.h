@@ -32,13 +32,12 @@ public:
 	};
 
 	EVarType		m_Type;
-	union
-	{
-		bool		m_Bool;
-		int			m_Int;
-		float		m_Float;
-		const char*	m_String;
-	};
+	
+	bool		m_Bool;
+	int			m_Int;
+	float		m_Float;
+	const char*	m_String;
+	
 	HashedString	m_Hash;	// Only valid if type is string
 
 #if PARANOID_HASH_CHECK
