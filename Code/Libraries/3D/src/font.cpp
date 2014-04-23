@@ -57,7 +57,7 @@ void Font::Initialize( const IDataStream& Stream, IRenderer* const pRenderer )
 		const uint NumCodePoints = Stream.ReadUInt32();
 		FOR_EACH_INDEX( CodePointIndex, NumCodePoints )
 		{
-			const unicode_t CodePoint = Stream.ReadUInt32();
+			const unicode_t CodePoint = (uint)Stream.ReadUInt32();
 			DEBUGASSERT( Locale.m_CharProps.Search( CodePoint ).IsNull() );
 			SFontCharProp& CharProp = Locale.m_CharProps.Insert( CodePoint );
 
