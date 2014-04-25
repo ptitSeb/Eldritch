@@ -31,11 +31,11 @@ struct SCompiledMeshHeader
 {
 	SCompiledMeshHeader();
 
-	unsigned long	m_MagicID;			// 'SMCD'
-	unsigned long	m_NumVertices;
-	unsigned long	m_NumIndices;
-	unsigned long	m_NumFrames;		// Ignored unless m_HasSkeleton
-	unsigned long	m_NumCollisionTris;
+	uint	m_MagicID;			// 'SMCD'
+	uint	m_NumVertices;
+	uint	m_NumIndices;
+	uint	m_NumFrames;		// Ignored unless m_HasSkeleton
+	uint	m_NumCollisionTris;
 	unsigned char	m_NumBones;			// Ignored unless m_HasSkeleton
 	unsigned char	m_NumAnims;			// Ignored unless m_HasSkeleton
 	unsigned char	m_NumMaterials;
