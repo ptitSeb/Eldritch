@@ -12,7 +12,7 @@ HashedString::HashedString()
 {
 }
 
-HashedString::HashedString( uint32 Hash )
+HashedString::HashedString( uint Hash )
 :	m_Hash( Hash )
 {
 }
@@ -49,7 +49,7 @@ bool HashedString::IsNull() const
 	return ( m_Hash == 0 );
 }
 
-uint32 HashedString::GetHash() const
+uint HashedString::GetHash() const
 {
 	return m_Hash;
 }

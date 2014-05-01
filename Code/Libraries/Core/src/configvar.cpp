@@ -7,7 +7,7 @@ ConfigVar::ConfigVar()
 ,	m_Int( 0 )
 ,	m_Float( 0 )
 ,	m_String( NULL )
-,	m_Hash( (unsigned long)0 )
+,	m_Hash( (uint)0 )
 #if PARANOID_HASH_CHECK
 ,	m_Name( "" )
 #endif

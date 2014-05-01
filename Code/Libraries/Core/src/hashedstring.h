@@ -9,7 +9,7 @@ class HashedString
 {
 public:
 	HashedString();
-	HashedString( uint32 Hash );
+	HashedString( uint Hash );
 	HashedString( const char* String );
 	HashedString( const SimpleString& String );
 
@@ -29,14 +29,14 @@ public:
 	bool	Equals( const HashedString& H ) const;
 	bool	IsNull() const;
 
-	uint32	GetHash() const;
+	uint	GetHash() const;
 
 	static uint32 Hash( const char* const String );
 
 	static const HashedString NullString;
 
 private:
-	uint32 m_Hash;
+	uint m_Hash;
 };
 
 #endif
