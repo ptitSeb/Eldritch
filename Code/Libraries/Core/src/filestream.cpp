@@ -71,9 +71,11 @@ int FileStream::PrintF( const char* Str, ... ) const
 
 	va_start( Args, Str );
 	Length = VSPRINTF_COUNT( Str, Args ) + 1;
+	va_end( Args );
+	va_start( Args, Str );
 	Buffer = new char[ Length ];	// TODO: Pool this instead of dynamically allocating
 	VSPRINTF( Buffer, Length, Str, Args );
-
+	va_end( Args );
 	RetVal = Write( Length - 1, Buffer );
 
 	SafeDelete( Buffer );
