@@ -505,6 +505,14 @@ public:
 		}
 #endif
 	}
+	
+	//FIXME: used in animation.cpp to fix 64-bit issue where m_Reserved is a ridiculous size, causing
+	//segfault on PushBack.
+	void	ClearAndResetReserved()
+	{
+		Clear();
+		m_Reserved = 1;
+	}
 
 	uint	Size() const
 	{

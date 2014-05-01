@@ -1511,7 +1511,10 @@ Mesh* MeshFactory::Read(
 	// Read animations
 	if( Animations )
 	{
-		Stream.Read( sizeof( Animation ) * Header.m_NumAnims, Animations );
+		for ( char animIndex = 0; animIndex < Header.m_NumAnims; animIndex++ )
+		{
+			Stream.Read( 88, &Animations[animIndex] );
+		}
 	}
 
 	if( Header.m_NumMaterials )

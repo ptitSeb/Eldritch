@@ -44,7 +44,7 @@ void Animation::InitializeFromDefinition( const SimpleString& QualifiedAnimation
 	STATICHASH( VelocityYaw );
 	MAKEHASH( QualifiedAnimationName );
 
-	m_AnimEvents.Clear();
+	m_AnimEvents.ClearAndResetReserved();
 
 	int NumAnimEvents = ConfigManager::GetInt( sNumAnimEvents, 0, sQualifiedAnimationName );
 	for( int AnimEventIndex = 0; AnimEventIndex < NumAnimEvents; ++AnimEventIndex )
