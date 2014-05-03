@@ -104,7 +104,7 @@ struct SDDSurfaceFormat
 	uint			m_NumMipMaps;
 	uint			m_AlphaBitDepth;
 	uint			m_Reserved;
-	void*			m_Surface;
+	uint			m_Surface;
 	SDDColorKey		m_DestOverlayColorKey;
 	SDDColorKey		m_DestBlitColorKey;
 	SDDColorKey		m_SrcOverlayColorKey;
