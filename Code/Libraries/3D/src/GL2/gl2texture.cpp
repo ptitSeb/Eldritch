@@ -130,7 +130,39 @@ struct SDDSurfaceFormat
 	Unused( DDSTag );
 
 	SDDSurfaceFormat DDSFormat;
-	Stream.Read( sizeof( SDDSurfaceFormat ), &DDSFormat );
+	
+	Stream.Read(sizeof( uint ), &DDSFormat.m_Size );
+	Stream.Read(sizeof( uint ), &DDSFormat.m_Flags );
+	Stream.Read(sizeof( uint ), &DDSFormat.m_Height );
+	Stream.Read(sizeof( uint ), &DDSFormat.m_Width );
+	Stream.Read(sizeof( uint ), &DDSFormat.m_Pitch );
+	Stream.Read(sizeof( uint ), &DDSFormat.m_NumBackBuffers );
+	Stream.Read(sizeof( uint ), &DDSFormat.m_NumMipMaps);
+	Stream.Read(sizeof( uint ), &DDSFormat.m_AlphaBitDepth );
+	Stream.Read(sizeof( uint ), &DDSFormat.m_Reserved );
+	Stream.Read(4, &DDSFormat.m_Surface );
+	Stream.Read(sizeof( uint ), &DDSFormat.m_DestOverlayColorKey.m_ColorSpaceLow );
+	Stream.Read(sizeof( uint ), &DDSFormat.m_DestOverlayColorKey.m_ColorSpaceHigh );
+	Stream.Read(sizeof( uint ), &DDSFormat.m_DestBlitColorKey.m_ColorSpaceLow );
+	Stream.Read(sizeof( uint ), &DDSFormat.m_DestBlitColorKey.m_ColorSpaceHigh );
+	Stream.Read(sizeof( uint ), &DDSFormat.m_SrcOverlayColorKey.m_ColorSpaceLow );
+	Stream.Read(sizeof( uint ), &DDSFormat.m_SrcOverlayColorKey.m_ColorSpaceHigh );
+	Stream.Read(sizeof( uint ), &DDSFormat.m_SrcBlitColorKey.m_ColorSpaceLow );
+	Stream.Read(sizeof( uint ), &DDSFormat.m_SrcBlitColorKey.m_ColorSpaceHigh );
+	Stream.Read(sizeof( uint ), &DDSFormat.m_PixelFormat.m_Size );
+	Stream.Read(sizeof( uint ), &DDSFormat.m_PixelFormat.m_Flags );
+	Stream.Read(sizeof( uint ), &DDSFormat.m_PixelFormat.m_ID );
+	Stream.Read(sizeof( uint ), &DDSFormat.m_PixelFormat.m_BitCount );
+	Stream.Read(sizeof( uint ), &DDSFormat.m_PixelFormat.m_BitMasks[0] );
+	Stream.Read(sizeof( uint ), &DDSFormat.m_PixelFormat.m_BitMasks[1] );
+	Stream.Read(sizeof( uint ), &DDSFormat.m_PixelFormat.m_BitMasks[2] );
+	Stream.Read(sizeof( uint ), &DDSFormat.m_PixelFormat.m_BitMasks[3] );
+	Stream.Read(sizeof( uint ), &DDSFormat.m_Caps.m_Caps[0] );
+	Stream.Read(sizeof( uint ), &DDSFormat.m_Caps.m_Caps[1] );
+	Stream.Read(sizeof( uint ), &DDSFormat.m_Caps.m_Caps[2] );
+	Stream.Read(sizeof( uint ), &DDSFormat.m_Caps.m_Caps[3] );
+	Stream.Read(sizeof( uint ), &DDSFormat.m_TextureStage );
+	
 	DEVASSERT( DDSFormat.m_Size == sizeof( SDDSurfaceFormat ) );
 
 	// GL doesn't support DXT2 or DXT4 (premultiplied alpha) formats.
