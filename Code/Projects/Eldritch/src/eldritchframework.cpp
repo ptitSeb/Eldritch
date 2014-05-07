@@ -32,6 +32,7 @@
 #include "configmanager.h"
 #include "filestream.h"
 #include "fmodaudiosystem.h"
+#include "openalaudiosystem.h"
 #include "eldritchmesh.h"
 #include "dynamicmeshmanager.h"
 #include "inputsystem.h"
@@ -584,7 +585,8 @@ void EldritchFramework::InitializeDLC()
 
 /*virtual*/ void EldritchFramework::InitializeAudioSystem()
 {
-	m_AudioSystem = new FMODAudioSystem;
+	//m_AudioSystem = new FMODAudioSystem;
+	m_AudioSystem = new OpenALAudioSystem;
 }
 
 // Also used to reinitialize world.

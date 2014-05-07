@@ -19,6 +19,12 @@ src/fmodsound.cpp
 src/fmodsound.h
 src/fmodsoundinstance.cpp
 src/fmodsoundinstance.h
+src/openalaudiosystem.cpp
+src/openalaudiosystem.h
+src/openalsound.cpp
+src/openalsound.h
+src/openalsoundinstance.cpp
+src/openalsoundinstance.h
 src/iaudiosystem.h
 src/isound.h
 src/isoundinstance.h

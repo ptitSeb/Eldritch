@@ -4,5 +4,6 @@
 class IAudioSystem;
 
 IAudioSystem* CreateFMODAudioSystem();
+IAudioSystem* CreateOpenALAudioSystem();
 
 #endif // AUDIO_H

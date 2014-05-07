@@ -291,4 +291,4 @@ src/uiinputmapeldritch.h
  
 add_executable(Eldritch ${eldritch_src})
 
-target_link_libraries(Eldritch Core Math 2D 3D Audio Workbench Rodin UI Framework SDL2 GL GLEW fmodex)
+target_link_libraries(Eldritch Core Math 2D 3D Audio Workbench Rodin UI Framework SDL2 GL GLEW fmodex openal)
