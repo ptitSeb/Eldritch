@@ -4,7 +4,7 @@
 #include <stddef.h>	// Required for BUILD_LINUX, at least.
 #include <new>		// Required for BUILD_LINUX, at least.
 
-#define USE_ALLOCATOR ( 1 && !BUILD_MAC )   // Early allocations through Cocoa framework makes allocator fail on Mac, or something.
+#define USE_ALLOCATOR ( 1 && !BUILD_MAC && !BUILD_64BIT_LINUX )   // Early allocations through Cocoa framework makes allocator fail on Mac, or something.
 
 class Allocator;
 
