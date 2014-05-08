@@ -25,7 +25,7 @@ OpenALAudioSystem::OpenALAudioSystem()
 	STATICHASH( DefaultReverb );
 	const SimpleString DefaultReverb = ConfigManager::GetString( sDefaultReverb, "", sAudioSystem );
 	SetReverbParams( DefaultReverb );
-s
+
 	STATICHASH( NumReverbCategories );
 	const uint NumReverbCategories = ConfigManager::GetInt( sNumReverbCategories, 0, sAudioSystem );
 	for( uint ReverbCategoryIndex = 0; ReverbCategoryIndex < NumReverbCategories; ++ReverbCategoryIndex )
