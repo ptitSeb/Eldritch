@@ -12,6 +12,7 @@ OpenALSound::OpenALSound(
 	IAudioSystem* const pSystem,
 	const SSoundInit& SoundInit )
 {
+	buffer = 0;
 	ASSERT( pSystem );
 	SetAudioSystem( pSystem );
 	//OpenALAudioSystem* const pOALAudioSystem = static_cast<OpenALAudioSystem*>( pSystem );
@@ -22,22 +23,22 @@ OpenALSound::OpenALSound(
 	size_t ExtOffset = strlen( SoundInit.m_Filename.CStr() ) - 3;
 	unsigned int Ext = *(unsigned int*)( SoundInit.m_Filename.CStr() + ExtOffset );
 
-	if ( SoundInit.m_IsStream )
+	if ( SoundInit.m_IsStream && SoundInit.m_Category == "Music" )
 	{
 		CreateStream( PackStream( SoundInit.m_Filename.CStr() ), SoundInit.m_IsLooping );
 	}
 	else
 	{
-		switch ( Ext )
-		{
-			case EXT_OGG:
-				CreateSampleFromOGG( PackStream( SoundInit.m_Filename.CStr() ), SoundInit.m_IsLooping );
-			break;
-			case EXT_WAV:
-				CreateSampleFromWAV( PackStream( SoundInit.m_Filename.CStr() ), SoundInit.m_IsLooping );
-			break;
-			default:
-				PRINTF("Error: Unknown file extension for sample loading!\n");
+	switch ( Ext )
+	{
+		case EXT_OGG:
+			CreateSampleFromOGG( PackStream( SoundInit.m_Filename.CStr() ), SoundInit.m_IsLooping );
+		break;
+		case EXT_WAV:
+			CreateSampleFromWAV( PackStream( SoundInit.m_Filename.CStr() ), SoundInit.m_IsLooping );
+		break;
+		default:
+			PRINTF("Error: Unknown file extension for sample loading!\n");
 		}
 	}
 }
@@ -89,7 +90,56 @@ void OpenALSound::CreateSampleFromOGG( const IDataStream& Stream, bool Looping )
 
 void OpenALSound::CreateSampleFromWAV( const IDataStream& Stream, bool Looping )
 {
+	ALenum format;
 
+	uint RIFFHeader = (uint)Stream.ReadUInt32();
+
+	ASSERT( RIFFHeader == 'FFIR' );
+
+	Stream.ReadUInt32(); //size
+
+	uint WAVFormat = (uint)Stream.ReadUInt32();
+
+	ASSERT( WAVFormat == 'EVAW' );
+
+	uint SubChunk1ID = (uint)Stream.ReadUInt32();
+
+	ASSERT( SubChunk1ID == ' tmf' );
+
+	Stream.ReadUInt32(); //SubChunk 1 size
+	Stream.ReadUInt16(); //AudioFormat
+	uint16 NumChannels = Stream.ReadUInt16();
+	uint Frequency = (uint)Stream.ReadUInt32();
+	Stream.ReadUInt32(); //ByteRate
+	Stream.ReadUInt16(); //BlockAlign
+	uint16 BitsPerSample = Stream.ReadUInt16();
+
+	switch( BitsPerSample )
+	{
+		case 8:
+			format = NumChannels == 2 ? AL_FORMAT_STEREO8 : AL_FORMAT_MONO8;
+		break;
+		case 16:
+			format = NumChannels == 2 ? AL_FORMAT_STEREO16 : AL_FORMAT_MONO16;
+		break;
+		default:
+			PRINTF("Error: Wave file has unknown format!\n");
+		return;
+		break;
+	}
+
+	uint SubChunk2ID = (uint)Stream.ReadUInt32();
+
+	ASSERT( SubChunk2ID == 'atad' );
+
+	uint SubChunk2Size = (uint)Stream.ReadUInt32();
+
+	char* wav_buffer = new char[ SubChunk2Size ];
+	Stream.Read(SubChunk2Size, wav_buffer);
+
+	alGenBuffers(1, &buffer);
+	alBufferData(buffer, format, wav_buffer, SubChunk2Size, Frequency);
+	SafeDeleteArray( wav_buffer );
 }
 
 void OpenALSound::CreateStream( const PackStream& Stream, bool Looping )
