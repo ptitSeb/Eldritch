@@ -25,23 +25,22 @@ StringManager::~StringManager()
 	FlushStrings( ESL_Permanent );
 }
 
-const char* StringManager::FormatV( EStringLife Life, const char* FormatString, va_list Args )
-{
-	int Length;
-	char* Buffer;
-
-	Length = VSPRINTF_COUNT( FormatString, Args ) + 1;
-	Buffer = Allocate( Life, Length );
-	VSPRINTF( Buffer, Length, FormatString, Args );
-	AddString( Life, Buffer );
-	return Buffer;
-}
-
 const char* StringManager::PrintF( EStringLife Life, const char* FormatString, ... )
 {
 	va_list Args;
+	
+	int Length;
+	char* Buffer;
+	
 	va_start( Args, FormatString );
-	return FormatV( Life, FormatString, Args );
+	Length = VSPRINTF_COUNT( FormatString, Args ) + 1;
+	va_end ( Args );
+	Buffer = Allocate( Life, Length );
+	va_start( Args, FormatString );
+	VSPRINTF( Buffer, Length, FormatString, Args );
+	va_end ( Args );
+	AddString( Life, Buffer );
+	return Buffer;
 }
 
 // Parses strings containing tokens of the form "#{[type]<:context>:[name]}", where type is:

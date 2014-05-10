@@ -16,7 +16,6 @@ public:
 		ESL_Permanent,	// Flushed when StringManager is shut down
 	};
 
-	static const char* FormatV( EStringLife Life, const char* FormatString, va_list Args );
 	static const char* PrintF( EStringLife Life, const char* FormatString, ... );
 	static const char* ParseConfigString( EStringLife Life, const char* ConfigString );	// In this case, a "config string" has config var tokens embedded
 	static bool ResolveAndEvaluateConditional( const char* ConditionalString );			// This isn't really the best place for this, but it kinda doesn't fit anywhere
