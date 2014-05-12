@@ -61,7 +61,11 @@ void BoneArray::Init( HashedString* BoneNames, SBone* Bones, const char* MeshFil
 	memcpy_s( m_Bones, sizeof( SBone ) * TotalBones, Bones, sizeof( SBone ) * TotalBones );
 
 	m_Animations	= new Animation[ NumAnims ];
-	memcpy_s( m_Animations, 88 * NumAnims, Animations, 88 * NumAnims );
+	
+	for (int i = 0; i < NumAnims; i++)
+	{
+		memcpy_s( &m_Animations[i], 88, &Animations[i], 88 );
+	}
 
 	// Set runtime anim properties from config
 	STATICHASH( AnimationMap );
