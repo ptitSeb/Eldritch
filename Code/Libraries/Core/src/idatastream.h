@@ -57,7 +57,7 @@ public:
 	inline int32 ReadInt32() const { int32 i; Read( 4, &i ); return i; }
 	inline float ReadFloat() const { float f; Read( 4, &f ); return f; }
 	inline bool ReadBool() const { bool b; Read( 1, &b ); return b; }
-	inline HashedString ReadHashedString() const { HashedString h; Read( 4, &h ); return h; }
+	inline HashedString ReadHashedString() const { HashedString h; Read( sizeof( HashedString ), &h ); return h; }
 	inline SimpleString ReadString() const
 	{
 		uint Length = ReadUInt32();
