@@ -403,7 +403,7 @@ WBEntity* WBCompEldHands::GetHand(const EHand Hand) const {
     return GetLeftHand();
   } else {
     WARN;
-    return NULL;
+    return nullptr;
   }
 }
 

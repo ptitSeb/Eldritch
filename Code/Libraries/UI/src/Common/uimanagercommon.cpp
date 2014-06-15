@@ -71,20 +71,20 @@ UIManagerCommon::~UIManagerCommon() {}
 
   STATIC_HASHED_STRING(ShowYesNoDialog);
   WBWorld::GetInstance()->GetEventManager()->AddObserver(sShowYesNoDialog, this,
-                                                         NULL);
+                                                         nullptr);
 
   STATIC_HASHED_STRING(Fade);
-  WBWorld::GetInstance()->GetEventManager()->AddObserver(sFade, this, NULL);
+  WBWorld::GetInstance()->GetEventManager()->AddObserver(sFade, this, nullptr);
 
   STATIC_HASHED_STRING(FadeIn);
-  WBWorld::GetInstance()->GetEventManager()->AddObserver(sFadeIn, this, NULL);
+  WBWorld::GetInstance()->GetEventManager()->AddObserver(sFadeIn, this, nullptr);
 
   STATIC_HASHED_STRING(FadeOut);
-  WBWorld::GetInstance()->GetEventManager()->AddObserver(sFadeOut, this, NULL);
+  WBWorld::GetInstance()->GetEventManager()->AddObserver(sFadeOut, this, nullptr);
 
   STATIC_HASHED_STRING(ResetToInitialScreens);
   WBWorld::GetInstance()->GetEventManager()->AddObserver(sResetToInitialScreens,
-                                                         this, NULL);
+                                                         this, nullptr);
 }
 
 /*virtual*/ void UIManagerCommon::UnregisterForEvents() {
@@ -95,23 +95,23 @@ UIManagerCommon::~UIManagerCommon() {}
   if (pEventManager) {
     STATIC_HASHED_STRING(ShowYesNoDialog);
     WBWorld::GetInstance()->GetEventManager()->RemoveObserver(sShowYesNoDialog,
-                                                              this, NULL);
+                                                              this, nullptr);
 
     STATIC_HASHED_STRING(Fade);
     WBWorld::GetInstance()->GetEventManager()->RemoveObserver(sFade, this,
-                                                              NULL);
+                                                              nullptr);
 
     STATIC_HASHED_STRING(FadeIn);
     WBWorld::GetInstance()->GetEventManager()->RemoveObserver(sFadeIn, this,
-                                                              NULL);
+                                                              nullptr);
 
     STATIC_HASHED_STRING(FadeOut);
     WBWorld::GetInstance()->GetEventManager()->RemoveObserver(sFadeOut, this,
-                                                              NULL);
+                                                              nullptr);
 
     STATIC_HASHED_STRING(ResetToInitialScreens);
     WBWorld::GetInstance()->GetEventManager()->RemoveObserver(
-        sResetToInitialScreens, this, NULL);
+        sResetToInitialScreens, this, nullptr);
   }
 }
 
@@ -138,7 +138,7 @@ UIManagerCommon::~UIManagerCommon() {}
     // TODO: Parameterize these as needed.
     const bool PauseGame = true;
     const SimpleString YesNoDynamicString = "";
-    const Array<WBAction*>* const pNoActions = NULL;
+    const Array<WBAction*>* const pNoActions = nullptr;
 
     ShowYesNoDialog(PauseGame, YesNoString, YesNoDynamicString, pYesActions,
                     pNoActions);
@@ -268,7 +268,7 @@ void UIManagerCommon::ShowYesNoDialog(
 
   pYesNoDialog->SetParameters(PauseGame, YesNoString, YesNoDynamicString,
                               YesEvent, NoEvent, YesCommand, NoCommand,
-                              YesCallback, NoCallback, NULL, NULL);
+                              YesCallback, NoCallback, nullptr, nullptr);
   m_UIStack->Push(pYesNoDialog);
 }
 

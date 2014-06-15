@@ -5,7 +5,7 @@
 #include "wbparamevaluatorfactory.h"
 #include "wbactionstack.h"
 
-WBPEPushContext::WBPEPushContext() : m_EntityPE(NULL) {}
+WBPEPushContext::WBPEPushContext() : m_EntityPE(nullptr) {}
 
 WBPEPushContext::~WBPEPushContext() { SafeDelete(m_EntityPE); }
 

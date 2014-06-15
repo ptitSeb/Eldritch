@@ -5,7 +5,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-MemoryStream::MemoryStream() : m_Data(NULL), m_Size(0), m_Offset(0) {}
+MemoryStream::MemoryStream() : m_Data(nullptr), m_Size(0), m_Offset(0) {}
 
 MemoryStream::MemoryStream(void* pData, uint Size)
     : m_Data((byte*)pData), m_Size(Size), m_Offset(0) {}
@@ -33,7 +33,7 @@ int MemoryStream::Write(int NumBytes, const void* Buffer) const {
 int MemoryStream::PrintF(const char* Str, ...) const {
   va_list Args;
   int Length = 0;
-  char* Buffer = NULL;
+  char* Buffer = nullptr;
   int RetVal = 0;
 
   va_start(Args, Str);

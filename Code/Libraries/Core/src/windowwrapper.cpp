@@ -21,7 +21,7 @@ Window::Window()
       m_Style(0)
 #endif
 #if BUILD_SDL
-    : m_Window(NULL)
+    : m_Window(nullptr)
 #endif
       ,
       m_Inited(false) {
@@ -353,7 +353,7 @@ void Window::SetFullscreen(const bool Fullscreen) {
   // "fullscreen windowed" mode,
   // but I assume that would be redundant with the stuff I'm already doing to
   // update window border.
-  SDL_SetWindowDisplayMode(m_Window, NULL);
+  SDL_SetWindowDisplayMode(m_Window, nullptr);
   SDL_SetWindowFullscreen(m_Window, Fullscreen ? SDL_WINDOW_FULLSCREEN : 0);
 #endif
 }

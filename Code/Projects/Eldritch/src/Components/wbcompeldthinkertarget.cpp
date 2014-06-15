@@ -54,10 +54,10 @@ WBCompEldThinkerTarget::~WBCompEldThinkerTarget() {}
       GET_WBCOMP(pEntity, RodinBlackboard);
   ASSERT(pBlackboard);
 
-  WBEntity* pSelectedCombatTarget = NULL;
+  WBEntity* pSelectedCombatTarget = nullptr;
   float SelectedCombatTargetScore = 0.0f;
 
-  WBEntity* pSelectedSearchTarget = NULL;
+  WBEntity* pSelectedSearchTarget = nullptr;
   float SelectedSearchTargetScore = 0.0f;
 
   const WBCompRodinKnowledge::TKnowledgeMap& KnowledgeMap =

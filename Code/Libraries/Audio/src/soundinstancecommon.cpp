@@ -5,7 +5,7 @@
 #include "mathcore.h"
 
 SoundInstanceCommon::SoundInstanceCommon()
-    : m_Sound(NULL), m_Attenuation(1.0f), m_BaseVolume(1.0f), m_Location() {}
+    : m_Sound(nullptr), m_Attenuation(1.0f), m_BaseVolume(1.0f), m_Location() {}
 
 SoundInstanceCommon::~SoundInstanceCommon() {}
 

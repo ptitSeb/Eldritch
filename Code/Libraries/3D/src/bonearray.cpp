@@ -13,9 +13,9 @@ BoneArray::BoneArray()
       m_NumFrames(0),
       m_NumBones(0),
       m_NumAnimations(0),
-      m_BoneNames(NULL),
-      m_Bones(NULL),
-      m_Animations(NULL) {}
+      m_BoneNames(nullptr),
+      m_Bones(nullptr),
+      m_Animations(nullptr) {}
 
 BoneArray::~BoneArray() {
   SafeDeleteArray(m_BoneNames);
@@ -106,7 +106,7 @@ Animation* BoneArray::GetAnimation(int Index) const {
   // Until I can isolate a cause, I'm making it more graceful.
   if (Index >= m_NumAnimations) {
     WARN;
-    return NULL;
+    return nullptr;
   }
 
   ASSERT(m_Animations);
@@ -114,7 +114,7 @@ Animation* BoneArray::GetAnimation(int Index) const {
   if (Index != INVALID_INDEX) {
     return m_Animations + Index;
   } else {
-    return NULL;
+    return nullptr;
   }
 }
 
@@ -126,7 +126,7 @@ Animation* BoneArray::GetAnimation(const HashedString& Name) const {
       return m_Animations + i;
     }
   }
-  return NULL;
+  return nullptr;
 }
 
 int BoneArray::GetAnimationIndex(const Animation* pAnimation) const {

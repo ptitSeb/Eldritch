@@ -6,8 +6,8 @@
 #include "sdpfactory.h"
 
 Material::Material()
-    : m_ShaderProgram(NULL),
-      m_SDP(NULL),
+    : m_ShaderProgram(nullptr),
+      m_SDP(nullptr),
       m_Flags(0),
       m_RenderState(),
       m_SamplerStates(),

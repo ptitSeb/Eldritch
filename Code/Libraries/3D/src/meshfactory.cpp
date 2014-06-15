@@ -56,12 +56,12 @@ Mesh* MeshFactory::CreatePlane(float Length, float Width, int LengthSegments,
   int IndicesMultiplier = (TwoSided) ? 12 : 6;
   int NumIndices = IndicesMultiplier * LengthSegments * WidthSegments;
 
-  Vector* Positions = new Vector[NumVertices];
-  uint* Colors = new uint[NumVertices];
-  Vector2* UVs = new Vector2[NumVertices];
-  Vector* Normals = new Vector[NumVertices];
-  Vector4* Tangents = new Vector4[NumVertices];
-  index_t* Indices = new index_t[NumIndices];
+  auto  Positions = new Vector[NumVertices];
+  auto  Colors = new uint[NumVertices];
+  auto  UVs = new Vector2[NumVertices];
+  auto  Normals = new Vector[NumVertices];
+  auto  Tangents = new Vector4[NumVertices];
+  auto  Indices = new index_t[NumIndices];
 
   float RecL = Length / (float)LengthSegments;
   float RecW = Width / (float)WidthSegments;
@@ -142,7 +142,7 @@ Mesh* MeshFactory::CreatePlane(float Length, float Width, int LengthSegments,
   NewVB->Init(InitStruct);
   NewIB->Init(NumIndices, Indices);
   NewIB->SetPrimitiveType(EPT_TRIANGLELIST);
-  Mesh* NewMesh = new Mesh(NewVB, VDecl, NewIB);
+  auto  NewMesh = new Mesh(NewVB, VDecl, NewIB);
 
   if (Plane == XY_PLANE) {
     NewMesh->m_AABB =
@@ -202,7 +202,7 @@ Mesh* MeshFactory::CreateSprite() {
   VertexBuffer->Init(InitStruct);
   IndexBuffer->Init(6, Indices);
   IndexBuffer->SetPrimitiveType(EPT_TRIANGLELIST);
-  Mesh* pMesh = new Mesh(VertexBuffer, VertexDeclaration, IndexBuffer);
+  auto  pMesh = new Mesh(VertexBuffer, VertexDeclaration, IndexBuffer);
 
   pMesh->m_AABB = AABB(Vector(-0.5f, 0.0f, -0.5f), Vector(0.5f, 0.0f, 0.5f));
 
@@ -220,9 +220,9 @@ Mesh* MeshFactory::CreateGrid(float Length, float Width, int LengthSegments,
   int NumVertices = 2 * (LenP + WidP - 2);
   int NumIndices = 2 * (LenP + WidP);
 
-  Vector* Positions = new Vector[NumVertices];
-  uint* Colors = new uint[NumVertices];
-  index_t* Indices = new index_t[NumIndices];
+  auto  Positions = new Vector[NumVertices];
+  auto  Colors = new uint[NumVertices];
+  auto  Indices = new index_t[NumIndices];
 
   float RecL = Length / (float)LengthSegments;
   float RecW = Width / (float)WidthSegments;
@@ -295,7 +295,7 @@ Mesh* MeshFactory::CreateGrid(float Length, float Width, int LengthSegments,
   NewVB->Init(InitStruct);
   NewIB->Init(NumIndices, Indices);
   NewIB->SetPrimitiveType(EPT_LINELIST);
-  Mesh* NewMesh = new Mesh(NewVB, VDecl, NewIB);
+  auto  NewMesh = new Mesh(NewVB, VDecl, NewIB);
 
   if (Plane == XY_PLANE) {
     NewMesh->m_AABB =
@@ -329,12 +329,12 @@ Mesh* MeshFactory::CreateCylinder(float Radius, float Height,
        RP);  // Main can + caps (with center vertices, but no duplicated vertex)
   int NumIndices = (6 * RadialSegments * HeightSegments) + (6 * RadialSegments);
 
-  Vector* Positions = new Vector[NumVertices];
-  uint* Colors = new uint[NumVertices];
-  Vector2* UVs = new Vector2[NumVertices];
-  Vector* Normals = new Vector[NumVertices];
-  Vector4* Tangents = new Vector4[NumVertices];
-  index_t* Indices = new index_t[NumIndices];
+  auto  Positions = new Vector[NumVertices];
+  auto  Colors = new uint[NumVertices];
+  auto  UVs = new Vector2[NumVertices];
+  auto  Normals = new Vector[NumVertices];
+  auto  Tangents = new Vector4[NumVertices];
+  auto  Indices = new index_t[NumIndices];
 
   float RecR = 1.f / RadialSegments;
   float RecH = Height / HeightSegments;
@@ -466,7 +466,7 @@ Mesh* MeshFactory::CreateCylinder(float Radius, float Height,
   NewVB->Init(InitStruct);
   NewIB->Init(NumIndices, Indices);
   NewIB->SetPrimitiveType(EPT_TRIANGLELIST);
-  Mesh* NewMesh = new Mesh(NewVB, VDecl, NewIB);
+  auto  NewMesh = new Mesh(NewVB, VDecl, NewIB);
 
   NewMesh->m_AABB =
       AABB(Vector(-Radius, -Radius, -HalfH), Vector(Radius, Radius, HalfH));
@@ -500,12 +500,12 @@ Mesh* MeshFactory::CreateBox(float Length, float Width, float Height,
       12 * (LengthSegments * WidthSegments + LengthSegments * HeightSegments +
             WidthSegments * HeightSegments);
 
-  Vector* Positions = new Vector[NumVertices];
-  uint* Colors = new uint[NumVertices];
-  Vector2* UVs = new Vector2[NumVertices];
-  Vector* Normals = new Vector[NumVertices];
-  Vector4* Tangents = new Vector4[NumVertices];
-  index_t* Indices = new index_t[NumIndices];
+  auto  Positions = new Vector[NumVertices];
+  auto  Colors = new uint[NumVertices];
+  auto  UVs = new Vector2[NumVertices];
+  auto  Normals = new Vector[NumVertices];
+  auto  Tangents = new Vector4[NumVertices];
+  auto  Indices = new index_t[NumIndices];
 
   float RecL = Length / (float)LengthSegments;
   float RecW = Width / (float)WidthSegments;
@@ -688,7 +688,7 @@ Mesh* MeshFactory::CreateBox(float Length, float Width, float Height,
   NewVB->Init(InitStruct);
   NewIB->Init(NumIndices, Indices);
   NewIB->SetPrimitiveType(EPT_TRIANGLELIST);
-  Mesh* NewMesh = new Mesh(NewVB, VDecl, NewIB);
+  auto  NewMesh = new Mesh(NewVB, VDecl, NewIB);
 
   NewMesh->m_AABB =
       AABB(Vector(-HalfL, -HalfW, -HalfH), Vector(HalfL, HalfW, HalfH));
@@ -714,7 +714,7 @@ Mesh* MeshFactory::CreateSphere(float Radius, int LongitudinalSegments,
   Unused(LongitudinalSegments);
   Unused(LatitudinalSegments);
   WARN;
-  return NULL;
+  return nullptr;
 }
 
 Mesh* MeshFactory::CreateGeosphere(float Radius, int Refinement) {
@@ -724,7 +724,7 @@ Mesh* MeshFactory::CreateGeosphere(float Radius, int Refinement) {
   Unused(Radius);
   Unused(Refinement);
   WARN;
-  return NULL;
+  return nullptr;
 }
 
 Mesh* MeshFactory::CreateTorus(float OuterRadius, float InnerRadius,
@@ -735,7 +735,7 @@ Mesh* MeshFactory::CreateTorus(float OuterRadius, float InnerRadius,
   Unused(OuterSegments);
   Unused(InnerSegments);
   WARN;
-  return NULL;
+  return nullptr;
 }
 
 Mesh* MeshFactory::CreateCapsule(float Radius, float InnerLength,
@@ -748,7 +748,7 @@ Mesh* MeshFactory::CreateCapsule(float Radius, float InnerLength,
   Unused(LongitudinalSegments);
   Unused(LatitudinalSegments);
   WARN;
-  return NULL;
+  return nullptr;
 }
 
 Mesh* MeshFactory::CreateCone(float Radius, float Height, int RadialSegments,
@@ -759,7 +759,7 @@ Mesh* MeshFactory::CreateCone(float Radius, float Height, int RadialSegments,
   Unused(RadialSegments);
   Unused(HeightSegments);
   WARN;
-  return NULL;
+  return nullptr;
 }
 
 Mesh* MeshFactory::CreateDebugLine(const Vector& Start, const Vector& End,
@@ -786,7 +786,7 @@ Mesh* MeshFactory::CreateDebugLine(const Vector& Start, const Vector& End,
   VertexBuffer->Init(InitStruct);
   IndexBuffer->Init(2, Indices);
   IndexBuffer->SetPrimitiveType(EPT_LINELIST);
-  Mesh* LineMesh = new Mesh(VertexBuffer, VertexDeclaration, IndexBuffer);
+  auto  LineMesh = new Mesh(VertexBuffer, VertexDeclaration, IndexBuffer);
 
   LineMesh->m_AABB = AABB(
       Vector(Min(Start.x, End.x), Min(Start.y, End.y), Min(Start.z, End.z)),
@@ -829,7 +829,7 @@ Mesh* MeshFactory::CreateDebugTriangle(const Vector& V1, const Vector& V2,
   VertexBuffer->Init(InitStruct);
   IndexBuffer->Init(6, Indices);
   IndexBuffer->SetPrimitiveType(EPT_LINELIST);
-  Mesh* TriMesh = new Mesh(VertexBuffer, VertexDeclaration, IndexBuffer);
+  auto  TriMesh = new Mesh(VertexBuffer, VertexDeclaration, IndexBuffer);
 
   TriMesh->m_AABB =
       AABB(Vector(Min(Min(V1.x, V2.x), V3.x), Min(Min(V1.y, V2.y), V3.y),
@@ -882,7 +882,7 @@ Mesh* MeshFactory::CreateDebugQuad(const Vector& V1, const Vector& V2,
   VertexBuffer->Init(InitStruct);
   IndexBuffer->Init(8, Indices);
   IndexBuffer->SetPrimitiveType(EPT_LINELIST);
-  Mesh* QuadMesh = new Mesh(VertexBuffer, VertexDeclaration, IndexBuffer);
+  auto  QuadMesh = new Mesh(VertexBuffer, VertexDeclaration, IndexBuffer);
 
   const float MinX = Min(Min(Min(V1.x, V2.x), V3.x), V4.x);
   const float MinY = Min(Min(Min(V1.y, V2.y), V3.y), V4.y);
@@ -960,7 +960,7 @@ Mesh* MeshFactory::CreateDebugBox(const Vector& Min, const Vector& Max,
   VertexBuffer->Init(InitStruct);
   IndexBuffer->Init(24, Indices);
   IndexBuffer->SetPrimitiveType(EPT_LINELIST);
-  Mesh* BoxMesh = new Mesh(VertexBuffer, VertexDeclaration, IndexBuffer);
+  auto  BoxMesh = new Mesh(VertexBuffer, VertexDeclaration, IndexBuffer);
 
   BoxMesh->m_AABB = AABB(Min, Max);
 
@@ -1024,7 +1024,7 @@ Mesh* MeshFactory::CreateDebugFrustum(const View& rView, unsigned int Color) {
   VertexBuffer->Init(InitStruct);
   IndexBuffer->Init(24, Indices);
   IndexBuffer->SetPrimitiveType(EPT_LINELIST);
-  Mesh* FrustumMesh = new Mesh(VertexBuffer, VertexDeclaration, IndexBuffer);
+  auto  FrustumMesh = new Mesh(VertexBuffer, VertexDeclaration, IndexBuffer);
 
   float MinX = Positions[0].x;
   float MinY = Positions[0].y;
@@ -1057,8 +1057,8 @@ Mesh* MeshFactory::CreateDebugSphere(const Vector& Center, float Radius,
   uint Colors[16 * 3];
   index_t Indices[16 * 6];
 
-  for (uint i = 0; i < 16 * 3; ++i) {
-    Colors[i] = Color;
+  for (auto & Colors_i : Colors) {
+    Colors_i = Color;
   }
 
   float Mult = 2.0f * PI / 16.0f;
@@ -1088,7 +1088,7 @@ Mesh* MeshFactory::CreateDebugSphere(const Vector& Center, float Radius,
   VertexBuffer->Init(InitStruct);
   IndexBuffer->Init(96, Indices);
   IndexBuffer->SetPrimitiveType(EPT_LINELIST);
-  Mesh* SphereMesh = new Mesh(VertexBuffer, VertexDeclaration, IndexBuffer);
+  auto  SphereMesh = new Mesh(VertexBuffer, VertexDeclaration, IndexBuffer);
 
   Vector Radii(Radius, Radius, Radius);
   SphereMesh->m_AABB = AABB(Center - Radii, Center + Radii);
@@ -1107,8 +1107,8 @@ Mesh* MeshFactory::CreateDebugEllipsoid(const Vector& Center,
   uint Colors[16 * 3];
   index_t Indices[16 * 6];
 
-  for (uint i = 0; i < 16 * 3; ++i) {
-    Colors[i] = Color;
+  for (auto & Colors_i : Colors) {
+    Colors_i = Color;
   }
 
   float Mult = 2.0f * PI / 16.0f;
@@ -1141,7 +1141,7 @@ Mesh* MeshFactory::CreateDebugEllipsoid(const Vector& Center,
   VertexBuffer->Init(InitStruct);
   IndexBuffer->Init(96, Indices);
   IndexBuffer->SetPrimitiveType(EPT_LINELIST);
-  Mesh* EllipsoidMesh = new Mesh(VertexBuffer, VertexDeclaration, IndexBuffer);
+  auto  EllipsoidMesh = new Mesh(VertexBuffer, VertexDeclaration, IndexBuffer);
 
   EllipsoidMesh->m_AABB = AABB(Center - Extents, Center + Extents);
 
@@ -1188,7 +1188,7 @@ Mesh* MeshFactory::CreateDebugCross(const Vector& Center, const float Length,
   VertexBuffer->Init(InitStruct);
   IndexBuffer->Init(6, Indices);
   IndexBuffer->SetPrimitiveType(EPT_LINELIST);
-  Mesh* CrossMesh = new Mesh(VertexBuffer, VertexDeclaration, IndexBuffer);
+  auto  CrossMesh = new Mesh(VertexBuffer, VertexDeclaration, IndexBuffer);
 
   const Vector Extents(Length, Length, Length);
   CrossMesh->m_AABB = AABB(Center - Extents, Center + Extents);
@@ -1259,7 +1259,7 @@ Mesh* MeshFactory::CreateDebugArrow(const Vector& Root, const Angles& Direction,
   IndexBuffer->Init(10, Indices);
   IndexBuffer->SetPrimitiveType(EPT_LINELIST);
 
-  Mesh* ArrowMesh = new Mesh(VertexBuffer, VertexDeclaration, IndexBuffer);
+  auto  ArrowMesh = new Mesh(VertexBuffer, VertexDeclaration, IndexBuffer);
 
   const Vector Extents(Length, Length, Length);
   ArrowMesh->m_AABB = AABB(Root - Extents, Root + Extents);
@@ -1278,7 +1278,7 @@ Mesh* MeshFactory::CreateDebugChar(float Width, float Height,
   Vector Positions[4];
   uint Colors[4];
   Vector2 UVs[4];
-  index_t* Indices = new index_t[NumIndices];
+  auto  Indices = new index_t[NumIndices];
 
   float HalfW = Width * .5f;
   float HalfH = Height * .5f;
@@ -1338,7 +1338,7 @@ Mesh* MeshFactory::CreateDebugChar(float Width, float Height,
   VertexBuffer->Init(InitStruct);
   IndexBuffer->Init(NumIndices, Indices);
   IndexBuffer->SetPrimitiveType(EPT_TRIANGLELIST);
-  Mesh* CharMesh = new Mesh(VertexBuffer, VertexDeclaration, IndexBuffer);
+  auto  CharMesh = new Mesh(VertexBuffer, VertexDeclaration, IndexBuffer);
 
   if (Plane == XY_PLANE) {
     CharMesh->m_AABB =
@@ -1399,41 +1399,41 @@ Mesh* MeshFactory::Read(const IDataStream& Stream, const char* Filename,
          (sizeof(index_t) == 2 && !Header.m_LongIndices));
   ASSERT(Header.m_MagicID == 'SMCD');
 
-  Vector* Positions = new Vector[Header.m_NumVertices];
-  uint* Colors = (Header.m_HasColors) ? new uint[Header.m_NumVertices] : NULL;
+  auto  Positions = new Vector[Header.m_NumVertices];
+  uint* Colors = (Header.m_HasColors) ? new uint[Header.m_NumVertices] : nullptr;
 #if USE_HDR
   STATICHASH(UseHDR);
   bool UseFloatColors = ConfigManager::GetBool(sUseHDR);
   Vector4* FloatColors1 =
-      (Header.m_HasColors) ? new Vector4[Header.m_NumVertices] : NULL;
+      (Header.m_HasColors) ? new Vector4[Header.m_NumVertices] : nullptr;
   Vector4* FloatColors2 =
-      (Header.m_HasColors) ? new Vector4[Header.m_NumVertices] : NULL;
+      (Header.m_HasColors) ? new Vector4[Header.m_NumVertices] : nullptr;
   Vector4* FloatColors3 =
-      (Header.m_HasColors) ? new Vector4[Header.m_NumVertices] : NULL;
+      (Header.m_HasColors) ? new Vector4[Header.m_NumVertices] : nullptr;
 #endif
-  Vector2* UVs = (Header.m_HasUVs) ? new Vector2[Header.m_NumVertices] : NULL;
+  Vector2* UVs = (Header.m_HasUVs) ? new Vector2[Header.m_NumVertices] : nullptr;
   Vector* Normals =
-      (Header.m_HasNormals) ? new Vector[Header.m_NumVertices] : NULL;
+      (Header.m_HasNormals) ? new Vector[Header.m_NumVertices] : nullptr;
   Vector4* Tangents =
-      (Header.m_HasTangents) ? new Vector4[Header.m_NumVertices] : NULL;
+      (Header.m_HasTangents) ? new Vector4[Header.m_NumVertices] : nullptr;
   SBoneData* BoneIndices =
-      (Header.m_HasSkeleton) ? new SBoneData[Header.m_NumVertices] : NULL;
+      (Header.m_HasSkeleton) ? new SBoneData[Header.m_NumVertices] : nullptr;
   SBoneData* BoneWeights =
-      (Header.m_HasSkeleton) ? new SBoneData[Header.m_NumVertices] : NULL;
-  index_t* Indices = new index_t[Header.m_NumIndices];
+      (Header.m_HasSkeleton) ? new SBoneData[Header.m_NumVertices] : nullptr;
+  auto  Indices = new index_t[Header.m_NumIndices];
   HashedString* BoneNames =
-      (Header.m_HasSkeleton) ? new HashedString[Header.m_NumBones] : NULL;
+      (Header.m_HasSkeleton) ? new HashedString[Header.m_NumBones] : nullptr;
   SBone* Bones = (Header.m_HasSkeleton)
                      ? new SBone[Header.m_NumFrames * Header.m_NumBones]
-                     : NULL;
+                     : nullptr;
   Animation* Animations =
-      (Header.m_HasSkeleton) ? new Animation[Header.m_NumAnims] : NULL;
+      (Header.m_HasSkeleton) ? new Animation[Header.m_NumAnims] : nullptr;
   SMaterial* Materials =
-      (Header.m_NumMaterials) ? new SMaterial[Header.m_NumMaterials] : NULL;
+      (Header.m_NumMaterials) ? new SMaterial[Header.m_NumMaterials] : nullptr;
   CollisionTriangle* CollisionTris =
       (Header.m_NumCollisionTris)
           ? new CollisionTriangle[Header.m_NumCollisionTris]
-          : NULL;
+          : nullptr;
 
   uint CollisionMeshFlags = 0;
   AABB BoundAABB;
@@ -1550,7 +1550,7 @@ Mesh* MeshFactory::Read(const IDataStream& Stream, const char* Filename,
     Callback.m_Callback(Callback.m_Void, Buffers);
   }
 
-  BoneArray* pBoneArray = NULL;
+  BoneArray* pBoneArray = nullptr;
   if (Bones) {
     ASSERT(Filename);
     pBoneArray = new BoneArray;
@@ -1558,9 +1558,9 @@ Mesh* MeshFactory::Read(const IDataStream& Stream, const char* Filename,
                      Header.m_NumBones, Header.m_NumAnims);
   }
 
-  IVertexBuffer* VertexBuffer = NULL;
-  IVertexDeclaration* VertexDeclaration = NULL;
-  IIndexBuffer* IndexBuffer = NULL;
+  IVertexBuffer* VertexBuffer = nullptr;
+  IVertexDeclaration* VertexDeclaration = nullptr;
+  IIndexBuffer* IndexBuffer = nullptr;
   if (Header.m_NumVertices) {
     VertexBuffer = m_Renderer->CreateVertexBuffer();
 
@@ -1576,7 +1576,7 @@ Mesh* MeshFactory::Read(const IDataStream& Stream, const char* Filename,
 
 #if USE_HDR
     if (UseFloatColors) {
-      InitStruct.Colors = NULL;
+      InitStruct.Colors = nullptr;
       InitStruct.FloatColors1 = FloatColors1;
       InitStruct.FloatColors2 = FloatColors2;
       InitStruct.FloatColors3 = FloatColors3;

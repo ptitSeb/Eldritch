@@ -547,7 +547,7 @@ void WBCompEldAIMotion::SetDeflectionRadius(const float DeflectionRadius) {
 void WBCompEldAIMotion::StartMove(const Vector& Destination) {
   m_MotionStatus = EMS_MoveFailed;
 
-  InternalStartMove(Destination, NULL);
+  InternalStartMove(Destination, nullptr);
 }
 
 void WBCompEldAIMotion::StartTurn(const Vector& TurnTarget) {
@@ -575,7 +575,7 @@ void WBCompEldAIMotion::StartWander(const float WanderTargetDistance) {
   m_Wander = true;
   m_WanderTargetDistance = WanderTargetDistance;
 
-  InternalStartMove(Vector(), NULL);
+  InternalStartMove(Vector(), nullptr);
 }
 
 void WBCompEldAIMotion::RepathFollow() {
@@ -635,7 +635,7 @@ void WBCompEldAIMotion::InternalStartMove(
   DEVASSERT(pTransform);
 
   WBCompEldCollision* const pCollision = GET_WBCOMP(pEntity, EldCollision);
-  const bool BypassPathing = (m_IsFlying && pCollision == NULL);
+  const bool BypassPathing = (m_IsFlying && pCollision == nullptr);
   ASSERT(pCollision || BypassPathing);
 
   const Vector CurrentLocation = pTransform->GetLocation();
@@ -669,7 +669,7 @@ void WBCompEldAIMotion::InternalStartMove(
     }
   }
 
-  const bool IsFollowing = (pDestinationEntity != NULL);
+  const bool IsFollowing = (pDestinationEntity != nullptr);
   Vector ActualStart = CurrentLocation;
 
   if (!m_IsFlying) {

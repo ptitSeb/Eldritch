@@ -35,12 +35,12 @@ WBEntity::WBEntity()
       m_TickComponents(),
       m_TickComponentsFlat(),
       m_RenderComponents(),
-      m_TransformComponent(NULL),
+      m_TransformComponent(nullptr),
       m_DefinitionName(""),
       m_Destroyed(false),
       m_UID(0),
       m_SceneHandle(0),
-      m_Scene(NULL)
+      m_Scene(nullptr)
 #if BUILD_DEBUG
       ,
       m_IteratingComponents(false)
@@ -100,7 +100,7 @@ void WBEntity::InitializeFromDefinition(const SimpleString& DefinitionName) {
 
     const HashedString& ComponentType = FactoryIter.GetKey();
     AddComponent(ComponentType, ConfigManager::GetInheritedString(
-                                    ComponentType, NULL, sDefinitionName));
+                                    ComponentType, nullptr, sDefinitionName));
   }
 
 #if BUILD_DEV
@@ -241,7 +241,7 @@ WBComponent* WBEntity::GetComponent(const HashedString& ComponentName) const {
     return ComponentIter.GetValue();
   }
 
-  return NULL;
+  return nullptr;
 }
 
 void WBEntity::SetTransformComponent(WBComponent* const pTransformComponent) {

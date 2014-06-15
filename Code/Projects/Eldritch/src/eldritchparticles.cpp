@@ -29,8 +29,8 @@ EldritchParticles::EldritchParticles()
       m_FinishTime(0.0f),
       m_RenderedLastFrame(false),
       m_HasImmediateSpawnedMax(false),
-      m_DynamicMesh(NULL),
-      m_TextureMap(NULL),
+      m_DynamicMesh(nullptr),
+      m_TextureMap(nullptr),
       m_ParticlesList(),
       m_ParticlesArray(),
       m_VB_Positions(),
@@ -499,7 +499,7 @@ void EldritchParticles::CreateMesh() {
   // PROFILE_FUNCTION;
 
   if (m_Params.m_MaxParticles == 0) {
-    m_DynamicMesh = NULL;
+    m_DynamicMesh = nullptr;
   } else {
     IRenderer* const pRenderer =
         EldritchFramework::GetInstance()->GetRenderer();
@@ -552,7 +552,7 @@ void EldritchParticles::CreateMesh() {
     ASSERT(m_DynamicMesh);
 
     m_DynamicMesh->Initialize(VertexBuffer, VertexDeclaration, IndexBuffer,
-                              NULL);
+                              nullptr);
     m_DynamicMesh->SetTexture(0, m_TextureMap);
 
 #if BUILD_DEBUG

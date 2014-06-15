@@ -17,7 +17,7 @@
 #include "mathcore.h"
 #include "irenderer.h"
 
-UIManager* UIWidget::m_UIManager = NULL;
+UIManager* UIWidget::m_UIManager = nullptr;
 
 UIWidget::UIWidget()
     : m_Name(),
@@ -31,7 +31,7 @@ UIWidget::UIWidget()
       m_Command(),
       m_Callback(),
       m_FocusSound(),
-      m_OwnerScreen(NULL),
+      m_OwnerScreen(nullptr),
       m_FocusShiftUp(0),
       m_FocusShiftDown(0),
       m_FocusShiftLeft(0),
@@ -48,7 +48,7 @@ UIWidget::UIWidget()
       m_Velocity(),
       m_AllowNegativeOrigin(false),
       m_Origin(EWO_TopLeft),
-      m_OriginParent(NULL),
+      m_OriginParent(nullptr),
       m_UsePulsingHighlight(false),
       m_PulsingHighlightMul(0.0f),
       m_PulsingHighlightAdd(0.0f),

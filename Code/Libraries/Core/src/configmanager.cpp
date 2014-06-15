@@ -14,7 +14,7 @@
 // For strlen
 #include <string.h>
 
-ConfigManager* ConfigManager::m_Instance = NULL;
+ConfigManager* ConfigManager::m_Instance = nullptr;
 const STRING_TYPE ConfigManager::EmptyContext("");
 
 Allocator ConfigManager::m_Allocator("ConfigManager");
@@ -27,7 +27,7 @@ bool ConfigManager::m_UsingAllocator = false;
 #endif
 
 ConfigManager::ConfigManager()
-    : m_Vars(m_UsingAllocator ? &m_Allocator : NULL),
+    : m_Vars(m_UsingAllocator ? &m_Allocator : nullptr),
       m_Bindings(),
       m_LastContextWritten("") {}
 
@@ -198,12 +198,12 @@ const ConfigVar* const ConfigManager::GetConfigVarForRead(
   const Map<HashedString, VarMap>::Iterator VarMapIter =
       m_Vars.Search(HASH_STRING(Context));
   if (VarMapIter.IsNull()) {
-    return NULL;
+    return nullptr;
   }
   const Map<HashedString, ConfigVar>::Iterator ConfigVarIter =
       (*VarMapIter).Search(HASH_STRING(Name));
   if (ConfigVarIter.IsNull()) {
-    return NULL;
+    return nullptr;
   }
 
   ConfigVar* pConfigVar = &(*ConfigVarIter);
@@ -481,7 +481,7 @@ HashedString ConfigManager::GetHash(
     const STRING_TYPE& Name, bool Default /*= false*/,
     const STRING_TYPE& Context /*= EmptyContext*/) {
   STRING_TYPE NextContext = Context;
-  const ConfigVar* pConfigVar = NULL;
+  const ConfigVar* pConfigVar = nullptr;
   const ConfigManager* const pInstance = GetInstance();
   for (;;) {
     pConfigVar = pInstance->GetConfigVarForRead(Name, NextContext);
@@ -504,7 +504,7 @@ HashedString ConfigManager::GetHash(
     const STRING_TYPE& Name, int Default /*= 0*/,
     const STRING_TYPE& Context /*= EmptyContext*/) {
   STRING_TYPE NextContext = Context;
-  const ConfigVar* pConfigVar = NULL;
+  const ConfigVar* pConfigVar = nullptr;
   const ConfigManager* const pInstance = GetInstance();
   for (;;) {
     pConfigVar = pInstance->GetConfigVarForRead(Name, NextContext);
@@ -530,7 +530,7 @@ HashedString ConfigManager::GetHash(
     const STRING_TYPE& Name, float Default /*= 0.0f*/,
     const STRING_TYPE& Context /*= EmptyContext*/) {
   STRING_TYPE NextContext = Context;
-  const ConfigVar* pConfigVar = NULL;
+  const ConfigVar* pConfigVar = nullptr;
   const ConfigManager* const pInstance = GetInstance();
   for (;;) {
     pConfigVar = pInstance->GetConfigVarForRead(Name, NextContext);
@@ -556,7 +556,7 @@ HashedString ConfigManager::GetHash(
     const STRING_TYPE& Name, const char* Default /*= NULL*/,
     const STRING_TYPE& Context /*= EmptyContext*/) {
   STRING_TYPE NextContext = Context;
-  const ConfigVar* pConfigVar = NULL;
+  const ConfigVar* pConfigVar = nullptr;
   const ConfigManager* const pInstance = GetInstance();
   for (;;) {
     pConfigVar = pInstance->GetConfigVarForRead(Name, NextContext);
@@ -580,7 +580,7 @@ HashedString ConfigManager::GetHash(
     const HashedString& Default /*= HashedString::NullString*/,
     const STRING_TYPE& Context /*= EmptyContext*/) {
   STRING_TYPE NextContext = Context;
-  const ConfigVar* pConfigVar = NULL;
+  const ConfigVar* pConfigVar = nullptr;
   const ConfigManager* const pInstance = GetInstance();
   for (;;) {
     pConfigVar = pInstance->GetConfigVarForRead(Name, NextContext);

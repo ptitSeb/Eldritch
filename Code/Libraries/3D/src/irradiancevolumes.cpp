@@ -9,7 +9,7 @@ IrradianceVolumes::IrradianceVolumes()
       m_NumVolumesY(0),
       m_NumVolumesZ(0),
       m_VolumeResolution(),
-      m_Volumes(NULL) {}
+      m_Volumes(nullptr) {}
 
 IrradianceVolumes::~IrradianceVolumes() { SafeDeleteArray(m_Volumes); }
 
@@ -54,8 +54,8 @@ Vector IrradianceVolumes::GetLocationOfIndexedVolume(uint X, uint Y,
 
 /*static*/ Vector4 IrradianceVolumes::GetSum(const SIrradianceVolume& Volume) {
   Vector4 Sum;
-  for (uint SideIndex = 0; SideIndex < 6; ++SideIndex) {
-    Sum += Volume.m_Light[SideIndex];
+  for (auto & elem : Volume.m_Light) {
+    Sum += elem;
   }
   return Sum;
 }

@@ -40,5 +40,5 @@ UIManagerFramework::~UIManagerFramework() {}
 }
 
 /*virtual*/ LineBatcher* UIManagerFramework::GetLineBatcher() const {
-  return NULL;
+  return nullptr;
 }

@@ -4,7 +4,7 @@
 #include "simplestring.h"
 
 static bool gIsEnabled = false;
-static Array<const char*>* gStack = NULL;
+static Array<const char*>* gStack = nullptr;
 
 void ExceptionTrace::Enable() {
   ASSERT(!gIsEnabled);

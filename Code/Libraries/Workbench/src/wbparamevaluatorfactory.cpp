@@ -33,7 +33,7 @@ WBPE* WBParamEvaluatorFactory::Create(const SimpleString& DefinitionName) {
     // The node type specified by the config file is not valid
     PRINTF("Invalid type requested for WBPE %s.\n", DefinitionName.CStr());
     WARNDESC("Invalid WBPE type requested.");
-    return NULL;
+    return nullptr;
   }
 
   WBPEFactoryFunc pFactory = (*FactoryIter);

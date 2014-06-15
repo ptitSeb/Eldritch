@@ -7,7 +7,7 @@
 #include "sphere.h"
 
 CollisionMesh::CollisionMesh()
-    : m_NumTris(0), m_Tris(NULL), m_MutableCollidable(true), m_Flags(CMF_All) {}
+    : m_NumTris(0), m_Tris(nullptr), m_MutableCollidable(true), m_Flags(CMF_All) {}
 
 CollisionMesh::CollisionMesh(unsigned int NumTris, CollisionTriangle* Tris,
                              uint Flags)

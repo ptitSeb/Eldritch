@@ -9,7 +9,7 @@
 
 AnimationState::AnimationState()
     : m_AnimationLayer(),
-      m_Mesh(NULL),
+      m_Mesh(nullptr),
       m_SuppressAnimEvents(false),
       m_AnimationListeners() {}
 
@@ -132,7 +132,7 @@ void AnimationState::PlayAnimation(Animation* pAnimation,
 
 void AnimationState::StopAnimation() {
   SAnimationLayer* pLayer = GetAnimationLayer();
-  pLayer->m_Animation = NULL;
+  pLayer->m_Animation = nullptr;
 }
 
 const Animation* AnimationState::GetPlayingAnimation() const {
@@ -140,7 +140,7 @@ const Animation* AnimationState::GetPlayingAnimation() const {
   if (pLayer && !pLayer->m_Stopped) {
     return pLayer->m_Animation;
   } else {
-    return NULL;
+    return nullptr;
   }
 }
 
@@ -149,7 +149,7 @@ const Animation* AnimationState::GetAnimation() const {
   if (pLayer) {
     return pLayer->m_Animation;
   } else {
-    return NULL;
+    return nullptr;
   }
 }
 

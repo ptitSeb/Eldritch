@@ -17,9 +17,9 @@ static const vidx_t kInvalidVoxelIndex = 0xffffffff;
 static const byte kInvalidWorldValue = 0xff;
 
 EldritchNav::EldritchNav()
-    : m_World(NULL),
+    : m_World(nullptr),
       m_Params(),
-      m_Path(NULL),
+      m_Path(nullptr),
       m_PathNodes(),
       m_WorldValues(),
       m_OpenSet(),
@@ -500,7 +500,7 @@ void EldritchNav::UpdateWorldFromEntity(WBCompEldCollision* const pCollision,
 
   WBEntity* const pEntity = pCollision->GetEntity();
   WBCompEldDoor* const pDoor = GET_WBCOMP(pEntity, EldDoor);
-  const bool IsDoor = (pDoor != NULL);
+  const bool IsDoor = (pDoor != nullptr);
   const bool IsLockedDoor = (pDoor && pDoor->IsLocked());
 
   static const byte kEntitiesMask = EWV_Entities;

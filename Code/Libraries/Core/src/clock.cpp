@@ -177,7 +177,7 @@ Clock::MultiplierRequest* Clock::AddMultiplierRequest(float Duration,
     WARNDESC("Clock multiplier should not be less than zero!");
   }
 
-  MultiplierRequest* pMultiplierRequest = new MultiplierRequest;
+  auto  pMultiplierRequest = new MultiplierRequest;
   pMultiplierRequest->m_Duration = Duration;
   pMultiplierRequest->m_Multiplier = Multiplier;
   m_MultiplierRequests.PushBack(pMultiplierRequest);
@@ -205,7 +205,7 @@ void Clock::RemoveMultiplierRequest(
   }
 
   // Null the request either way
-  *pMultiplierRequest = NULL;
+  *pMultiplierRequest = nullptr;
 }
 
 void Clock::ClearMultiplierRequests() {

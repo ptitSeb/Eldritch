@@ -19,7 +19,7 @@ EldritchPersistence::~EldritchPersistence() {
 void EldritchPersistence::RegisterForEvents() {
   STATIC_HASHED_STRING(SetPersistentVar);
   WBWorld::GetInstance()->GetEventManager()->AddObserver(sSetPersistentVar,
-                                                         this, NULL);
+                                                         this, nullptr);
 }
 
 /*virtual*/ void EldritchPersistence::HandleEvent(const WBEvent& Event) {

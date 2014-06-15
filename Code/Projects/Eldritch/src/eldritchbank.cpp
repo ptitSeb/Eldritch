@@ -22,7 +22,7 @@ EldritchBank::~EldritchBank() {
 void EldritchBank::RegisterForEvents() {
   STATIC_HASHED_STRING(OnMasterFileLoaded);
   WBWorld::GetInstance()->GetEventManager()->AddObserver(sOnMasterFileLoaded,
-                                                         this, NULL);
+                                                         this, nullptr);
 }
 
 /*virtual*/ void EldritchBank::HandleEvent(const WBEvent& Event) {

@@ -30,7 +30,7 @@ int DynamicMemoryStream::Write(int NumBytes, const void* Buffer) const {
 int DynamicMemoryStream::PrintF(const char* Str, ...) const {
   va_list Args;
   int Length = 0;
-  char* Buffer = NULL;
+  char* Buffer = nullptr;
   int RetVal = 0;
 
   va_start(Args, Str);

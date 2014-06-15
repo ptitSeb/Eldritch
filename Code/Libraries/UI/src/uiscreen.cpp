@@ -30,13 +30,13 @@
 #define LEFT_MOUSE_BUTTON \
   (UIScreen::m_MouseButtonsSwapped ? Mouse::EB_Right : Mouse::EB_Left)
 
-UIManager* UIScreen::m_UIManager = NULL;
+UIManager* UIScreen::m_UIManager = nullptr;
 bool UIScreen::m_MouseButtonsSwapped = false;
 
 UIScreen::UIScreen()
     : m_RenderWidgets(),
       m_FocusWidgets(),
-      m_FocusedWidget(NULL),
+      m_FocusedWidget(nullptr),
       m_TakesFocus(false),
       m_PausesGame(false),
       m_SeizesMouse(false),
@@ -49,7 +49,7 @@ UIScreen::UIScreen()
       m_FocusYShift(0),
       m_LastMousePosX(0),
       m_LastMousePosY(0),
-      m_ClickedWidget(NULL),
+      m_ClickedWidget(nullptr),
       m_PushedSound(""),
       m_PoppedSound(""),
       m_OnStack(false),
@@ -58,7 +58,7 @@ UIScreen::UIScreen()
 UIScreen::UIScreen(const SimpleString& DefinitionName)
     : m_RenderWidgets(),
       m_FocusWidgets(),
-      m_FocusedWidget(NULL),
+      m_FocusedWidget(nullptr),
       m_TakesFocus(false),
       m_PausesGame(false),
       m_SeizesMouse(false),
@@ -71,7 +71,7 @@ UIScreen::UIScreen(const SimpleString& DefinitionName)
       m_FocusYShift(0),
       m_LastMousePosX(0),
       m_LastMousePosY(0),
-      m_ClickedWidget(NULL),
+      m_ClickedWidget(nullptr),
       m_PushedSound(""),
       m_PoppedSound(""),
       m_OnStack(false),
@@ -263,7 +263,7 @@ void UIScreen::TickMouse() {
           MouseY >= WidgetBounds.m_Top && MouseY <= WidgetBounds.m_Bottom) {
         m_ClickedWidget = m_FocusedWidget;
       } else {
-        m_ClickedWidget = NULL;
+        m_ClickedWidget = nullptr;
       }
     } else if (m_UIManager->GetKeyboard()->OnFall(LEFT_MOUSE_KEY) ||
                m_UIManager->GetMouse()->OnFall(LEFT_MOUSE_BUTTON)) {
@@ -273,10 +273,10 @@ void UIScreen::TickMouse() {
         if (MouseX >= WidgetBounds.m_Left && MouseX <= WidgetBounds.m_Right &&
             MouseY >= WidgetBounds.m_Top && MouseY <= WidgetBounds.m_Bottom) {
           m_ClickedWidget->OnTrigger();
-          m_ClickedWidget = NULL;
+          m_ClickedWidget = nullptr;
         } else {
           m_ClickedWidget->Released();
-          m_ClickedWidget = NULL;
+          m_ClickedWidget = nullptr;
         }
       }
     } else if (m_UIManager->GetKeyboard()->IsHigh(LEFT_MOUSE_KEY) ||
@@ -337,7 +337,7 @@ UIScreen::ETickReturn UIScreen::Tick(float DeltaTime, bool HasFocus) {
   ETickReturn RetVal = ETR_None;
 
   if (!HasFocus) {
-    m_ClickedWidget = NULL;
+    m_ClickedWidget = nullptr;
   }
 
   RefreshWidgets();
@@ -406,7 +406,7 @@ void UIScreen::Pushed() {
 
 void UIScreen::Popped() {
   m_OnStack = false;
-  m_ClickedWidget = NULL;
+  m_ClickedWidget = nullptr;
   if (m_UIManager->GetAudioSystem() && m_PoppedSound != "") {
     m_UIManager->GetAudioSystem()->Play(m_PoppedSound, Vector());
   }
@@ -511,7 +511,7 @@ UIWidget* UIScreen::GetWidget(const HashedString& Name) {
   if (WidgetIter.IsValid()) {
     return *WidgetIter;
   } else {
-    return NULL;
+    return nullptr;
   }
 }
 
@@ -561,7 +561,7 @@ void UIScreen::ShiftFocus(int Amount) {
   const uint NumFocusWidgets = m_FocusWidgets.Size();
   if (NumFocusWidgets > 0) {
     uint FocusIndex = GetFocusIndex();
-    UIWidget* pFocusWidget = NULL;
+    UIWidget* pFocusWidget = nullptr;
 
     do {
       // Add size to focus index to prevent subtracting from zero

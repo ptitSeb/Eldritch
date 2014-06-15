@@ -90,7 +90,7 @@
 #define COOL_SIDE_VIEW_THING 0
 
 // Singleton accessor
-static EldritchFramework* gSingletonFramework = NULL;
+static EldritchFramework* gSingletonFramework = nullptr;
 
 /*static*/ EldritchFramework* EldritchFramework::GetInstance() {
   return gSingletonFramework;
@@ -98,20 +98,20 @@ static EldritchFramework* gSingletonFramework = NULL;
 
 /*static*/ void EldritchFramework::SetInstance(
     EldritchFramework* const pFramework) {
-  ASSERT(gSingletonFramework == NULL);
+  ASSERT(gSingletonFramework == nullptr);
   gSingletonFramework = pFramework;
 }
 
 EldritchFramework::EldritchFramework()
-    : m_Game(NULL),
-      m_World(NULL)
+    : m_Game(nullptr),
+      m_World(nullptr)
 #if BUILD_DEV
       ,
-      m_Tools(NULL)
+      m_Tools(nullptr)
 #endif
       ,
-      m_Controller(NULL),
-      m_InputSystem(NULL)
+      m_Controller(nullptr),
+      m_InputSystem(nullptr)
 #if BUILD_WINDOWS
       ,
       m_CheckForUpdates(NULL)
@@ -119,20 +119,20 @@ EldritchFramework::EldritchFramework()
       ,
       m_DisplayWidth(0),
       m_DisplayHeight(0),
-      m_TargetManager(NULL),
-      m_MainView(NULL),
-      m_FGView(NULL),
-      m_HUDView(NULL),
-      m_MirrorView(NULL),
-      m_MinimapView(NULL),
-      m_Audio3DListener(NULL) {
+      m_TargetManager(nullptr),
+      m_MainView(nullptr),
+      m_FGView(nullptr),
+      m_HUDView(nullptr),
+      m_MirrorView(nullptr),
+      m_MinimapView(nullptr),
+      m_Audio3DListener(nullptr) {
   EldritchFramework::SetInstance(this);
   Framework3D::SetInstance(this);
 }
 
 EldritchFramework::~EldritchFramework() {
   ASSERT(gSingletonFramework == this);
-  gSingletonFramework = NULL;
+  gSingletonFramework = nullptr;
 }
 
 /*virtual*/ void EldritchFramework::GetInitialWindowTitle(
@@ -470,11 +470,11 @@ void EldritchFramework::InitializeDLC() {
   {
     UIScreenEldSetRes* pSetRes =
         m_UIManager->GetScreen<UIScreenEldSetRes>("SetResScreen");
-    pSetRes->SetUICallback(SUICallback(EldritchFramework::OnSetRes, NULL));
+    pSetRes->SetUICallback(SUICallback(EldritchFramework::OnSetRes, nullptr));
 
     UIScreenFade* pFade = m_UIManager->GetScreen<UIScreenFade>("Fade");
     pFade->SetFadeCallback(
-        SUICallback(EldritchFramework::OnFadeFinished, NULL));
+        SUICallback(EldritchFramework::OnFadeFinished, nullptr));
   }
 
   WB_MAKE_EVENT(ResetToInitialScreens, NULL);
@@ -634,27 +634,27 @@ void EldritchFramework::InitializeWorld(const HashedString& WorldDef,
 
 void EldritchFramework::RegisterForEvents() {
   STATIC_HASHED_STRING(QuitGame);
-  WBWorld::GetInstance()->GetEventManager()->AddObserver(sQuitGame, this, NULL);
+  WBWorld::GetInstance()->GetEventManager()->AddObserver(sQuitGame, this, nullptr);
 
   STATIC_HASHED_STRING(ToggleInvertY);
   WBWorld::GetInstance()->GetEventManager()->AddObserver(sToggleInvertY, this,
-                                                         NULL);
+                                                         nullptr);
 
   STATIC_HASHED_STRING(ToggleFullscreen);
   WBWorld::GetInstance()->GetEventManager()->AddObserver(sToggleFullscreen,
-                                                         this, NULL);
+                                                         this, nullptr);
 
   STATIC_HASHED_STRING(OnSliderChanged);
   WBWorld::GetInstance()->GetEventManager()->AddObserver(sOnSliderChanged, this,
-                                                         NULL);
+                                                         nullptr);
 
   STATIC_HASHED_STRING(WritePrefsConfig);
   WBWorld::GetInstance()->GetEventManager()->AddObserver(sWritePrefsConfig,
-                                                         this, NULL);
+                                                         this, nullptr);
 
   STATIC_HASHED_STRING(CheckForUpdates);
   WBWorld::GetInstance()->GetEventManager()->AddObserver(sCheckForUpdates, this,
-                                                         NULL);
+                                                         nullptr);
 }
 
 /*virtual*/ void EldritchFramework::HandleEvent(const WBEvent& Event) {
@@ -887,7 +887,7 @@ void EldritchFramework::ShutDownWorld() {
   SafeDelete(m_Tools);
 #endif
 
-  m_Audio3DListener->SetWorld(NULL);
+  m_Audio3DListener->SetWorld(nullptr);
 
   WBWorld::DeleteInstance();
 }
@@ -1123,7 +1123,7 @@ void EldritchFramework::Pause() {
   if (m_Keyboard->IsHigh(Keyboard::EB_LeftAlt) &&
       m_Keyboard->IsHigh(Keyboard::EB_LeftControl) &&
       m_Keyboard->OnRise(Keyboard::EB_Backspace)) {
-    WBEntity* const pEntity = NULL;
+    WBEntity* const pEntity = nullptr;
     pEntity->Tick(0.0f);
   }
 
@@ -1132,7 +1132,7 @@ void EldritchFramework::Pause() {
       m_Keyboard->IsHigh(Keyboard::EB_LeftShift) &&
       m_Keyboard->OnRise(Keyboard::EB_Backspace)) {
     for (;;) {
-      byte* pArray = new byte[32];
+      auto  pArray = new byte[32];
       pArray[0] = pArray[31];
     }
   }
@@ -1310,16 +1310,16 @@ void EldritchFramework::CreateBuckets() {
   ADDBUCKET("Main", BUCKET(m_MainView, pMainRT, MAT_WORLD,
                            MAT_ALPHA | MAT_DYNAMIC, true, CLEAR_DEPTH));
   ADDBUCKET("MainDynamic",
-            BUCKET(NULL, NULL, MAT_WORLD | MAT_DYNAMIC, MAT_ALPHA, true));
+            BUCKET(nullptr, nullptr, MAT_WORLD | MAT_DYNAMIC, MAT_ALPHA, true));
 #endif
 #if BUILD_DEV
-  ADDBUCKET("MainDebug", BUCKET(NULL, NULL, MAT_DEBUG_WORLD, MAT_NONE, true));
+  ADDBUCKET("MainDebug", BUCKET(nullptr, nullptr, MAT_DEBUG_WORLD, MAT_NONE, true));
 #endif
   ADDBUCKET("MainAlpha",
-            BUCKET(NULL, NULL, MAT_WORLD | MAT_ALPHA, MAT_NONE, true));
-  ADDBUCKET("MainFG", BUCKET(m_FGView, NULL, MAT_FOREGROUND, MAT_ALPHA, true,
+            BUCKET(nullptr, nullptr, MAT_WORLD | MAT_ALPHA, MAT_NONE, true));
+  ADDBUCKET("MainFG", BUCKET(m_FGView, nullptr, MAT_FOREGROUND, MAT_ALPHA, true,
                              CLEAR_DEPTH));
-  ADDBUCKET("MainFGAlpha", BUCKET(NULL, NULL, MAT_FOREGROUND | MAT_ALPHA,
+  ADDBUCKET("MainFGAlpha", BUCKET(nullptr, nullptr, MAT_FOREGROUND | MAT_ALPHA,
                                   MAT_NONE, true, CLEAR_DEPTH));
   ADDBUCKET("Mirror", BUCKET(m_MirrorView, pMirrRT, MAT_OFFSCREEN_0, MAT_NONE,
                              true, CLEAR_DEPTH));
@@ -1327,9 +1327,9 @@ void EldritchFramework::CreateBuckets() {
                               true, CLEAR_DEPTH | CLEAR_COLOR));
   ADDBUCKET("Post", BUCKET(m_HUDView, pScrnRT, MAT_POSTFX, MAT_NONE, true,
                            CLEAR_DEPTH));
-  ADDBUCKET("HUD", BUCKET(NULL, NULL, MAT_HUD, MAT_NONE, true, CLEAR_DEPTH));
+  ADDBUCKET("HUD", BUCKET(nullptr, nullptr, MAT_HUD, MAT_NONE, true, CLEAR_DEPTH));
 #if BUILD_DEV
-  ADDBUCKET("HUDDebug", BUCKET(NULL, NULL, MAT_DEBUG_HUD, MAT_NONE, true));
+  ADDBUCKET("HUDDebug", BUCKET(nullptr, nullptr, MAT_DEBUG_HUD, MAT_NONE, true));
 #endif
 
 #undef ADDBUCKET

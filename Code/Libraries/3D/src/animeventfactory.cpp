@@ -2,7 +2,7 @@
 #include "animeventfactory.h"
 #include "configmanager.h"
 
-AnimEventFactory* AnimEventFactory::m_Instance = NULL;
+AnimEventFactory* AnimEventFactory::m_Instance = nullptr;
 
 AnimEventFactory::AnimEventFactory() : m_FactoryFuncMap() {}
 

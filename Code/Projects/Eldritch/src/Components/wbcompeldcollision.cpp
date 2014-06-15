@@ -671,13 +671,13 @@ void WBCompEldCollision::AddToCollisionMap() {
 
 void WBCompEldCollision::AddToCollisionArray(const uint Flags) {
   TCollisionArray& CollisionArray = sm_CollisionMap[Flags];
-  ASSERT(!CollisionArray.Find(this, NULL));
+  ASSERT(!CollisionArray.Find(this, nullptr));
   CollisionArray.PushBack(this);
 }
 
 void WBCompEldCollision::AddToTouchingArray() {
   if (m_CanTouch) {
-    ASSERT(!sm_TouchingArray.Find(this, NULL));
+    ASSERT(!sm_TouchingArray.Find(this, nullptr));
     sm_TouchingArray.PushBack(this);
   }
 }
@@ -699,7 +699,7 @@ void WBCompEldCollision::RemoveFromCollisionMap() {
 void WBCompEldCollision::RemoveFromCollisionArray(const uint Flags) {
   ASSERT(sm_CollisionMap.Search(Flags).IsValid());
   TCollisionArray& CollisionArray = sm_CollisionMap[Flags];
-  ASSERT(CollisionArray.Find(this, NULL));
+  ASSERT(CollisionArray.Find(this, nullptr));
   CollisionArray.FastRemoveItem(this);
 
   // Clean up after array so we don't need to manage static memory.
@@ -710,7 +710,7 @@ void WBCompEldCollision::RemoveFromCollisionArray(const uint Flags) {
 
 void WBCompEldCollision::RemoveFromTouchingArray() {
   if (m_CanTouch) {
-    ASSERT(sm_TouchingArray.Find(this, NULL));
+    ASSERT(sm_TouchingArray.Find(this, nullptr));
     sm_TouchingArray.FastRemoveItem(this);
   }
 }
@@ -722,7 +722,7 @@ WBCompEldCollision::GetCollisionArray(const uint Flags) {
     const TCollisionArray& CollisionArray = CollisionMapIter.GetValue();
     return &CollisionArray;
   } else {
-    return NULL;
+    return nullptr;
   }
 }
 

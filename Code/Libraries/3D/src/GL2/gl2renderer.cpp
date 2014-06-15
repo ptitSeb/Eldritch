@@ -26,7 +26,7 @@
 #define IGNORE_REDUNDANT_SAMPLER_STATE 1
 
 GL2Renderer::GL2Renderer(Window* const pWindow)
-    : m_Window(pWindow), m_RenderContext(NULL), m_MaxVertexAttribs(0) {}
+    : m_Window(pWindow), m_RenderContext(nullptr), m_MaxVertexAttribs(0) {}
 
 GL2Renderer::~GL2Renderer() {
   GLERRORCHECK;
@@ -38,13 +38,13 @@ GL2Renderer::~GL2Renderer() {
     ASSERT(Success == TRUE);
 #endif
 #if BUILD_SDL
-    const int Error = SDL_GL_MakeCurrent(NULL, NULL);
+    const int Error = SDL_GL_MakeCurrent(nullptr, nullptr);
     Unused(Error);
     ASSERT(Error == 0);
 #endif
   }
 
-  if (m_RenderContext != NULL) {
+  if (m_RenderContext != nullptr) {
 #if BUILD_WINDOWS_NO_SDL
     const BOOL Success = wglDeleteContext(m_RenderContext);
     Unused(Success);
@@ -94,7 +94,7 @@ void GL2Renderer::Initialize() {
 #endif
 #if BUILD_SDL
   m_RenderContext = SDL_GL_CreateContext(m_Window->GetSDLWindow());
-  ASSERT(m_RenderContext != NULL);
+  ASSERT(m_RenderContext != nullptr);
 #endif
 
   {
@@ -269,10 +269,10 @@ void GL2Renderer::Tick() {
     pBucket->SortByMaterials();
   }
 
-  Mesh* pMesh = NULL;
-  GL2VertexBuffer* VertexBuffer = NULL;
-  GL2IndexBuffer* IndexBuffer = NULL;
-  IVertexDeclaration* pVertexDeclaration = NULL;
+  Mesh* pMesh = nullptr;
+  GL2VertexBuffer* VertexBuffer = nullptr;
+  GL2IndexBuffer* IndexBuffer = nullptr;
+  IVertexDeclaration* pVertexDeclaration = nullptr;
   uint NumMeshes = pBucket->m_Meshes.Size();
   Frustum ViewFrustum(GetViewMatrix() * GetProjectionMatrix());
 
@@ -368,7 +368,7 @@ void GL2Renderer::Tick() {
 
         DEBUGASSERT(IndexBuffer->GetNumIndices() > 0);
         glDrawElements(IndexBuffer->GetPrimitiveType(),
-                       IndexBuffer->GetNumIndices(), GLINDEXFORMAT, NULL);
+                       IndexBuffer->GetNumIndices(), GLINDEXFORMAT, nullptr);
       }
 
 #if BUILD_DEBUG
@@ -459,21 +459,21 @@ IIndexBuffer* GL2Renderer::CreateIndexBuffer() { return new GL2IndexBuffer; }
 ITexture* GL2Renderer::CreateTexture(const char* Filename) {
   XTRACE_FUNCTION;
 
-  GL2Texture* const pTexture = new GL2Texture;
+  auto  const pTexture = new GL2Texture;
   pTexture->Initialize(Filename);
   return pTexture;
 }
 
 /*virtual*/ IVertexShader* GL2Renderer::CreateVertexShader(
     const SimpleString& Filename) {
-  GL2VertexShader* const pVertexShader = new GL2VertexShader;
+  auto  const pVertexShader = new GL2VertexShader;
   pVertexShader->Initialize(PackStream(Filename.CStr()));
   return pVertexShader;
 }
 
 /*virtual*/ IPixelShader* GL2Renderer::CreatePixelShader(
     const SimpleString& Filename) {
-  GL2PixelShader* const pPixelShader = new GL2PixelShader;
+  auto  const pPixelShader = new GL2PixelShader;
   pPixelShader->Initialize(PackStream(Filename.CStr()));
   return pPixelShader;
 }
@@ -481,14 +481,14 @@ ITexture* GL2Renderer::CreateTexture(const char* Filename) {
 /*virtual*/ IShaderProgram* GL2Renderer::CreateShaderProgram(
     IVertexShader* const pVertexShader, IPixelShader* const pPixelShader,
     IVertexDeclaration* const pVertexDeclaration) {
-  GL2ShaderProgram* const pShaderProgram = new GL2ShaderProgram;
+  auto  const pShaderProgram = new GL2ShaderProgram;
   pShaderProgram->Initialize(pVertexShader, pPixelShader, pVertexDeclaration);
   return pShaderProgram;
 }
 
 IRenderTarget* GL2Renderer::CreateRenderTarget(
     const SRenderTargetParams& Params) {
-  GL2RenderTarget* pTarget = new GL2RenderTarget;
+  auto  pTarget = new GL2RenderTarget;
   pTarget->Initialize(Params);
   m_RenderTargets.PushBack(pTarget);
   return pTarget;

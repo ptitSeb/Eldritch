@@ -61,7 +61,7 @@ void WBCompRodinBlackboard::Load(const IDataStream& Stream) {
   if (Version >= VERSION_BLACKBOARDENTRIES) {
     const uint PackedEventSize = Stream.ReadUInt32();
     WBPackedEvent PackedEvent;
-    PackedEvent.Reinit(NULL, PackedEventSize);
+    PackedEvent.Reinit(nullptr, PackedEventSize);
     Stream.Read(PackedEventSize, PackedEvent.GetData());
     m_BlackboardEntries.Unpack(PackedEvent);
   }

@@ -19,7 +19,7 @@ Mesh::Mesh(IVertexBuffer* pVertexBuffer, IVertexDeclaration* pVertexDeclaration,
       m_Location(),
       m_Scale(1.0f, 1.0f, 1.0f),
       m_Rotation(),
-      m_BoneMatrices(NULL),
+      m_BoneMatrices(nullptr),
       m_DirtyBoneMatrices(false),
       m_BoneModifiers(),
       m_AABB(),
@@ -146,7 +146,7 @@ Matrix Mesh::GetConcatenatedTransforms() {
          Matrix::CreateTranslation(m_Location);
 }
 
-bool Mesh::IsAnimated() const { return (m_Bones != NULL); }
+bool Mesh::IsAnimated() const { return (m_Bones != nullptr); }
 
 void Mesh::Tick(float DeltaTime) {
   if (IsAnimated()) {
@@ -206,7 +206,7 @@ const Animation* Mesh::GetPlayingAnimation() const {
   if (IsAnimated()) {
     return m_AnimationState.GetPlayingAnimation();
   } else {
-    return NULL;
+    return nullptr;
   }
 }
 
@@ -217,7 +217,7 @@ Animation* Mesh::GetAnimation(const SimpleString& Name) const {
     return m_Bones->GetAnimation(Name);
   }
 
-  return NULL;
+  return nullptr;
 }
 
 void Mesh::AddAnimationListener(const SAnimationListener& AnimationListener) {

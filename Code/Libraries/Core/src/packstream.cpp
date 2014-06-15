@@ -20,15 +20,15 @@ SPackageFileEntry::SPackageFileEntry()
       m_Compressed(0) {}
 
 SPackageFile::SPackageFile()
-    : m_Filename(NULL), m_Stream(NULL), m_Header(), m_Entries() {}
+    : m_Filename(nullptr), m_Stream(nullptr), m_Header(), m_Entries() {}
 
 PackStream::PackStream(const char* Filename)
     : m_Filename(Filename),
-      m_PackageFile(NULL),
-      m_FileEntry(NULL),
-      m_FileStream(NULL),
-      m_MemoryStream(NULL),
-      m_PackageFileBuffer(NULL),
+      m_PackageFile(nullptr),
+      m_FileEntry(nullptr),
+      m_FileStream(nullptr),
+      m_MemoryStream(nullptr),
+      m_PackageFileBuffer(nullptr),
       m_PackedMode(false) {
   if (sm_PackageFiles.Size()) {
     PROFILE_SCOPE(MultiPackageFileLookup);
@@ -47,7 +47,7 @@ PackStream::PackStream(const char* Filename)
           m_PackageFile = &PackageFile;
           m_FileEntry = FileEntry;
 
-          byte* CompressedBuffer = new byte[FileEntry->m_CompressedSize];
+          auto  CompressedBuffer = new byte[FileEntry->m_CompressedSize];
 
           PackageFile.m_Stream->SetPos(PackageFile.m_Header.m_OffsetToFiles +
                                        FileEntry->m_OffsetToFile);
@@ -124,7 +124,7 @@ PackStream::~PackStream() {
     }
 
     for (uint i = 0; i < NewPackageFile.m_Header.m_NumFiles; ++i) {
-      SPackageFileEntry* FileEntry = new SPackageFileEntry;
+      auto  FileEntry = new SPackageFileEntry;
 
       FileEntry->m_Filename = NewPackageFile.m_Stream->ReadString();
       FileEntry->m_OffsetToFile = (uint)NewPackageFile.m_Stream->ReadUInt32();

@@ -48,7 +48,7 @@ void Animation::InitializeFromDefinition(
       ConfigManager::GetInt(sNumAnimEvents, 0, sQualifiedAnimationName);
   for (int AnimEventIndex = 0; AnimEventIndex < NumAnimEvents;
        ++AnimEventIndex) {
-    AnimEvent* pAnimEvent = NULL;
+    AnimEvent* pAnimEvent = nullptr;
 
     if (AnimEventVersion < 2) {
       // OLD SYSTEM

@@ -66,4 +66,4 @@ void Random::SetRandomSeed(uint Seed) {
 
 uint Random::GetRandomSeed() const { return m_Seed; }
 
-void Random::Seed() { SetRandomSeed((uint)time(NULL)); }
+void Random::Seed() { SetRandomSeed((uint)time(nullptr)); }

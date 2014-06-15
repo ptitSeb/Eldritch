@@ -4,7 +4,7 @@
 #include "configmanager.h"
 #include "wbparamevaluatorfactory.h"
 
-WBPEEldGetCharacterVO::WBPEEldGetCharacterVO() : m_EntityPE(NULL), m_VO() {}
+WBPEEldGetCharacterVO::WBPEEldGetCharacterVO() : m_EntityPE(nullptr), m_VO() {}
 
 WBPEEldGetCharacterVO::~WBPEEldGetCharacterVO() { SafeDelete(m_EntityPE); }
 

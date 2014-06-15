@@ -54,10 +54,10 @@ WBCompEldThinkerHearWormTarget::~WBCompEldThinkerHearWormTarget() {}
       GET_WBCOMP(pEntity, RodinBlackboard);
   ASSERT(pBlackboard);
 
-  WBEntity* pSelectedAlarmTarget = NULL;
+  WBEntity* pSelectedAlarmTarget = nullptr;
   float SelectedAlarmTargetScore = 0.0f;
 
-  WBEntity* pSelectedWatchTarget = NULL;
+  WBEntity* pSelectedWatchTarget = nullptr;
   float SelectedWatchTargetScore = 0.0f;
 
   const WBCompRodinKnowledge::TKnowledgeMap& KnowledgeMap =

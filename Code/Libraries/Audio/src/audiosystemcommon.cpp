@@ -8,8 +8,8 @@
 #include "isoundinstance.h"
 
 AudioSystemCommon::AudioSystemCommon()
-    : m_SoundManager(NULL),
-      m_Sound3DListener(NULL),
+    : m_SoundManager(nullptr),
+      m_Sound3DListener(nullptr),
       m_SoundInstances(),
       m_InstanceDeleteCallbacks(),
       m_MasterVolume(1.0f),
@@ -213,14 +213,14 @@ SimpleString AudioSystemCommon::GetRandomSource(
   for (uint SourceIndex = 0; SourceIndex < NumSources; ++SourceIndex) {
     if (RolledWeight <= CumulativeWeightArray[SourceIndex]) {
       return ConfigManager::GetArchetypeSequenceString(
-          "Source%d", SourceIndex, sArchetypeName, NULL, sDefinitionName);
+          "Source%d", SourceIndex, sArchetypeName, nullptr, sDefinitionName);
       break;
     }
   }
 
   // We should never get here!
   WARN;
-  return NULL;
+  return nullptr;
 }
 
 /*virtual*/ void AudioSystemCommon::AddSoundInstance(

@@ -39,7 +39,7 @@ bool Match(char c1, char c2) {
 
 // Cross-platform verified.
 bool FileUtil::Exists(const char* Filename) {
-  FILE* pFile = NULL;
+  FILE* pFile = nullptr;
   FOPEN(pFile, Filename, "rb");
   if (pFile) {
     fclose(pFile);
@@ -70,7 +70,7 @@ bool FileUtil::PathExists(const char* Path) {
 
 // Cross-platform verified.
 uint FileUtil::Size(const char* Filename) {
-  FILE* pFile = NULL;
+  FILE* pFile = nullptr;
   FOPEN(pFile, Filename, "rb");
   if (pFile) {
     fseek(pFile, 0, SEEK_END);
@@ -103,7 +103,7 @@ SimpleString FileUtil::Normalize(const char* Path) {
   ASSERT(Path);
 
   uint Length = (uint)strlen(Path) + 1;
-  char* NormalizedPath = new char[Length];
+  auto  NormalizedPath = new char[Length];
 
   strcpy_s(NormalizedPath, Length, Path);
 
@@ -370,7 +370,7 @@ const char* FileUtil::StripLeadingFolder(const char* Path, const char* Folder) {
 const char* FileUtil::StripLeadingFolders(const char* Path) {
   ASSERT(Path);
 
-  const char* LastPathChar = NULL;
+  const char* LastPathChar = nullptr;
   while (*Path) {
     if (Match(*Path, '/')) {
       LastPathChar = Path;
@@ -391,11 +391,11 @@ SimpleString FileUtil::StripExtension(const char* Path) {
   ASSERT(Path);
 
   uint Length = (uint)strlen(Path) + 1;
-  char* PathCopy = new char[Length];
+  auto  PathCopy = new char[Length];
   strcpy_s(PathCopy, Length, Path);
 
   char* PathCopyIter = PathCopy;
-  char* LastDot = NULL;
+  char* LastDot = nullptr;
   while (*PathCopyIter) {
     if (Match(*PathCopyIter, '.')) {
       LastDot = PathCopyIter;
@@ -418,11 +418,11 @@ SimpleString FileUtil::StripExtensions(const char* Path) {
   ASSERT(Path);
 
   uint Length = (uint)strlen(Path) + 1;
-  char* PathCopy = new char[Length];
+  auto  PathCopy = new char[Length];
   strcpy_s(PathCopy, Length, Path);
 
   char* PathCopyIter = PathCopy;
-  char* FirstDot = NULL;
+  char* FirstDot = nullptr;
   while (*PathCopyIter && !FirstDot) {
     if (Match(*PathCopyIter, '.')) {
       FirstDot = PathCopyIter;

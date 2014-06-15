@@ -1,7 +1,7 @@
 #include "core.h"
 #include "stopwatch.h"
 
-Stopwatch::Stopwatch() : m_Clock(), m_PauseRequest(NULL) {}
+Stopwatch::Stopwatch() : m_Clock(), m_PauseRequest(nullptr) {}
 
 float Stopwatch::GetTime() {
   m_Clock.Tick();
@@ -21,5 +21,5 @@ void Stopwatch::TogglePause() {
 
 void Stopwatch::Reset() {
   m_Clock.Initialize();
-  m_PauseRequest = NULL;
+  m_PauseRequest = nullptr;
 }

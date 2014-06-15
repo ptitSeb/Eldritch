@@ -12,33 +12,33 @@
 #include "fontmanager.h"
 
 UIWidgetText::UIWidgetText()
-    : m_Font(NULL),
+    : m_Font(nullptr),
       m_IsLiteral(false),
       m_IsDynamicPosition(false),
       m_ClampToPixelGrid(false),
       m_String(),
       m_DynamicString(),
-      m_Mesh(NULL),
+      m_Mesh(nullptr),
       m_FontPrintFlags(FONT_PRINT_LEFT),
       m_WrapWidth(0.0f),
       m_HasDropShadow(false),
       m_DropShadowOffset(),
       m_DropShadowColor(ARGB_TO_COLOR(255, 0, 0, 0)),
-      m_DropShadowMesh(NULL) {}
+      m_DropShadowMesh(nullptr) {}
 
 UIWidgetText::UIWidgetText(const SimpleString& DefinitionName)
-    : m_Font(NULL),
+    : m_Font(nullptr),
       m_IsLiteral(false),
       m_IsDynamicPosition(false),
       m_String(),
       m_DynamicString(),
-      m_Mesh(NULL),
+      m_Mesh(nullptr),
       m_FontPrintFlags(FONT_PRINT_LEFT),
       m_WrapWidth(0.0f),
       m_HasDropShadow(false),
       m_DropShadowOffset(),
       m_DropShadowColor(ARGB_TO_COLOR(255, 0, 0, 0)),
-      m_DropShadowMesh(NULL) {
+      m_DropShadowMesh(nullptr) {
   InitializeFromDefinition(DefinitionName);
 }
 
@@ -101,7 +101,7 @@ void UIWidgetText::UpdateRender() {
     m_DropShadowMesh = new Mesh;
     m_DropShadowMesh->Initialize(m_Mesh->m_VertexBuffer,
                                  m_Mesh->m_VertexDeclaration,
-                                 m_Mesh->m_IndexBuffer, NULL);
+                                 m_Mesh->m_IndexBuffer, nullptr);
     m_DropShadowMesh->m_Material = m_Mesh->m_Material;
 
     m_DropShadowMesh->m_Location = m_Mesh->m_Location;

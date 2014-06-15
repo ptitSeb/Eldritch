@@ -13,7 +13,7 @@ DataPipe& DataPipe::operator=(const DataPipe& Pipe) {
 }
 
 void DataPipe::Pipe(int NumBytes) const {
-  byte* pBuffer = new byte[NumBytes];
+  auto  pBuffer = new byte[NumBytes];
   m_InStream.Read(NumBytes, pBuffer);
   m_OutStream.Write(NumBytes, pBuffer);
   SafeDeleteArray(pBuffer);

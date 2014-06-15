@@ -46,6 +46,6 @@ const Array<WBComponent*>* WBComponentArrays::GetComponents(
   if (ComponentArrayIterator.IsValid()) {
     return &ComponentArrayIterator.GetValue();
   } else {
-    return NULL;
+    return nullptr;
   }
 }

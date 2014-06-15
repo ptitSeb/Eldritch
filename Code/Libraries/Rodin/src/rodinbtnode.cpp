@@ -4,7 +4,7 @@
 #include "Components/wbcomprodinbehaviortree.h"
 #include "wbworld.h"
 
-RodinBTNode::RodinBTNode() : m_BehaviorTree(NULL), m_IsSleeping(false) {}
+RodinBTNode::RodinBTNode() : m_BehaviorTree(nullptr), m_IsSleeping(false) {}
 
 RodinBTNode::~RodinBTNode() {}
 

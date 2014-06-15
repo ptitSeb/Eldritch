@@ -3,10 +3,10 @@
 
 #include <stdarg.h>
 
-FileStream::FileStream() : m_TheFile(NULL), m_FileMode(EFM_None) {}
+FileStream::FileStream() : m_TheFile(nullptr), m_FileMode(EFM_None) {}
 
 FileStream::FileStream(const char* FileName, EFileMode FileMode)
-    : m_TheFile(NULL), m_FileMode(FileMode) {
+    : m_TheFile(nullptr), m_FileMode(FileMode) {
   if (FileMode == EFM_Read) {
     FOPEN(m_TheFile, FileName, "rb");
   } else if (FileMode == EFM_Write) {
@@ -48,7 +48,7 @@ int FileStream::PrintF(const char* Str, ...) const {
 
   va_list Args;
   int Length = 0;
-  char* Buffer = NULL;
+  char* Buffer = nullptr;
   int RetVal = 0;
 
   va_start(Args, Str);

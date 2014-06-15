@@ -5,7 +5,7 @@
 #include "wbparamevaluatorfactory.h"
 #include "reversehash.h"
 
-WBPEGetState::WBPEGetState() : m_EntityPE(NULL) {}
+WBPEGetState::WBPEGetState() : m_EntityPE(nullptr) {}
 
 WBPEGetState::~WBPEGetState() { SafeDelete(m_EntityPE); }
 

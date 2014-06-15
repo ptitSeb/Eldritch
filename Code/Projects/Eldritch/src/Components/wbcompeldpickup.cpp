@@ -6,8 +6,8 @@
 #include "wbcompeldwallet.h"
 #include "idatastream.h"
 
-/*static*/ WBCompEldPickup* WBCompEldPickup::sm_PurchasePickup = NULL;
-/*static*/ WBEntity* WBCompEldPickup::sm_Purchaser = NULL;
+/*static*/ WBCompEldPickup* WBCompEldPickup::sm_PurchasePickup = nullptr;
+/*static*/ WBEntity* WBCompEldPickup::sm_Purchaser = nullptr;
 
 WBCompEldPickup::WBCompEldPickup()
     : m_GiveItemDef(), m_Price(0), m_FriendlyName(), m_FriendlyDesc() {
@@ -199,13 +199,13 @@ void WBCompEldPickup::RegisterForPurchaseEvents() {
   WBEventManager* const pEventManager = GetEventManager();
   if (pEventManager) {
     STATIC_HASHED_STRING(OnPurchaseBuy);
-    pEventManager->AddObserver(sOnPurchaseBuy, this, NULL);
+    pEventManager->AddObserver(sOnPurchaseBuy, this, nullptr);
 
     STATIC_HASHED_STRING(OnPurchaseSteal);
-    pEventManager->AddObserver(sOnPurchaseSteal, this, NULL);
+    pEventManager->AddObserver(sOnPurchaseSteal, this, nullptr);
 
     STATIC_HASHED_STRING(OnShopkeeperDied);
-    pEventManager->AddObserver(sOnShopkeeperDied, this, NULL);
+    pEventManager->AddObserver(sOnShopkeeperDied, this, nullptr);
   }
 }
 
@@ -213,13 +213,13 @@ void WBCompEldPickup::UnregisterForPurchaseEvents() {
   WBEventManager* const pEventManager = GetEventManager();
   if (pEventManager) {
     STATIC_HASHED_STRING(OnPurchaseBuy);
-    pEventManager->RemoveObserver(sOnPurchaseBuy, this, NULL);
+    pEventManager->RemoveObserver(sOnPurchaseBuy, this, nullptr);
 
     STATIC_HASHED_STRING(OnPurchaseSteal);
-    pEventManager->RemoveObserver(sOnPurchaseSteal, this, NULL);
+    pEventManager->RemoveObserver(sOnPurchaseSteal, this, nullptr);
 
     STATIC_HASHED_STRING(OnShopkeeperDied);
-    pEventManager->RemoveObserver(sOnShopkeeperDied, this, NULL);
+    pEventManager->RemoveObserver(sOnShopkeeperDied, this, nullptr);
   }
 }
 

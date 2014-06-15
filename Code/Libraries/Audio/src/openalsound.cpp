@@ -45,7 +45,7 @@ OpenALSound::~OpenALSound() { alDeleteBuffers(1, &buffer); }
 
 /*virtual*/ ISoundInstance* OpenALSound::CreateSoundInstance() {
   // should try to get an existing source rather than create a new one?
-  OpenALSoundInstance* const pInstance = new OpenALSoundInstance(this);
+  auto  const pInstance = new OpenALSoundInstance(this);
   ALuint src = pInstance->source;
 
   alSourcei(src, AL_BUFFER, buffer);
@@ -58,10 +58,10 @@ OpenALSound::~OpenALSound() { alDeleteBuffers(1, &buffer); }
 
 void OpenALSound::CreateSampleFromOGG(const IDataStream& Stream, bool Looping) {
   int Length = Stream.Size();
-  byte* pBuffer = new byte[Length];
+  auto  pBuffer = new byte[Length];
   Stream.Read(Length, pBuffer);
 
-  stb_vorbis* ogg = stb_vorbis_open_memory(pBuffer, Length, NULL, NULL);
+  stb_vorbis* ogg = stb_vorbis_open_memory(pBuffer, Length, nullptr, nullptr);
 
   ASSERT(ogg);
 
@@ -72,7 +72,7 @@ void OpenALSound::CreateSampleFromOGG(const IDataStream& Stream, bool Looping) {
 
     int const length_samples =
         (stb_vorbis_stream_length_in_samples(ogg) * info.channels);
-    ALshort* ogg_buffer = new ALshort[length_samples];
+    auto  ogg_buffer = new ALshort[length_samples];
     alGenBuffers(1, &buffer);
     stb_vorbis_get_samples_short_interleaved(ogg, info.channels, ogg_buffer,
                                              length_samples);
@@ -128,7 +128,7 @@ void OpenALSound::CreateSampleFromWAV(const IDataStream& Stream, bool Looping) {
 
   uint SubChunk2Size = (uint)Stream.ReadUInt32();
 
-  char* wav_buffer = new char[SubChunk2Size];
+  auto  wav_buffer = new char[SubChunk2Size];
   Stream.Read(SubChunk2Size, wav_buffer);
 
   alGenBuffers(1, &buffer);

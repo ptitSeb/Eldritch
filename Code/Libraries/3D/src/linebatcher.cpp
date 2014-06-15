@@ -83,12 +83,12 @@ void LineBatcher::Add(const Array<Vector>& m_AddPositions,
 Mesh* LineBatcher::Render() {
 #if BUILD_RELEASE
   if (m_IsDebug) {
-    return NULL;
+    return nullptr;
   }
 #endif
 
   if (0 == m_Positions.Size()) {
-    return NULL;
+    return nullptr;
   }
 
   IVertexBuffer* VertexBuffer = m_Renderer->CreateVertexBuffer();
@@ -103,7 +103,7 @@ Mesh* LineBatcher::Render() {
   VertexBuffer->Init(InitStruct);
   IndexBuffer->Init(m_Indices.Size(), m_Indices.GetData());
   IndexBuffer->SetPrimitiveType(EPT_LINELIST);
-  Mesh* LinesMesh = new Mesh(VertexBuffer, VertexDeclaration, IndexBuffer);
+  auto  LinesMesh = new Mesh(VertexBuffer, VertexDeclaration, IndexBuffer);
 
 #if BUILD_DEBUG
   LinesMesh->m_Name = "LineBatch";

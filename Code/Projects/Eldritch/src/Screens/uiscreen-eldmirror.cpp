@@ -20,10 +20,10 @@
 #include "mathcore.h"
 
 UIScreenEldMirror::UIScreenEldMirror()
-    : m_RigMesh(NULL),
-      m_HeadMesh(NULL),
-      m_BodyMesh(NULL),
-      m_BackdropMesh(NULL),
+    : m_RigMesh(nullptr),
+      m_HeadMesh(nullptr),
+      m_BodyMesh(nullptr),
+      m_BackdropMesh(nullptr),
       m_MirrorRTWidth(0),
       m_MirrorRTHeight(0),
       m_MirrorAnimation(),
@@ -223,7 +223,7 @@ Mesh* UIScreenEldMirror::CreateRigMesh(const SimpleString& MeshName) {
   EldritchFramework* const pFramework = EldritchFramework::GetInstance();
   IRenderer* const pRenderer = pFramework->GetRenderer();
 
-  EldritchMesh* const pMesh = new EldritchMesh();
+  auto  const pMesh = new EldritchMesh();
   pRenderer->GetMeshFactory()->GetDynamicMesh(MeshName.CStr(), pMesh);
 
   return pMesh;
@@ -236,7 +236,7 @@ Mesh* UIScreenEldMirror::CreateMesh(const SimpleString& MeshName,
   TextureManager* const pTextureManager = pRenderer->GetTextureManager();
   EldritchWorld* const pWorld = pFramework->GetWorld();
 
-  EldritchMesh* const pMesh = new EldritchMesh();
+  auto  const pMesh = new EldritchMesh();
   pRenderer->GetMeshFactory()->GetDynamicMesh(MeshName.CStr(), pMesh);
 
   if (TextureName != "") {
@@ -245,8 +245,8 @@ Mesh* UIScreenEldMirror::CreateMesh(const SimpleString& MeshName,
 
   // Null out the default normal and spec textures; shader code will populate
   // with the current fog lookup texture, etc.
-  pMesh->SetTexture(1, NULL);
-  pMesh->SetTexture(2, NULL);
+  pMesh->SetTexture(1, nullptr);
+  pMesh->SetTexture(2, nullptr);
 
   pMesh->SetMaterialDefinition("Material_EntityAnimated", pRenderer);
   pMesh->SetMaterialFlags(MAT_OFFSCREEN_0);

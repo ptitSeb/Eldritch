@@ -4,7 +4,7 @@
 #include "iaudiosystem.h"
 
 SoundCommon::SoundCommon()
-    : m_System(NULL),
+    : m_System(nullptr),
       m_IsStream(false),
       m_Looping(false),
       m_Is3D(false),

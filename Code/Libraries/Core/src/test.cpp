@@ -4,7 +4,7 @@
 
 #include <string.h>
 
-Test* Test::m_Instance = NULL;
+Test* Test::m_Instance = nullptr;
 
 Test::Test(const char* Filename) : m_TotalTests(0), m_SuccessfulTests(0) {
   m_Stream = new FileStream(Filename, FileStream::EFM_Write);

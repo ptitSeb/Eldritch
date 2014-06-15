@@ -7,14 +7,14 @@
 #include "mesh.h"
 
 KDTree::KDTree()
-    : m_FrontChild(NULL),
-      m_BackChild(NULL),
+    : m_FrontChild(nullptr),
+      m_BackChild(nullptr),
       m_SplittingPlane(),
       m_FullBound(),
       m_TightBound(),
       m_LocalBound(),
       m_NumMeshes(0),
-      m_Meshes(NULL) {}
+      m_Meshes(nullptr) {}
 
 KDTree::~KDTree() {
   // kd-tree doesn't actually manage the meshes (world does),

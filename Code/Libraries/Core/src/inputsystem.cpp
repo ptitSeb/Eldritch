@@ -13,10 +13,10 @@
 // axial bindings).
 
 InputSystem::InputSystem()
-    : m_Keyboard(NULL),
-      m_Mouse(NULL),
-      m_Controller(NULL),
-      m_Clock(NULL),
+    : m_Keyboard(nullptr),
+      m_Mouse(nullptr),
+      m_Controller(nullptr),
+      m_Clock(nullptr),
       m_KeyboardConfigContext(""),
       m_MouseConfigContext(""),
       m_ControllerConfigContext(""),
@@ -51,8 +51,8 @@ InputSystem::InputSystem()
       m_HoldTime(0.0f),
       m_StateA(),
       m_StateB(),
-      m_CurrentState(NULL),
-      m_LastState(NULL),
+      m_CurrentState(nullptr),
+      m_LastState(nullptr),
       m_HoldState(),
       m_AnalogStateA(),
       m_AnalogStateB(),
@@ -146,7 +146,7 @@ void InputSystem::Initialize(const SimpleString& DefinitionName) {
         "InputContext%d", InputContextIndex, "", sDefinitionName);
     DEVASSERT(m_InputContexts.Search(InputContextName).IsNull());
 
-    InputContext* const pInputContext = new InputContext;
+    auto  const pInputContext = new InputContext;
     pInputContext->Initialize(InputContextName, this);
     m_InputContexts[InputContextName] = pInputContext;
   }

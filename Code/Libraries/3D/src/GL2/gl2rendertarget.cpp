@@ -40,7 +40,7 @@ GLenum GetGLFormat(const ERenderTargetFormat Format) {
 GL2RenderTarget::GL2RenderTarget()
     : m_FrameBufferObject(0),
       m_ColorTextureObject(0),
-      m_ColorTexture(NULL),
+      m_ColorTexture(nullptr),
       m_DepthStencilRenderBufferObject(0),
       m_Width(0),
       m_Height(0) {}
@@ -95,7 +95,7 @@ GL2RenderTarget::~GL2RenderTarget() {
     // The image format parameters don't necessarily match the color format,
     // but it doesn't matter because we're not providing image data here.
     glTexImage2D(GL_TEXTURE_2D, 0, ColorFormat, Params.Width, Params.Height, 0,
-                 GL_BGRA, GL_UNSIGNED_BYTE, NULL);
+                 GL_BGRA, GL_UNSIGNED_BYTE, nullptr);
     m_ColorTexture = new GL2Texture(m_ColorTextureObject);
   }
 
@@ -165,5 +165,5 @@ void GL2RenderTarget::Reset() {}
 
 /*virtual*/ ITexture* GL2RenderTarget::GetDepthStencilTextureHandle() {
   // Unsupported on GL. Cannot sample from depth stencil.
-  return NULL;
+  return nullptr;
 }

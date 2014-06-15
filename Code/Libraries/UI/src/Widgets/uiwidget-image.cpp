@@ -11,16 +11,16 @@
 #include "texturemanager.h"
 
 UIWidgetImage::UIWidgetImage()
-    : m_Texture(NULL),
+    : m_Texture(nullptr),
       m_Dimensions(),
-      m_Mesh(NULL),
+      m_Mesh(nullptr),
       m_Calibration(false),
       m_Material() {}
 
 UIWidgetImage::UIWidgetImage(const SimpleString& DefinitionName)
-    : m_Texture(NULL),
+    : m_Texture(nullptr),
       m_Dimensions(),
-      m_Mesh(NULL),
+      m_Mesh(nullptr),
       m_Calibration(false),
       m_Material() {
   InitializeFromDefinition(DefinitionName);

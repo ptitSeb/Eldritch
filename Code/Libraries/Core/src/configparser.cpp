@@ -119,7 +119,7 @@ char GetHex(char c) {
 // and determines the token type for unknown right-hand tokens.
 void InnerParse(const char c, char& StrMark, Array<char>& TokenString,
                 const int LineCount, SToken::ETokenType& InOutTokenType,
-                bool* OutClosedString = NULL) {
+                bool* OutClosedString = nullptr) {
   switch (InOutTokenType) {
     case SToken::ET_None:
       // Determine the type of the RHS from the first character
@@ -526,7 +526,7 @@ void ConfigParser::Parse(const IDataStream& Stream) {
   for (uint i = 0; i < Tokens.Size(); ++i) {
     SToken& NameToken = Tokens[i];
     SimpleString Name = "";
-    const char* ValueString = NULL;
+    const char* ValueString = nullptr;
     if (NameToken.m_TokenType == SToken::ET_Name) {
       Name = NameToken.m_TokenString.GetData();
       ASSERT(Tokens[i + 1].m_TokenType == SToken::ET_Equals);
@@ -568,7 +568,7 @@ void ConfigParser::Parse(const IDataStream& Stream) {
         case SToken::ET_String: {
           // Make a permanent copy of the string
           uint Length = (uint)strlen(ValueString);
-          char* pString = new char[Length + 1];
+          auto  pString = new char[Length + 1];
           memcpy_s(pString, Length + 1, ValueString, Length);
           pString[Length] = '\0';
           StringManager::AddString(StringManager::ESL_Permanent, pString);
@@ -678,7 +678,7 @@ void ConfigParser::ParseTiny(const IDataStream& Stream) {
           case SToken::ET_String: {
             // Make a permanent copy of the string
             uint Length = (uint)strlen(ValuePart.GetData());
-            char* pString = new char[Length + 1];
+            auto  pString = new char[Length + 1];
             memcpy_s(pString, Length + 1, ValuePart.GetData(), Length);
             pString[Length] = '\0';
             StringManager::AddString(StringManager::ESL_Permanent, pString);

@@ -5,7 +5,7 @@
 #include "configmanager.h"
 
 RodinBTNodeDecorator::RodinBTNodeDecorator()
-    : m_Child(NULL), m_ChildStatus(ETS_None) {}
+    : m_Child(nullptr), m_ChildStatus(ETS_None) {}
 
 RodinBTNodeDecorator::~RodinBTNodeDecorator() { SafeDelete(m_Child); }
 

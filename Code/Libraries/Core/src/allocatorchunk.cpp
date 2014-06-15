@@ -29,12 +29,12 @@
 #endif
 
 AllocatorChunk::SAllocatorBlock::SAllocatorBlock()
-    : m_Chunk(NULL), m_Used(false), m_Size(0), m_Prev(NULL), m_Next(NULL) {}
+    : m_Chunk(nullptr), m_Used(false), m_Size(0), m_Prev(nullptr), m_Next(nullptr) {}
 
 AllocatorChunk::AllocatorChunk()
-    : m_Allocator(NULL),
-      m_Head(NULL),
-      m_Free(NULL),
+    : m_Allocator(nullptr),
+      m_Head(nullptr),
+      m_Free(nullptr),
       m_Size(0)
 #if BUILD_DEV
       ,
@@ -103,9 +103,9 @@ void AllocatorChunk::ShutDown() {
 
   free(m_Head);
 
-  m_Allocator = NULL;
-  m_Head = NULL;
-  m_Free = NULL;
+  m_Allocator = nullptr;
+  m_Head = nullptr;
+  m_Free = nullptr;
   m_Size = 0;
 
 #if BUILD_DEV
@@ -125,7 +125,7 @@ void* AllocatorChunk::Allocate(uint Size, uint Alignment) {
 
   if (!m_Free) {
     DEBUGBREAKPOINT;  // Out of memory!
-    return NULL;
+    return nullptr;
   }
 
   // Round alignment up to granularity
@@ -156,7 +156,7 @@ void* AllocatorChunk::Allocate(uint Size, uint Alignment) {
 
     if (Fit == m_Free) {
       DEBUGBREAKPOINT;  // Not enough space for allocation!
-      return NULL;
+      return nullptr;
     }
   }
 
@@ -174,7 +174,7 @@ void* AllocatorChunk::Allocate(uint Size, uint Alignment) {
     NextFree = NextFree->m_Next ? NextFree->m_Next : m_Head;
   } while (NextFree != Fit && NextFree->m_Used);
 
-  m_Free = (NextFree == Fit) ? NULL : NextFree;
+  m_Free = (NextFree == Fit) ? nullptr : NextFree;
   DEVASSERT(m_Free);  // Out of memory; not immediately fatal, but we must free
                       // something before we can alloc again
 
@@ -228,7 +228,7 @@ void AllocatorChunk::Free(void* pObj) {
 void AllocatorChunk::Flush() {
   DEVASSERT(m_Head);
 
-  m_Head->m_Next = NULL;
+  m_Head->m_Next = nullptr;
   m_Head->m_Size = m_Size - Allocator::m_BlockHeaderSize;
   m_Free = m_Head;
 
@@ -252,7 +252,7 @@ void AllocatorChunk::Split(SAllocatorBlock* const BlockToSplit, uint Size) {
   DEVASSERT(BlockToSplit->m_Size > Size + Allocator::m_BlockHeaderSize);
   void* const Where = static_cast<void*>(reinterpret_cast<byte*>(BlockToSplit) +
                                          Allocator::m_BlockHeaderSize + Size);
-  SAllocatorBlock* const NewBlock =
+  auto  const NewBlock =
       new (Where) SAllocatorBlock;  // NOTE: Could just cast Where to a Block*
                                     // and initialize, but placement new doesn't
                                     // have any overhead and I like constructors
@@ -290,7 +290,7 @@ void AllocatorChunk::SplitToAlignment(SAllocatorBlock* const BlockToSplit,
   DEVASSERT(BlockToSplit->m_Size > AlignPad + Allocator::m_BlockHeaderSize);
   void* const Where = static_cast<void*>(
       (byte*)BlockToSplit + Allocator::m_BlockHeaderSize + AlignPad);
-  SAllocatorBlock* const NewBlock =
+  auto  const NewBlock =
       new (Where) SAllocatorBlock;  // NOTE: Could just cast Where to a Block*
                                     // and initialize, but placement new doesn't
                                     // have any overhead and I like constructors

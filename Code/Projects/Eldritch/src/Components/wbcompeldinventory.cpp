@@ -30,7 +30,7 @@ WBCompEldInventory::~WBCompEldInventory() {}
 
 WBEntity* WBCompEldInventory::GetItem(const HashedString& Slot) {
   TInventoryMap::Iterator InventoryIter = m_InventoryMap.Search(Slot);
-  return InventoryIter.IsValid() ? InventoryIter.GetValue().Get() : NULL;
+  return InventoryIter.IsValid() ? InventoryIter.GetValue().Get() : nullptr;
 }
 
 void WBCompEldInventory::AddItem(const SimpleString& DefinitionName) {
@@ -83,7 +83,7 @@ void WBCompEldInventory::AddItem(const HashedString& Slot,
     WBEntity* const pCurrentWeapon = GetItem(sWeapon);
     WBEntity* const pAltWeapon = GetItem(sWeaponAlt);
 
-    if (pCurrentWeapon && pAltWeapon == NULL) {
+    if (pCurrentWeapon && pAltWeapon == nullptr) {
       WBCompEldItem* const pItemComponent = GET_WBCOMP(pItem, EldItem);
       ASSERT(pItemComponent);
 
@@ -144,7 +144,7 @@ void WBCompEldInventory::RemoveItem(WBEntity* const pItem) {
 }
 
 void WBCompEldInventory::RemoveItem(const HashedString& Slot) {
-  DropItem(Slot, true, NULL);
+  DropItem(Slot, true, nullptr);
 }
 
 void WBCompEldInventory::DropItem(const HashedString& Slot,
@@ -179,9 +179,9 @@ void WBCompEldInventory::DropItem(const HashedString& Slot,
   // HACK: If we dropped our weapon and aren't intended to replace it,
   // and we have an alt weapon, automatically swap to it.
   STATIC_HASHED_STRING(Weapon);
-  if (Slot == sWeapon && pReplacingItem == NULL) {
+  if (Slot == sWeapon && pReplacingItem == nullptr) {
     STATIC_HASHED_STRING(WeaponAlt);
-    if (GetItem(sWeaponAlt) != NULL) {
+    if (GetItem(sWeaponAlt) != nullptr) {
       SwapItems(sWeapon, sWeaponAlt);
     }
   }
@@ -267,7 +267,7 @@ void WBCompEldInventory::SwapItems(const HashedString& SlotA,
     STATIC_HASHED_STRING(SuppressSpawn);
     const bool SuppressSpawn = Event.GetBool(sSuppressSpawn);
 
-    DropItem(Slot, SuppressSpawn, NULL);
+    DropItem(Slot, SuppressSpawn, nullptr);
   } else if (EventName == sSwapItems) {
     STATIC_HASHED_STRING(SlotA);
     const HashedString SlotA = Event.GetHash(sSlotA);

@@ -36,7 +36,7 @@ RodinBTNode* RodinBTNodeFactory::Create(
     PRINTF("Invalid type requested for RodinBTNode %s.\n",
            DefinitionName.CStr());
     WARNDESC("Invalid RodinBTNode type requested.");
-    return NULL;
+    return nullptr;
   }
 
   RodinBTNodeFactoryFunc pFactory = (*FactoryIter);

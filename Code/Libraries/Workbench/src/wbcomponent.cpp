@@ -40,7 +40,7 @@ WBComponent::FactoryMap WBComponent::m_WBCompFactoryMap;
   // NOTE: This supports nulling out a component in a mod by using an empty
   // string.
   if (DefinitionName == "") {
-    return NULL;
+    return nullptr;
   }
 
   FactoryMap::Iterator FactoryIter = m_WBCompFactoryMap.Search(TypeName);
@@ -48,7 +48,7 @@ WBComponent::FactoryMap WBComponent::m_WBCompFactoryMap;
     PRINTF("Invalid type requested for WBComponent %s.\n",
            DefinitionName.CStr());
     WARNDESC("Invalid WBComponent type requested.");
-    return NULL;
+    return nullptr;
   }
 
   WBCompFactoryFunc pWBCompFactory = (*FactoryIter);
@@ -63,7 +63,7 @@ WBComponent::FactoryMap WBComponent::m_WBCompFactoryMap;
   return pNewComponent;
 }
 
-WBComponent::WBComponent() : m_Entity(NULL) {}
+WBComponent::WBComponent() : m_Entity(nullptr) {}
 
 WBComponent::~WBComponent() {}
 

@@ -5,7 +5,7 @@
 int main(int argc, char* argv[]) {
   if (argc > 1) {
     bool SuppressedOutput = false;
-    uint8* FileContents = NULL;
+    uint8* FileContents = nullptr;
     int Length = 0;
 
     if (argc > 2) {

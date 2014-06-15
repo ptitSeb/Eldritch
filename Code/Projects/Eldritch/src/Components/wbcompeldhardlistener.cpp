@@ -10,7 +10,7 @@ void WBCompEldHardListener::RegisterForEvents() {
   WBEventManager* const pEventManager = GetEventManager();
   if (pEventManager) {
     STATIC_HASHED_STRING(NotifyHardModeSet);
-    pEventManager->AddObserver(sNotifyHardModeSet, this, NULL);
+    pEventManager->AddObserver(sNotifyHardModeSet, this, nullptr);
   }
 }
 
@@ -18,7 +18,7 @@ void WBCompEldHardListener::UnregisterForEvents() {
   WBEventManager* const pEventManager = GetEventManager();
   if (pEventManager) {
     STATIC_HASHED_STRING(NotifyHardModeSet);
-    pEventManager->RemoveObserver(sNotifyHardModeSet, this, NULL);
+    pEventManager->RemoveObserver(sNotifyHardModeSet, this, nullptr);
   }
 }
 

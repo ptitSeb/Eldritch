@@ -115,7 +115,7 @@ void Keyboard::Tick(float DeltaTime) {
 #endif
 
 #if BUILD_SDL
-  const Uint8* const SDLKeysState = SDL_GetKeyboardState(NULL);
+  const Uint8* const SDLKeysState = SDL_GetKeyboardState(nullptr);
   for (uint KeyIndex = EB_None; KeyIndex < EB_Max; ++KeyIndex) {
     const SDL_Scancode SDLScancode = SDLScancodes[KeyIndex];
     const Uint8 SDLState = SDLKeysState[SDLScancode];

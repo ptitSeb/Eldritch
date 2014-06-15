@@ -72,7 +72,7 @@ EldritchFactions::EFactionCon WBCompEldFaction::GetCon(
   WBCompEldFaction* const pFactionB = GET_WBCOMP(pEntityB, EldFaction);
 
   // Null factions are always treated as neutral.
-  if (pFactionA == NULL || pFactionB == NULL) {
+  if (pFactionA == nullptr || pFactionB == nullptr) {
     return EldritchFactions::EFR_Neutral;
   }
 

@@ -9,13 +9,13 @@
 
 FilePacker::FilePacker()
     : m_InFileSize(0),
-      m_InFileBuffer(NULL),
+      m_InFileBuffer(nullptr),
       m_InFileCompressionSize(0),
-      m_InFileCompressionBuffer(NULL),
+      m_InFileCompressionBuffer(nullptr),
       m_Header(),
       m_FileEntries(),
       m_ExistingPackFileSize(0),
-      m_ExistingPackFileBuffer(NULL) {}
+      m_ExistingPackFileBuffer(nullptr) {}
 
 int FilePacker::PackFile(const char* InFilename, const char* PackFilename,
                          bool Compress) {
@@ -57,7 +57,7 @@ void FilePacker::WriteUnpackedFile(const IDataStream& Stream,
                                    SPackageFileEntry& FileEntry) {
   byte* pFileData = m_ExistingPackFileBuffer + FileEntry.m_OffsetToFile;
   if (FileEntry.m_Compressed) {
-    byte* pUncompressedData = new byte[FileEntry.m_DecompressedSize];
+    auto  pUncompressedData = new byte[FileEntry.m_DecompressedSize];
     uncompress(pUncompressedData, &FileEntry.m_DecompressedSize, pFileData,
                FileEntry.m_CompressedSize);
     Stream.Write(FileEntry.m_DecompressedSize, pUncompressedData);

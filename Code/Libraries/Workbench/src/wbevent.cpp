@@ -52,7 +52,7 @@ Angles WBEvent::SParameter::CoerceAngles() const {
 }
 
 WBEntity* WBEvent::SParameter::CoerceEntity() const {
-  return m_Type == EWBEPT_Entity ? GetEntity().Get() : NULL;
+  return m_Type == EWBEPT_Entity ? GetEntity().Get() : nullptr;
 }
 
 SimpleString WBEvent::SParameter::CoerceString() const {
@@ -84,7 +84,7 @@ SimpleString WBEvent::SParameter::CoerceString() const {
 }
 
 void* WBEvent::SParameter::CoercePointer() const {
-  return m_Type == EWBEPT_Pointer ? GetPointer() : NULL;
+  return m_Type == EWBEPT_Pointer ? GetPointer() : nullptr;
 }
 
 void WBEvent::Set(const HashedString& Name,
@@ -157,7 +157,7 @@ HashedString WBEvent::GetEventName() const {
 const WBEvent::SParameter* WBEvent::GetParameter(
     const HashedString& Name) const {
   TParameterMap::Iterator ParamIter = m_Parameters.Search(Name);
-  return ParamIter.IsValid() ? &ParamIter.GetValue() : NULL;
+  return ParamIter.IsValid() ? &ParamIter.GetValue() : nullptr;
 }
 
 WBEvent::EType WBEvent::GetType(const HashedString& Name) const {
@@ -198,7 +198,7 @@ Angles WBEvent::GetAngles(const HashedString& Name) const {
 
 WBEntity* WBEvent::GetEntity(const HashedString& Name) const {
   TParameterMap::Iterator ParamIter = m_Parameters.Search(Name);
-  return ParamIter.IsValid() ? ParamIter.GetValue().CoerceEntity() : NULL;
+  return ParamIter.IsValid() ? ParamIter.GetValue().CoerceEntity() : nullptr;
 }
 
 SimpleString WBEvent::GetString(const HashedString& Name) const {
@@ -208,7 +208,7 @@ SimpleString WBEvent::GetString(const HashedString& Name) const {
 
 void* WBEvent::GetPointer(const HashedString& Name) const {
   TParameterMap::Iterator ParamIter = m_Parameters.Search(Name);
-  return ParamIter.IsValid() ? ParamIter.GetValue().CoercePointer() : NULL;
+  return ParamIter.IsValid() ? ParamIter.GetValue().CoercePointer() : nullptr;
 }
 
 WBPackedEvent WBEvent::Pack() const {
@@ -266,7 +266,7 @@ void WBEvent::Load(const IDataStream& Stream) {
   const uint PackedEventSize = Stream.ReadUInt32();
 
   WBPackedEvent PackedEvent;
-  PackedEvent.Reinit(NULL, PackedEventSize);
+  PackedEvent.Reinit(nullptr, PackedEventSize);
   Stream.Read(PackedEventSize, PackedEvent.GetData());
 
   Unpack(PackedEvent);

@@ -20,14 +20,14 @@
 #include "plane.h"
 
 WBCompEldMesh::WBCompEldMesh()
-    : m_Mesh(NULL),
+    : m_Mesh(nullptr),
       m_MeshOriginalAABB(),
       m_Hidden(false),
       m_Offset(),
       m_IrradianceOffsetZ(0.0f),
       m_SendUpdatedEvent(false),
-      m_DependentDropShadow(NULL),
-      m_DependentFrobbable(NULL),
+      m_DependentDropShadow(nullptr),
+      m_DependentFrobbable(nullptr),
       m_ForceUpdateTransform(false),
       m_OldTransform_Location(),
       m_OldTransform_Rotation(),
@@ -66,8 +66,8 @@ void WBCompEldMesh::SetMesh(const SimpleString& Mesh) {
 
   // Null out the default normal and spec textures; shader code will populate
   // with the current fog lookup texture, etc.
-  m_Mesh->SetTexture(1, NULL);
-  m_Mesh->SetTexture(2, NULL);
+  m_Mesh->SetTexture(1, nullptr);
+  m_Mesh->SetTexture(2, nullptr);
 
   m_MeshOriginalAABB = m_Mesh->m_AABB;
 
@@ -305,8 +305,8 @@ void WBCompEldMesh::UpdateIrradiance(const float DeltaTime) {
         pWorld->GetIrradianceAt(EntityLocation + IrradianceOffset);
   }
 
-  for (uint IrrDir = 0; IrrDir < 6; ++IrrDir) {
-    Vector4& DirLight = CurrentIrradiance.m_Light[IrrDir];
+  for (auto & DirLight : CurrentIrradiance.m_Light) {
+    
     DirLight += m_CurrentHighlight;
     DirLight += m_ConstantIrradiance;
   }

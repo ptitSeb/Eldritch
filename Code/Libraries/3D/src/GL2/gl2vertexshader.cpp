@@ -15,7 +15,7 @@ void GL2VertexShader::Initialize(const IDataStream& Stream) {
   XTRACE_FUNCTION;
 
   const int Length = Stream.Size();
-  byte* pBuffer = new byte[Length];
+  auto  pBuffer = new byte[Length];
   Stream.Read(Length, pBuffer);
 
   m_VertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -41,7 +41,7 @@ void GL2VertexShader::Initialize(const IDataStream& Stream) {
     glGetShaderiv(m_VertexShader, GL_INFO_LOG_LENGTH, &LogLength);
     Array<GLchar> Log;
     Log.Resize(LogLength);
-    glGetShaderInfoLog(m_VertexShader, LogLength, NULL, Log.GetData());
+    glGetShaderInfoLog(m_VertexShader, LogLength, nullptr, Log.GetData());
     if (LogLength > 0) {
       PRINTF("GLSL vertex shader compile failed:\n");
       PRINTF(Log.GetData());

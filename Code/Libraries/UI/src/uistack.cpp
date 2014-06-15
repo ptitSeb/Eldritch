@@ -23,8 +23,8 @@
 
 UIStack::UIStack()
     : m_ScreenStack(),
-      m_FadeOverlay(NULL),
-      m_DebugOverlay(NULL)
+      m_FadeOverlay(nullptr),
+      m_DebugOverlay(nullptr)
 #if BUILD_DEBUG
       ,
       m_IteratingStack(false)
@@ -62,7 +62,7 @@ UIScreen* UIStack::GetFocus() {
       return StackScreen.m_Screen;
     }
   }
-  return NULL;
+  return nullptr;
 }
 
 bool UIStack::PausesGame() {
@@ -319,7 +319,7 @@ UIScreen* UIStack::Top() {
     return StackScreen.m_Screen;
   }
 
-  return NULL;
+  return nullptr;
 }
 
 void UIStack::Clear() {

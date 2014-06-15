@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-StringManager* StringManager::m_Instance = NULL;
+StringManager* StringManager::m_Instance = nullptr;
 Allocator StringManager::m_AllocatorPermanent("StringManager/Permanent");
 Allocator StringManager::m_AllocatorTransient("StringManager/Transient");
 bool StringManager::m_UsingAllocator = false;
@@ -120,7 +120,7 @@ void StringManager::ParseConfigToken(Array<char>& ParsedString,
   SimpleString Context =
       (SecondPartArray.Size() > 1) ? FirstPartArray.GetData() : "";
 
-  const char* AppendString = NULL;
+  const char* AppendString = nullptr;
 
   if (TypeChar == 'b') {
     bool TheBool = ConfigManager::GetBool(Name, false, Context);

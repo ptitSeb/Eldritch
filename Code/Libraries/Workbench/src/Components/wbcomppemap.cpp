@@ -36,5 +36,5 @@ WBCompPEMap::~WBCompPEMap() {
 
 WBPE* WBCompPEMap::GetPE(const HashedString& Name) const {
   Map<HashedString, WBPE*>::Iterator PEIter = m_PEMap.Search(Name);
-  return PEIter.IsValid() ? PEIter.GetValue() : NULL;
+  return PEIter.IsValid() ? PEIter.GetValue() : nullptr;
 }

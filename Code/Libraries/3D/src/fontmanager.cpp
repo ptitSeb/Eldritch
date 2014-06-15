@@ -24,7 +24,7 @@ Font* FontManager::GetFont(const char* Filename) {
   if (FontIter.IsValid()) {
     return FontIter.GetValue();
   } else {
-    Font* const pFont = new Font;
+    auto  const pFont = new Font;
     pFont->Initialize(PackStream(Filename), m_Renderer);
 
     m_FontTable.Insert(HashedFilename, pFont);

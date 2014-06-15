@@ -143,8 +143,8 @@ struct SVoxelMeshBuffers {
 };
 
 EldritchWorld::EldritchWorld()
-    : m_Framework(NULL),
-      m_Nav(NULL),
+    : m_Framework(nullptr),
+      m_Nav(nullptr),
       m_VoxelMap(),
       m_PackedVoxels(),
       m_WorldMeshes(),
@@ -901,7 +901,7 @@ void EldritchWorld::BuildMesh(const uint MeshIndex) {
 
   if (Buffers.Positions.Size() == 0) {
     // No voxels to draw in this mesh space.
-    ASSERT(m_WorldMeshes[MeshIndex] == NULL);
+    ASSERT(m_WorldMeshes[MeshIndex] == nullptr);
     return;
   }
 
@@ -931,7 +931,7 @@ void EldritchWorld::BuildMesh(const uint MeshIndex) {
                        static_cast<float>(EndVoxelY),
                        static_cast<float>(EndVoxelZ));
 
-  Mesh* const NewWorldMesh =
+  auto  const NewWorldMesh =
       new Mesh(VertexBuffer, VertexDeclaration, IndexBuffer);
   NewWorldMesh->m_AABB = AABB(AABBMin, AABBMax);
 #if BUILD_DEV

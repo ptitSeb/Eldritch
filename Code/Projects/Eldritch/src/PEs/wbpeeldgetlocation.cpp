@@ -4,7 +4,7 @@
 #include "wbparamevaluatorfactory.h"
 #include "Components/wbcompeldtransform.h"
 
-WBPEEldGetLocation::WBPEEldGetLocation() : m_EntityPE(NULL) {}
+WBPEEldGetLocation::WBPEEldGetLocation() : m_EntityPE(nullptr) {}
 
 WBPEEldGetLocation::~WBPEEldGetLocation() { SafeDelete(m_EntityPE); }
 

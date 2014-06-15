@@ -140,7 +140,7 @@ void WBCompEldItem::SpawnDrop() const {
 bool WBCompEldItem::GetSpawnDropTransform(Vector& OutLocation,
                                           Vector& OutImpulse,
                                           Angles& OutOrientation) const {
-  WBCompEldTransform* pSelectedTransform = NULL;
+  WBCompEldTransform* pSelectedTransform = nullptr;
 
   // First, try to spawn from our owner's transform.
   WBCompOwner* const pOwnerComponent = GET_WBCOMP(GetEntity(), Owner);

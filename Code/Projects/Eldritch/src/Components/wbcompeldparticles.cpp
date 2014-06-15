@@ -38,7 +38,7 @@ WBCompEldParticles::~WBCompEldParticles() {
 
   const bool Serialize = false;
   const bool Attached = true;
-  const Vector* pLocationOverride = NULL;
+  const Vector* pLocationOverride = nullptr;
 
   STATICHASH(Particles);
   const SimpleString ParticlesDef =
@@ -229,7 +229,7 @@ void WBCompEldParticles::StopParticleSystem(
 
     const bool Serialize = true;
     const Vector* pLocationOverride =
-        UseLocationOverride ? (&LocationOverride) : NULL;
+        UseLocationOverride ? (&LocationOverride) : nullptr;
 
     AddParticleSystem(ParticleSystemDef, Serialize, Attached,
                       pLocationOverride);

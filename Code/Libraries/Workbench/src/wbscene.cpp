@@ -79,7 +79,7 @@ WBEntity* WBScene::GetEntity(const uint EntitySceneHandle) const {
   if (EntityIter.IsValid()) {
     return EntityIter.GetValue().m_Entity;
   } else {
-    return NULL;
+    return nullptr;
   }
 }
 
@@ -144,7 +144,7 @@ void WBScene::DeferredRemoveEntity(const uint EntitySceneHandle) {
 
 WBEntity* WBScene::GetFirstEntityByComponent(
     const HashedString& ComponentName) const {
-  WBEntity* RetVal = NULL;
+  WBEntity* RetVal = nullptr;
   BEGIN_ITERATING_ENTITIES;
   FOR_EACH_MAP(EntityIter, m_Entities, uint, SEntityRef) {
     const SEntityRef& EntityRef = EntityIter.GetValue();
@@ -222,7 +222,7 @@ void WBScene::Load(const IDataStream& Stream) {
 
   uint NumEntities = Stream.ReadUInt32();
   for (uint EntityIndex = 0; EntityIndex < NumEntities; ++EntityIndex) {
-    WBEntity* pNewEntity = new WBEntity;
+    auto  pNewEntity = new WBEntity;
     pNewEntity->Load(Stream);
 
     AddEntity(pNewEntity, pNewEntity->GetSceneHandle());

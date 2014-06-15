@@ -5,7 +5,7 @@
 #include "wbparamevaluatorfactory.h"
 #include "reversehash.h"
 
-WBPEEldGetFaction::WBPEEldGetFaction() : m_EntityPE(NULL) {}
+WBPEEldGetFaction::WBPEEldGetFaction() : m_EntityPE(nullptr) {}
 
 WBPEEldGetFaction::~WBPEEldGetFaction() { SafeDelete(m_EntityPE); }
 

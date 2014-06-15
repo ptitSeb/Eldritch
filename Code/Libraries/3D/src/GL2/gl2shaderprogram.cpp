@@ -6,8 +6,8 @@
 #include "simplestring.h"
 
 GL2ShaderProgram::GL2ShaderProgram()
-    : m_VertexShader(NULL),
-      m_PixelShader(NULL),
+    : m_VertexShader(nullptr),
+      m_PixelShader(nullptr),
       m_ShaderProgram(0),
       m_UniformTable() {}
 
@@ -63,7 +63,7 @@ GL2ShaderProgram::~GL2ShaderProgram() {
     glGetProgramiv(m_ShaderProgram, GL_INFO_LOG_LENGTH, &LogLength);
     Array<GLchar> Log;
     Log.Resize(LogLength);
-    glGetProgramInfoLog(m_ShaderProgram, LogLength, NULL, Log.GetData());
+    glGetProgramInfoLog(m_ShaderProgram, LogLength, nullptr, Log.GetData());
     if (LogLength > 0) {
       PRINTF("GLSL shader program link failed:\n");
       PRINTF(Log.GetData());

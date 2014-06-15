@@ -70,8 +70,8 @@ void Frustum::InitWith(const Matrix& m) {
 }
 
 bool Frustum::Intersects(const Vector& Point) const {
-  for (int i = 0; i < 6; ++i) {
-    if (!m_Planes[i].OnFrontSide(Point)) {
+  for (auto & elem : m_Planes) {
+    if (!elem.OnFrontSide(Point)) {
       return false;
     }
   }
@@ -82,47 +82,47 @@ bool Frustum::Intersects(const Vector& Point) const {
 // If (and only if) all the points are on the back side of any one
 // plane, the box is outside.
 bool Frustum::Intersects(const AABB& Box) const {
-  for (int i = 0; i < 6; ++i) {
+  for (auto & elem : m_Planes) {
     // This is effectively a plane-point side test: dot( normal, point ) +
     // distance > 0 <=> point on front side of plane
-    if (m_Planes[i].m_Normal.x * Box.m_Min.x +
-            m_Planes[i].m_Normal.y * Box.m_Min.y +
-            m_Planes[i].m_Normal.z * Box.m_Min.z + m_Planes[i].m_Distance >
+    if (elem.m_Normal.x * Box.m_Min.x +
+            elem.m_Normal.y * Box.m_Min.y +
+            elem.m_Normal.z * Box.m_Min.z + elem.m_Distance >
         0.0f)
       continue;
-    if (m_Planes[i].m_Normal.x * Box.m_Min.x +
-            m_Planes[i].m_Normal.y * Box.m_Min.y +
-            m_Planes[i].m_Normal.z * Box.m_Max.z + m_Planes[i].m_Distance >
+    if (elem.m_Normal.x * Box.m_Min.x +
+            elem.m_Normal.y * Box.m_Min.y +
+            elem.m_Normal.z * Box.m_Max.z + elem.m_Distance >
         0.0f)
       continue;
-    if (m_Planes[i].m_Normal.x * Box.m_Min.x +
-            m_Planes[i].m_Normal.y * Box.m_Max.y +
-            m_Planes[i].m_Normal.z * Box.m_Min.z + m_Planes[i].m_Distance >
+    if (elem.m_Normal.x * Box.m_Min.x +
+            elem.m_Normal.y * Box.m_Max.y +
+            elem.m_Normal.z * Box.m_Min.z + elem.m_Distance >
         0.0f)
       continue;
-    if (m_Planes[i].m_Normal.x * Box.m_Min.x +
-            m_Planes[i].m_Normal.y * Box.m_Max.y +
-            m_Planes[i].m_Normal.z * Box.m_Max.z + m_Planes[i].m_Distance >
+    if (elem.m_Normal.x * Box.m_Min.x +
+            elem.m_Normal.y * Box.m_Max.y +
+            elem.m_Normal.z * Box.m_Max.z + elem.m_Distance >
         0.0f)
       continue;
-    if (m_Planes[i].m_Normal.x * Box.m_Max.x +
-            m_Planes[i].m_Normal.y * Box.m_Min.y +
-            m_Planes[i].m_Normal.z * Box.m_Min.z + m_Planes[i].m_Distance >
+    if (elem.m_Normal.x * Box.m_Max.x +
+            elem.m_Normal.y * Box.m_Min.y +
+            elem.m_Normal.z * Box.m_Min.z + elem.m_Distance >
         0.0f)
       continue;
-    if (m_Planes[i].m_Normal.x * Box.m_Max.x +
-            m_Planes[i].m_Normal.y * Box.m_Min.y +
-            m_Planes[i].m_Normal.z * Box.m_Max.z + m_Planes[i].m_Distance >
+    if (elem.m_Normal.x * Box.m_Max.x +
+            elem.m_Normal.y * Box.m_Min.y +
+            elem.m_Normal.z * Box.m_Max.z + elem.m_Distance >
         0.0f)
       continue;
-    if (m_Planes[i].m_Normal.x * Box.m_Max.x +
-            m_Planes[i].m_Normal.y * Box.m_Max.y +
-            m_Planes[i].m_Normal.z * Box.m_Min.z + m_Planes[i].m_Distance >
+    if (elem.m_Normal.x * Box.m_Max.x +
+            elem.m_Normal.y * Box.m_Max.y +
+            elem.m_Normal.z * Box.m_Min.z + elem.m_Distance >
         0.0f)
       continue;
-    if (m_Planes[i].m_Normal.x * Box.m_Max.x +
-            m_Planes[i].m_Normal.y * Box.m_Max.y +
-            m_Planes[i].m_Normal.z * Box.m_Max.z + m_Planes[i].m_Distance >
+    if (elem.m_Normal.x * Box.m_Max.x +
+            elem.m_Normal.y * Box.m_Max.y +
+            elem.m_Normal.z * Box.m_Max.z + elem.m_Distance >
         0.0f)
       continue;
     return false;
@@ -131,9 +131,9 @@ bool Frustum::Intersects(const AABB& Box) const {
 }
 
 bool Frustum::Intersects(const Sphere& s) const {
-  for (int i = 0; i < 6; ++i) {
+  for (auto & elem : m_Planes) {
     // If the sphere lies outside any one plane, it's not an intersection
-    if (m_Planes[i].DistanceTo(s.m_Center) < -s.m_Radius) {
+    if (elem.DistanceTo(s.m_Center) < -s.m_Radius) {
       return false;
     }
   }
@@ -147,15 +147,15 @@ bool Frustum::Intersects(const Sphere& s) const {
 bool Frustum::Intersects(const Frustum& f) const {
   Vector Corners[8];
   f.GetCorners(Corners);
-  for (int i = 0; i < 6; ++i) {
-    if (m_Planes[i].OnFrontSide(Corners[0])) continue;
-    if (m_Planes[i].OnFrontSide(Corners[1])) continue;
-    if (m_Planes[i].OnFrontSide(Corners[2])) continue;
-    if (m_Planes[i].OnFrontSide(Corners[3])) continue;
-    if (m_Planes[i].OnFrontSide(Corners[4])) continue;
-    if (m_Planes[i].OnFrontSide(Corners[5])) continue;
-    if (m_Planes[i].OnFrontSide(Corners[6])) continue;
-    if (m_Planes[i].OnFrontSide(Corners[7])) continue;
+  for (auto & elem : m_Planes) {
+    if (elem.OnFrontSide(Corners[0])) continue;
+    if (elem.OnFrontSide(Corners[1])) continue;
+    if (elem.OnFrontSide(Corners[2])) continue;
+    if (elem.OnFrontSide(Corners[3])) continue;
+    if (elem.OnFrontSide(Corners[4])) continue;
+    if (elem.OnFrontSide(Corners[5])) continue;
+    if (elem.OnFrontSide(Corners[6])) continue;
+    if (elem.OnFrontSide(Corners[7])) continue;
     return false;
   }
   return true;

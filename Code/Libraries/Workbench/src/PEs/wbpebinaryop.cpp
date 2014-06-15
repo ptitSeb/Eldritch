@@ -3,7 +3,7 @@
 #include "configmanager.h"
 #include "../wbparamevaluatorfactory.h"
 
-WBPEBinaryOp::WBPEBinaryOp() : m_InputA(NULL), m_InputB(NULL) {}
+WBPEBinaryOp::WBPEBinaryOp() : m_InputA(nullptr), m_InputB(nullptr) {}
 
 WBPEBinaryOp::~WBPEBinaryOp() {
   SafeDelete(m_InputA);

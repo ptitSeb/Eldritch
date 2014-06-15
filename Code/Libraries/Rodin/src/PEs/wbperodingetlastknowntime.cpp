@@ -4,7 +4,7 @@
 #include "wbparamevaluatorfactory.h"
 #include "Components/wbcomprodinknowledge.h"
 
-WBPERodinGetLastKnownTime::WBPERodinGetLastKnownTime() : m_EntityPE(NULL) {}
+WBPERodinGetLastKnownTime::WBPERodinGetLastKnownTime() : m_EntityPE(nullptr) {}
 
 WBPERodinGetLastKnownTime::~WBPERodinGetLastKnownTime() {
   SafeDelete(m_EntityPE);

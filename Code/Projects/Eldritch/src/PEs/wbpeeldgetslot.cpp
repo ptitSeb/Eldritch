@@ -5,7 +5,7 @@
 #include "wbparamevaluatorfactory.h"
 #include "reversehash.h"
 
-WBPEEldGetSlot::WBPEEldGetSlot() : m_EntityPE(NULL) {}
+WBPEEldGetSlot::WBPEEldGetSlot() : m_EntityPE(nullptr) {}
 
 WBPEEldGetSlot::~WBPEEldGetSlot() { SafeDelete(m_EntityPE); }
 

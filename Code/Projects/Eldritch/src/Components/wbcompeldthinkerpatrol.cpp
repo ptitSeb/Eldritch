@@ -42,7 +42,7 @@ WBCompEldThinkerPatrol::~WBCompEldThinkerPatrol() {}
   const Vector CurrentLocation = pTransform->GetLocation();
 
   // Select the furthest patrol point that we know about.
-  WBEntity* pFurthestPatrol = NULL;
+  WBEntity* pFurthestPatrol = nullptr;
   float FurthestDistSq = -1.0f;
 
   const WBCompRodinKnowledge::TKnowledgeMap& KnowledgeMap =

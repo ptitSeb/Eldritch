@@ -8,7 +8,7 @@
 #define REPORT_FULL_TREE 0
 
 WBCompRodinBehaviorTree::WBCompRodinBehaviorTree()
-    : m_RootNode(NULL),
+    : m_RootNode(nullptr),
       m_ScheduledNodes(),
       m_TickIterateNodeIndex(0),
       m_Paused(false),

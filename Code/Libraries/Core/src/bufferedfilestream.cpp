@@ -6,7 +6,7 @@
 #include <memory.h>
 
 BufferedFileStream::BufferedFileStream()
-    : m_Filename(NULL),
+    : m_Filename(nullptr),
       m_Buffer(),
       m_FileMode(EFM_None),
       m_Position(0),
@@ -19,7 +19,7 @@ BufferedFileStream::BufferedFileStream(const char* Filename, EFileMode FileMode)
       m_Position(0),
       m_Filesize(0) {
   if (m_FileMode == EFM_Read) {
-    FILE* pFile = NULL;
+    FILE* pFile = nullptr;
     FOPEN(pFile, m_Filename, "rb");
     if (pFile) {
       fseek(pFile, 0, SEEK_END);
@@ -37,7 +37,7 @@ BufferedFileStream::BufferedFileStream(const char* Filename, EFileMode FileMode)
 BufferedFileStream::~BufferedFileStream() {
   if (m_FileMode == EFM_Write || m_FileMode == EFM_Append) {
     if (m_Filesize) {
-      FILE* pFile = NULL;
+      FILE* pFile = nullptr;
       if (m_FileMode == EFM_Write) {
         FOPEN(pFile, m_Filename, "wb");
       } else {
@@ -71,7 +71,7 @@ int BufferedFileStream::Write(int NumBytes, const void* Buffer) const {
 int BufferedFileStream::PrintF(const char* Str, ...) const {
   va_list Args;
   int Length = 0;
-  char* Buffer = NULL;
+  char* Buffer = nullptr;
   int RetVal = 0;
 
   va_start(Args, Str);

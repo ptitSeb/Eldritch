@@ -3,7 +3,7 @@
 #include "vector.h"
 #include "plane.h"
 
-SectorBound::SectorBound() : m_NumPlanes(0), m_Planes(NULL) {}
+SectorBound::SectorBound() : m_NumPlanes(0), m_Planes(nullptr) {}
 
 SectorBound::~SectorBound() { SafeDeleteArray(m_Planes); }
 

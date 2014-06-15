@@ -4,7 +4,7 @@
 #include "configmanager.h"
 #include "wbparamevaluatorfactory.h"
 
-WBPEEldGetItem::WBPEEldGetItem() : m_EntityPE(NULL), m_SlotPE(NULL) {}
+WBPEEldGetItem::WBPEEldGetItem() : m_EntityPE(nullptr), m_SlotPE(nullptr) {}
 
 WBPEEldGetItem::~WBPEEldGetItem() {
   SafeDelete(m_EntityPE);

@@ -7,12 +7,12 @@
 
 TargetManager::TargetManager(IRenderer* pRenderer, uint Width, uint Height)
     : m_Renderer(pRenderer),
-      m_OriginalRenderTarget(NULL),
-      m_DepthRenderTarget(NULL),
-      m_DepthAlphaRenderTarget(NULL),
-      m_PrimaryRenderTarget(NULL),
-      m_BloomSmallTarget1(NULL),
-      m_BloomSmallTarget2(NULL),
+      m_OriginalRenderTarget(nullptr),
+      m_DepthRenderTarget(nullptr),
+      m_DepthAlphaRenderTarget(nullptr),
+      m_PrimaryRenderTarget(nullptr),
+      m_BloomSmallTarget1(nullptr),
+      m_BloomSmallTarget2(nullptr),
       m_BloomWidth(0),
       m_BloomHeight(0) {
   CreateTargets(Width, Height);

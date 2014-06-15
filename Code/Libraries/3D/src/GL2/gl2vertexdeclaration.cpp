@@ -9,6 +9,6 @@ void GL2VertexDeclaration::Initialize(uint VertexSignature) {
   m_VertexSignature = VertexSignature;
 }
 
-void* GL2VertexDeclaration::GetDeclaration() { return NULL; }
+void* GL2VertexDeclaration::GetDeclaration() { return nullptr; }
 
 uint GL2VertexDeclaration::GetSignature() { return m_VertexSignature; }

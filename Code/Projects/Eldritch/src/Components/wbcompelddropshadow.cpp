@@ -20,7 +20,7 @@
 #include "eldritchgame.h"
 
 WBCompEldDropShadow::WBCompEldDropShadow()
-    : m_Mesh(NULL),
+    : m_Mesh(nullptr),
       m_MeshOriginalAABB(),
       m_VoxelCheckOffsetZ(0.0f),
       m_ShadowFloatZ(0.0f),
@@ -61,8 +61,8 @@ WBCompEldDropShadow::~WBCompEldDropShadow() {
       pRenderer->GetMeshFactory()->CreateQuad(Radius * 2.0f, XY_PLANE, false);
   m_Mesh->SetTexture(0, pRenderer->GetTextureManager()->GetTexture(
                             "Textures/drop-shadow_NODXT.tga"));
-  m_Mesh->SetTexture(1, NULL);
-  m_Mesh->SetTexture(2, NULL);
+  m_Mesh->SetTexture(1, nullptr);
+  m_Mesh->SetTexture(2, nullptr);
   m_Mesh->SetMaterialDefinition("Material_DropShadow", pRenderer);
   m_Mesh->SetMaterialFlags(MAT_WORLD | MAT_DYNAMIC | MAT_ALPHA);
   m_Mesh->m_ConstantColor = GetWorld()->GetShadowColor();

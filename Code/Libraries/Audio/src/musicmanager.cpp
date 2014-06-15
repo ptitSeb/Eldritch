@@ -105,7 +105,7 @@ void MusicManager::OnInstanceDeleted(ISoundInstance* pInstance) {
 
 void MusicManager::PlayNextSequence() {
   m_CurrentSequence = m_NextSequence;
-  m_NextSequence.m_Instance = NULL;  // Null this so the new current sequence
+  m_NextSequence.m_Instance = nullptr;  // Null this so the new current sequence
                                      // isn't stopped when we free the next
                                      // sequence
 
@@ -202,8 +202,8 @@ void MusicManager::FreeSequence(SSequence& Sequence) {
   if (Sequence.m_Instance) {
     Sequence.m_Instance->Stop();
   }
-  Sequence.m_Sound = NULL;
-  Sequence.m_Instance = NULL;
+  Sequence.m_Sound = nullptr;
+  Sequence.m_Instance = nullptr;
   Sequence.m_DefinitionName = "";
 }
 

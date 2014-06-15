@@ -16,7 +16,7 @@
 #include <string.h>
 
 Font::Font()
-    : m_Renderer(NULL), m_Height(0.0f), m_FontLocales(), m_FontLanguages() {}
+    : m_Renderer(nullptr), m_Height(0.0f), m_FontLocales(), m_FontLanguages() {}
 
 Font::~Font() {}
 
@@ -299,7 +299,7 @@ Mesh* Font::Print(const Array<unicode_t>& CodePoints, const SRect& Bounds,
   pIndexBuffer->Init(NumIndices, Indices.GetData());
   pIndexBuffer->SetPrimitiveType(EPT_TRIANGLELIST);
 
-  Mesh* StringMesh = new Mesh(pVertexBuffer, pVertexDeclaration, pIndexBuffer);
+  auto  StringMesh = new Mesh(pVertexBuffer, pVertexDeclaration, pIndexBuffer);
 
   AABB MeshBounds;
   MeshBounds.m_Min.x = Bounds.m_Left - 1.0f;

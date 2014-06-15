@@ -35,7 +35,7 @@ GL2Texture::~GL2Texture() {
   int MipWidth = 0;
   int MipHeight = 0;
   byte* ThisLevel = ARGBImage;
-  byte* NextLevel = NULL;
+  byte* NextLevel = nullptr;
   for (int MipLevel = 0; MipLevel < MipLevels; ++MipLevel) {
     glTexImage2D(GL_TEXTURE_2D, MipLevel, GL_RGBA8, Width, Height, 0, GL_BGRA,
                  GL_UNSIGNED_BYTE, ThisLevel);

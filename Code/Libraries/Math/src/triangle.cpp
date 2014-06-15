@@ -37,7 +37,7 @@ bool Triangle::IsInBackOf(const Plane& P) const {
 }
 
 Vector Triangle::GetClosestPoint(const Vector& v) const {
-  return GetClosestPoint(v, NULL);
+  return GetClosestPoint(v, nullptr);
 }
 
 // Real-Time Collision Detection p.139

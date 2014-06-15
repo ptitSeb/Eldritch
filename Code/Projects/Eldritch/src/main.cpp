@@ -127,7 +127,7 @@ extern "C" int main(int argc, char* argv[])
   Initialize();
 #endif
 
-  EldritchFramework* pFramework = new EldritchFramework;
+  auto  pFramework = new EldritchFramework;
 #if BUILD_WINDOWS_NO_SDL
   pFramework->SetInitializeParameters(hInstance, nCmdShow);
 #endif

@@ -39,30 +39,30 @@
 #define UPLOADLOG ((0 || BUILD_FINAL) && BUILD_WINDOWS)
 
 // Singleton accessor
-static Framework3D* gSingletonFramework = NULL;
+static Framework3D* gSingletonFramework = nullptr;
 
 /*static*/ Framework3D* Framework3D::GetInstance() {
   return gSingletonFramework;
 }
 
 /*static*/ void Framework3D::SetInstance(Framework3D* const pFramework) {
-  ASSERT(gSingletonFramework == NULL);
+  ASSERT(gSingletonFramework == nullptr);
   gSingletonFramework = pFramework;
 }
 
 Framework3D::Framework3D()
-    : m_EventManager(NULL),
-      m_Display(NULL),
-      m_Window(NULL),
-      m_SplashWindow(NULL),
-      m_Keyboard(NULL),
-      m_Mouse(NULL),
-      m_Clock(NULL),
-      m_AudioSystem(NULL),
-      m_UIManager(NULL),
-      m_UIInputMap(NULL),
-      m_Renderer(NULL),
-      m_TargetManager(NULL),
+    : m_EventManager(nullptr),
+      m_Display(nullptr),
+      m_Window(nullptr),
+      m_SplashWindow(nullptr),
+      m_Keyboard(nullptr),
+      m_Mouse(nullptr),
+      m_Clock(nullptr),
+      m_AudioSystem(nullptr),
+      m_UIManager(nullptr),
+      m_UIInputMap(nullptr),
+      m_Renderer(nullptr),
+      m_TargetManager(nullptr),
       m_HasFocus(false),
       m_FrameTimeAccumulator(0.0f),
       m_UseFixedFrameTime(false),
@@ -84,7 +84,7 @@ Framework3D::Framework3D()
 
 Framework3D::~Framework3D() {
   m_EventManager->Destroy();
-  m_EventManager = NULL;
+  m_EventManager = nullptr;
 }
 
 #if BUILD_WINDOWS_NO_SDL
@@ -243,7 +243,7 @@ void Framework3D::Main() {
 
   STATICHASH(IconImage);
   const char* const pIconImage =
-      ConfigManager::GetString(sIconImage, NULL, sFramework);
+      ConfigManager::GetString(sIconImage, nullptr, sFramework);
   ASSERT(pIconImage);
   const Surface IconSurface =
       Surface(PackStream(pIconImage), Surface::ESFT_BMP);
@@ -338,7 +338,7 @@ void Framework3D::CreateSplashWindow(const uint WindowIcon,
   STATICHASH(Framework);
   STATICHASH(SplashImage);
   const char* const pSplashImage =
-      ConfigManager::GetString(sSplashImage, NULL, sFramework);
+      ConfigManager::GetString(sSplashImage, nullptr, sFramework);
   if (!pSplashImage) {
     return;
   }
@@ -376,7 +376,7 @@ void Framework3D::CreateSplashWindow(const uint WindowIcon,
   Unused(WindowIcon);
   STATICHASH(IconImage);
   const char* const pIconImage =
-      ConfigManager::GetString(sIconImage, NULL, sFramework);
+      ConfigManager::GetString(sIconImage, nullptr, sFramework);
   ASSERT(pIconImage);
   const Surface IconSurface =
       Surface(PackStream(pIconImage), Surface::ESFT_BMP);

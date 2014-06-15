@@ -4,7 +4,7 @@
 #include "configmanager.h"
 #include "wbparamevaluatorfactory.h"
 
-WBPEEldGetVelocity::WBPEEldGetVelocity() : m_EntityPE(NULL) {}
+WBPEEldGetVelocity::WBPEEldGetVelocity() : m_EntityPE(nullptr) {}
 
 WBPEEldGetVelocity::~WBPEEldGetVelocity() { SafeDelete(m_EntityPE); }
 

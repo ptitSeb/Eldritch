@@ -16,16 +16,16 @@
 #include "iuiinputmap.h"
 
 UIWidgetSlider::UIWidgetSlider()
-    : m_SliderLabel(NULL),
-      m_SliderBack(NULL),
-      m_Slider(NULL),
+    : m_SliderLabel(nullptr),
+      m_SliderBack(nullptr),
+      m_Slider(nullptr),
       m_ShiftAmount(0.0f),
       m_SlideValue_SavedState(0.0f) {}
 
 UIWidgetSlider::UIWidgetSlider(const SimpleString& DefinitionName)
-    : m_SliderLabel(NULL),
-      m_SliderBack(NULL),
-      m_Slider(NULL),
+    : m_SliderLabel(nullptr),
+      m_SliderBack(nullptr),
+      m_Slider(nullptr),
       m_ShiftAmount(0.0f),
       m_SlideValue_SavedState(0.0f) {
   InitializeFromDefinition(DefinitionName);

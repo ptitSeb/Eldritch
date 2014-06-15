@@ -32,7 +32,7 @@ static const int kMaxTransforms =
          EldritchWorldGen::ERT_Rotate90);
 
 EldritchWorldGen::EldritchWorldGen()
-    : m_World(NULL),
+    : m_World(nullptr),
       m_RoomDefs(),
       m_FeatureRoomDefs(),
       m_Themes(),
@@ -93,7 +93,7 @@ void EldritchWorldGen::Initialize(const SimpleString& WorldGenDefinitionName) {
   STATICHASH(NumRoomDefs);
   const uint NumRoomDefs =
       ConfigManager::GetInheritedInt(sNumRoomDefs, 0, sWorldGenDefinitionName);
-  InitializeRoomDefs(NULL, NumRoomDefs, &m_RoomMap, WorldGenDefinitionName);
+  InitializeRoomDefs(nullptr, NumRoomDefs, &m_RoomMap, WorldGenDefinitionName);
 
   STATICHASH(NumThemes);
   const uint NumThemes =
@@ -234,7 +234,7 @@ void EldritchWorldGen::InitializeFeatureRoomDef(
   const uint NumRoomDefs =
       ConfigManager::GetInt(sNumRoomDefs, 0, sFeatureRoomDefName);
   ASSERT(NumRoomDefs);
-  InitializeRoomDefs(&FeatureRoomDef.m_RoomDefs, NumRoomDefs, NULL,
+  InitializeRoomDefs(&FeatureRoomDef.m_RoomDefs, NumRoomDefs, nullptr,
                      FeatureRoomDefName);
 }
 

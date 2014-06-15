@@ -8,8 +8,8 @@ CollisionInfo::CollisionInfo()
       m_CollideNonBlockingEntities(false),
       m_UseCompositeCollision(false),
       m_StopAtAnyCollision(false),
-      m_CollidingEntity(NULL),
-      m_TargetEntity(NULL),
+      m_CollidingEntity(nullptr),
+      m_TargetEntity(nullptr),
       m_CollisionMeshFlags(CMF_Default),
       m_UserFlags(0),
       m_Collision(false),
@@ -19,8 +19,8 @@ CollisionInfo::CollisionInfo()
                     // collide has a max T. Shouldn't cause problems, but just
                     // in case.
       ,
-      m_HitEntity(NULL),
-      m_HitMesh(NULL),
+      m_HitEntity(nullptr),
+      m_HitMesh(nullptr),
       m_HitName(HashedString::NullString) {}
 
 void CollisionInfo::ResetInParameters() {
@@ -29,8 +29,8 @@ void CollisionInfo::ResetInParameters() {
   m_CollideNonBlockingEntities = false;
   m_UseCompositeCollision = false;
   m_StopAtAnyCollision = false;
-  m_CollidingEntity = NULL;
-  m_TargetEntity = NULL;
+  m_CollidingEntity = nullptr;
+  m_TargetEntity = nullptr;
   m_CollisionMeshFlags = CMF_Default;
   m_UserFlags = 0;
 }
@@ -40,8 +40,8 @@ void CollisionInfo::ResetOutParameters() {
   m_Plane = Plane();
   m_Intersection = Vector();
   m_HitT = 1.0f;
-  m_HitEntity = NULL;
-  m_HitMesh = NULL;
+  m_HitEntity = nullptr;
+  m_HitMesh = nullptr;
   m_HitName = HashedString::NullString;
 }
 

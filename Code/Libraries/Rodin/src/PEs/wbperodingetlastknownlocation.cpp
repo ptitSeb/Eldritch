@@ -5,7 +5,7 @@
 #include "Components/wbcomprodinknowledge.h"
 
 WBPERodinGetLastKnownLocation::WBPERodinGetLastKnownLocation()
-    : m_EntityPE(NULL) {}
+    : m_EntityPE(nullptr) {}
 
 WBPERodinGetLastKnownLocation::~WBPERodinGetLastKnownLocation() {
   SafeDelete(m_EntityPE);

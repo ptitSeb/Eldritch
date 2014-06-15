@@ -1285,7 +1285,7 @@ void WBCompEldPlayer::TEMPHACKInput() {
     WBCompEldInventory* const pInventory =
         GET_WBCOMP(GetEntity(), EldInventory);
     STATIC_HASHED_STRING(Power);
-    pInventory->DropItem(sPower, false, NULL);
+    pInventory->DropItem(sPower, false, nullptr);
   }
 
   if (pKeyboard->OnRise(Keyboard::EB_Mouse_Left)) {

@@ -11,7 +11,7 @@
 #define BYTES 3
 
 static uint DrawLineColor = 0;
-static Surface* DrawLineSurface = NULL;
+static Surface* DrawLineSurface = nullptr;
 
 // TODO: There's a lot of duplicated code in the blit functions here.
 // Refactor some of it out into private functions or at least macro it up?
@@ -29,10 +29,10 @@ Surface::Surface()
 #endif
 #if BUILD_SDL
       ,
-      m_Surface(NULL)
+      m_Surface(nullptr)
 #endif
       ,
-      m_pPixels(NULL),
+      m_pPixels(nullptr),
       m_BitmapInfo(),
       m_ViewportLeft(0),
       m_ViewportTop(0),
@@ -53,7 +53,7 @@ Surface::Surface(int Width, int Height)
       m_OldBMP(NULL)
 #endif
       ,
-      m_pPixels(NULL),
+      m_pPixels(nullptr),
       m_BitmapInfo(),
       m_ViewportLeft(0),
       m_ViewportTop(0),
@@ -74,7 +74,7 @@ Surface::Surface(const IDataStream& Stream, ESurfaceFileType FileType)
       m_OldBMP(NULL)
 #endif
       ,
-      m_pPixels(NULL),
+      m_pPixels(nullptr),
       m_BitmapInfo(),
       m_ViewportLeft(0),
       m_ViewportTop(0),
@@ -279,7 +279,7 @@ void Surface::BlitToWindow(Window* const pWindow) const {
   ASSERT(pWindowSurface);
 
   {
-    const int Error = SDL_BlitSurface(m_Surface, NULL, pWindowSurface, NULL);
+    const int Error = SDL_BlitSurface(m_Surface, nullptr, pWindowSurface, nullptr);
     ASSERT(Error == 0);
     Unused(Error);
   }
@@ -513,7 +513,7 @@ void DrawLineCallback(int x, int y, bool& Break, void* pContext) {
 void Surface::DrawLine(int x1, int y1, int x2, int y2, uint Color) {
   DrawLineColor = Color;
   DrawLineSurface = this;
-  Math::Bresenham(x1, y1, x2, y2, &DrawLineCallback, NULL);
+  Math::Bresenham(x1, y1, x2, y2, &DrawLineCallback, nullptr);
 }
 
 void Surface::DrawBox(int x1, int y1, int x2, int y2, uint Color) {

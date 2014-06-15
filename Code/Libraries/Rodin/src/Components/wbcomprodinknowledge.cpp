@@ -42,7 +42,7 @@ WBCompRodinKnowledge::~WBCompRodinKnowledge() {}
     const float ExpireTime = Knowledge.GetFloat(sExpireTime);
     const float TimeRemaining = ExpireTime - CurrentTime;
 
-    if (pEntity == NULL || (!NeverExpire && TimeRemaining < 0.0f)) {
+    if (pEntity == nullptr || (!NeverExpire && TimeRemaining < 0.0f)) {
       m_KnowledgeMap.Remove(KnowledgeIter);
     } else {
       ++KnowledgeIter;
@@ -53,13 +53,13 @@ WBCompRodinKnowledge::~WBCompRodinKnowledge() {}
 const WBCompRodinKnowledge::TKnowledge* WBCompRodinKnowledge::GetKnowledge(
     const WBEntityRef& Entity) const {
   TKnowledgeMap::Iterator KnowledgeIterator = m_KnowledgeMap.Search(Entity);
-  return (KnowledgeIterator.IsValid()) ? &KnowledgeIterator.GetValue() : NULL;
+  return (KnowledgeIterator.IsValid()) ? &KnowledgeIterator.GetValue() : nullptr;
 }
 
 WBCompRodinKnowledge::TKnowledge* WBCompRodinKnowledge::GetKnowledge(
     const WBEntityRef& Entity) {
   TKnowledgeMap::Iterator KnowledgeIterator = m_KnowledgeMap.Search(Entity);
-  return (KnowledgeIterator.IsValid()) ? &KnowledgeIterator.GetValue() : NULL;
+  return (KnowledgeIterator.IsValid()) ? &KnowledgeIterator.GetValue() : nullptr;
 }
 
 WBCompRodinKnowledge::TKnowledge& WBCompRodinKnowledge::UpdateEntity(
@@ -239,7 +239,7 @@ void WBCompRodinKnowledge::Load(const IDataStream& Stream) {
 
       const uint PackedKnowledgeSize = Stream.ReadUInt32();
       WBPackedEvent PackedKnowledge;
-      PackedKnowledge.Reinit(NULL, PackedKnowledgeSize);
+      PackedKnowledge.Reinit(nullptr, PackedKnowledgeSize);
       Stream.Read(PackedKnowledgeSize, PackedKnowledge.GetData());
       const TKnowledge UnpackedKnowledge = PackedKnowledge.Unpack();
 

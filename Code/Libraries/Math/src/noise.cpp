@@ -89,16 +89,16 @@ float CubicValues[] = {
 };
 
 void Noise::ShuffleHasher() {
-  for (int Index = 0; Index < 256; ++Index) {
+  for (auto & elem : Hasher) {
     int OtherIndex = Math::Random(0, 255);
-    Swap(Hasher[Index], Hasher[OtherIndex]);
+    Swap(elem, Hasher[OtherIndex]);
   }
 }
 
 void Noise::ShuffleCubicValues() {
-  for (int Index = 0; Index < 256; ++Index) {
+  for (auto & CubicValue : CubicValues) {
     int OtherIndex = Math::Random(0, 255);
-    Swap(CubicValues[Index], CubicValues[OtherIndex]);
+    Swap(CubicValue, CubicValues[OtherIndex]);
   }
 }
 

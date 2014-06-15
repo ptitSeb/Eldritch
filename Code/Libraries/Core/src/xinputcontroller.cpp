@@ -14,7 +14,7 @@ XInputController::XInputController(uint Port /*= 0*/)
     : m_Port(Port)
 #if BUILD_SDL
       ,
-      m_Controller(NULL)
+      m_Controller(nullptr)
 #endif
       ,
       m_LeftThumbDeadZone(0.0f),

@@ -4,6 +4,7 @@
 #include "mesh.h"
 #include "view.h"
 #include "ishaderprogram.h"
+#include <utility>
 
 Bucket::Bucket(View* pView, IRenderTarget* RenderTarget, unsigned int Flags,
                unsigned int FilterFlags /*= MAT_NONE*/,
@@ -18,7 +19,7 @@ Bucket::Bucket(View* pView, IRenderTarget* RenderTarget, unsigned int Flags,
       m_SortByMaterial(false),
       m_Meshes(),
       m_ClearFlags(ClearFlags),
-      m_ClearColor(ClearColor),
+      m_ClearColor(std::move(ClearColor)),
       m_ClearDepth(ClearDepth),
       m_SortHelpers(),
       m_MatSortHelpers()

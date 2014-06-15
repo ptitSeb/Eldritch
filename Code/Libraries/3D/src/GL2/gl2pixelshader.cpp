@@ -15,7 +15,7 @@ void GL2PixelShader::Initialize(const IDataStream& Stream) {
   XTRACE_FUNCTION;
 
   const int Length = Stream.Size();
-  byte* pBuffer = new byte[Length];
+  auto  pBuffer = new byte[Length];
   Stream.Read(Length, pBuffer);
 
   m_PixelShader = glCreateShader(GL_FRAGMENT_SHADER);
@@ -41,7 +41,7 @@ void GL2PixelShader::Initialize(const IDataStream& Stream) {
     glGetShaderiv(m_PixelShader, GL_INFO_LOG_LENGTH, &LogLength);
     Array<GLchar> Log;
     Log.Resize(LogLength);
-    glGetShaderInfoLog(m_PixelShader, LogLength, NULL, Log.GetData());
+    glGetShaderInfoLog(m_PixelShader, LogLength, nullptr, Log.GetData());
     if (LogLength > 0) {
       PRINTF("GLSL fragment shader compile failed:\n");
       PRINTF(Log.GetData());

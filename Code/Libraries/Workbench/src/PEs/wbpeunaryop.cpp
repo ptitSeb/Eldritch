@@ -3,7 +3,7 @@
 #include "configmanager.h"
 #include "../wbparamevaluatorfactory.h"
 
-WBPEUnaryOp::WBPEUnaryOp() : m_Input(NULL) {}
+WBPEUnaryOp::WBPEUnaryOp() : m_Input(nullptr) {}
 
 WBPEUnaryOp::~WBPEUnaryOp() { SafeDelete(m_Input); }
 

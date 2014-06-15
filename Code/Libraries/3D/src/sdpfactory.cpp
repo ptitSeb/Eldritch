@@ -42,7 +42,7 @@ ShaderDataProvider* SDPFactory::GetSDPInstance(const HashedString& TypeName) {
       sSDPFactoryFuncMap.Search(TypeName);
   if (FactoryIter.IsNull()) {
     WARNDESC("Invalid SDP type requested.");
-    return NULL;
+    return nullptr;
   }
 
   SDPFactoryFunc pFactory = (*FactoryIter);

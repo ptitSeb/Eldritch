@@ -6,7 +6,7 @@
 #include "Components/wbcompeldhard.h"
 
 WBPEEldHardSwitch::WBPEEldHardSwitch()
-    : m_NormalInput(NULL), m_HardInput(NULL) {}
+    : m_NormalInput(nullptr), m_HardInput(nullptr) {}
 
 WBPEEldHardSwitch::~WBPEEldHardSwitch() {
   SafeDelete(m_NormalInput);

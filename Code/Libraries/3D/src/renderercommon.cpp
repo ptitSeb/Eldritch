@@ -26,24 +26,24 @@ RendererCommon::RendererCommon()
       m_ViewMatrix(),
       m_ProjectionMatrix(),
       m_View(),
-      m_CurrentRenderTarget(NULL),
-      m_DefaultRenderTarget(NULL),
+      m_CurrentRenderTarget(nullptr),
+      m_DefaultRenderTarget(nullptr),
       m_RenderTargets(),
       m_DynamicVertexBuffers(),
-      m_ShaderManager(NULL),
-      m_TextureManager(NULL),
-      m_FontManager(NULL),
-      m_VertexDeclarationManager(NULL),
-      m_MeshFactory(NULL),
+      m_ShaderManager(nullptr),
+      m_TextureManager(nullptr),
+      m_FontManager(nullptr),
+      m_VertexDeclarationManager(nullptr),
+      m_MeshFactory(nullptr),
       m_DoFrustumCulling(false),
       m_DoMaterialSort(false),
-      m_Clock(NULL),
-      m_ShaderProgram(NULL),
-      m_VertexShader(NULL),
-      m_PixelShader(NULL),
+      m_Clock(nullptr),
+      m_ShaderProgram(nullptr),
+      m_VertexShader(nullptr),
+      m_PixelShader(nullptr),
       m_RenderState(),
       m_SamplerStates(),
-      m_Display(NULL)
+      m_Display(nullptr)
 #if BUILD_DEBUG
       ,
       m_DEBUGRenderStats()
@@ -144,7 +144,7 @@ void RendererCommon::AddBucket(const HashedString& Name, Bucket* pBucket) {
 Bucket* RendererCommon::GetBucket(const HashedString& Name) {
   Map<HashedString, Bucket*>::Iterator BucketIter = m_NamedBuckets.Search(Name);
   if (BucketIter.IsNull()) {
-    return NULL;
+    return nullptr;
   } else {
     return (*BucketIter);
   }
@@ -154,7 +154,7 @@ Bucket* RendererCommon::GetBucket(uint Index) {
   if (Index < m_OrderedBuckets.Size()) {
     return m_OrderedBuckets[Index];
   }
-  return NULL;
+  return nullptr;
 }
 
 void RendererCommon::FreeBuckets() {
@@ -265,7 +265,7 @@ void RendererCommon::RenderBuckets() {
   if (m_ViewportPasses.Empty()) {
     // Just render buckets like normal
     for (uint i = 0; i < m_OrderedBuckets.Size(); ++i) {
-      RenderBucket(m_OrderedBuckets[i], NULL);
+      RenderBucket(m_OrderedBuckets[i], nullptr);
     }
   } else {
     // Render each bucket for each viewport pass
@@ -490,8 +490,7 @@ void RendererCommon::ResetRenderState() {
   // Reset our shadowed state so we'll update the D3D state properly after
   // reset.
   m_RenderState = SRenderState();
-  for (uint SamplerStage = 0; SamplerStage < MAX_TEXTURE_STAGES;
-       ++SamplerStage) {
-    m_SamplerStates[SamplerStage] = SSamplerState();
+  for (auto & elem : m_SamplerStates) {
+    elem = SSamplerState();
   }
 }

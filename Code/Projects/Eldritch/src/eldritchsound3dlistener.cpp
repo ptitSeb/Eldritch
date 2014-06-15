@@ -7,7 +7,7 @@
 #include "configmanager.h"
 
 EldritchSound3DListener::EldritchSound3DListener()
-    : m_World(NULL), m_VerticalScalar(0.0f), m_OccludedFalloffRadius(0.0f) {}
+    : m_World(nullptr), m_VerticalScalar(0.0f), m_OccludedFalloffRadius(0.0f) {}
 
 EldritchSound3DListener::~EldritchSound3DListener() {}
 

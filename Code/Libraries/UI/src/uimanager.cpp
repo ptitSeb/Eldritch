@@ -8,7 +8,7 @@
 #include "wbeventmanager.h"
 
 UIManager::UIManager()
-    : m_UIStack(NULL),
+    : m_UIStack(nullptr),
       m_Screens(),
       m_Events()
 #if BUILD_DEBUG
@@ -84,7 +84,7 @@ UIScreen* UIManager::AddScreen(const HashedString& Name, UIScreen* pScreen) {
 UIScreen* UIManager::GetScreen(const HashedString& Name) {
   Map<HashedString, UIScreen*>::Iterator ScreenIter = m_Screens.Search(Name);
   if (ScreenIter.IsNull()) {
-    return NULL;
+    return nullptr;
   } else {
     return *ScreenIter;
   }
@@ -93,47 +93,47 @@ UIScreen* UIManager::GetScreen(const HashedString& Name) {
 /*virtual*/ void UIManager::RegisterForEvents() {
   STATIC_HASHED_STRING(ReinitializeUI);
   WBWorld::GetInstance()->GetEventManager()->AddObserver(sReinitializeUI, this,
-                                                         NULL);
+                                                         nullptr);
 
   STATIC_HASHED_STRING(PushUIScreen);
   WBWorld::GetInstance()->GetEventManager()->AddObserver(sPushUIScreen, this,
-                                                         NULL);
+                                                         nullptr);
 
   STATIC_HASHED_STRING(PopUIScreen);
   WBWorld::GetInstance()->GetEventManager()->AddObserver(sPopUIScreen, this,
-                                                         NULL);
+                                                         nullptr);
 
   STATIC_HASHED_STRING(ClearUIStack);
   WBWorld::GetInstance()->GetEventManager()->AddObserver(sClearUIStack, this,
-                                                         NULL);
+                                                         nullptr);
 
   STATIC_HASHED_STRING(RemoveUIScreen);
   WBWorld::GetInstance()->GetEventManager()->AddObserver(sRemoveUIScreen, this,
-                                                         NULL);
+                                                         nullptr);
 
   STATIC_HASHED_STRING(SetWidgetHidden);
   WBWorld::GetInstance()->GetEventManager()->AddObserver(sSetWidgetHidden, this,
-                                                         NULL);
+                                                         nullptr);
 
   STATIC_HASHED_STRING(SetWidgetImage);
   WBWorld::GetInstance()->GetEventManager()->AddObserver(sSetWidgetImage, this,
-                                                         NULL);
+                                                         nullptr);
 
   STATIC_HASHED_STRING(SetUISliderValue);
   WBWorld::GetInstance()->GetEventManager()->AddObserver(sSetUISliderValue,
-                                                         this, NULL);
+                                                         this, nullptr);
 
   STATIC_HASHED_STRING(SetWidgetDisabled);
   WBWorld::GetInstance()->GetEventManager()->AddObserver(sSetWidgetDisabled,
-                                                         this, NULL);
+                                                         this, nullptr);
 
   STATIC_HASHED_STRING(SetWidgetLocation);
   WBWorld::GetInstance()->GetEventManager()->AddObserver(sSetWidgetLocation,
-                                                         this, NULL);
+                                                         this, nullptr);
 
   STATIC_HASHED_STRING(SetWidgetAlpha);
   WBWorld::GetInstance()->GetEventManager()->AddObserver(sSetWidgetAlpha, this,
-                                                         NULL);
+                                                         nullptr);
 }
 
 /*virtual*/ void UIManager::UnregisterForEvents() {
@@ -142,47 +142,47 @@ UIScreen* UIManager::GetScreen(const HashedString& Name) {
   if (pEventManager) {
     STATIC_HASHED_STRING(ReinitializeUI);
     WBWorld::GetInstance()->GetEventManager()->RemoveObserver(sReinitializeUI,
-                                                              this, NULL);
+                                                              this, nullptr);
 
     STATIC_HASHED_STRING(PushUIScreen);
     WBWorld::GetInstance()->GetEventManager()->RemoveObserver(sPushUIScreen,
-                                                              this, NULL);
+                                                              this, nullptr);
 
     STATIC_HASHED_STRING(PopUIScreen);
     WBWorld::GetInstance()->GetEventManager()->RemoveObserver(sPopUIScreen,
-                                                              this, NULL);
+                                                              this, nullptr);
 
     STATIC_HASHED_STRING(ClearUIStack);
     WBWorld::GetInstance()->GetEventManager()->RemoveObserver(sClearUIStack,
-                                                              this, NULL);
+                                                              this, nullptr);
 
     STATIC_HASHED_STRING(RemoveUIScreen);
     WBWorld::GetInstance()->GetEventManager()->RemoveObserver(sRemoveUIScreen,
-                                                              this, NULL);
+                                                              this, nullptr);
 
     STATIC_HASHED_STRING(SetWidgetHidden);
     WBWorld::GetInstance()->GetEventManager()->RemoveObserver(sSetWidgetHidden,
-                                                              this, NULL);
+                                                              this, nullptr);
 
     STATIC_HASHED_STRING(SetWidgetImage);
     WBWorld::GetInstance()->GetEventManager()->RemoveObserver(sSetWidgetImage,
-                                                              this, NULL);
+                                                              this, nullptr);
 
     STATIC_HASHED_STRING(SetUISliderValue);
     WBWorld::GetInstance()->GetEventManager()->RemoveObserver(sSetUISliderValue,
-                                                              this, NULL);
+                                                              this, nullptr);
 
     STATIC_HASHED_STRING(SetWidgetDisabled);
     WBWorld::GetInstance()->GetEventManager()->RemoveObserver(
-        sSetWidgetDisabled, this, NULL);
+        sSetWidgetDisabled, this, nullptr);
 
     STATIC_HASHED_STRING(SetWidgetLocation);
     WBWorld::GetInstance()->GetEventManager()->RemoveObserver(
-        sSetWidgetLocation, this, NULL);
+        sSetWidgetLocation, this, nullptr);
 
     STATIC_HASHED_STRING(SetWidgetAlpha);
     WBWorld::GetInstance()->GetEventManager()->RemoveObserver(sSetWidgetAlpha,
-                                                              this, NULL);
+                                                              this, nullptr);
   }
 }
 

@@ -9,7 +9,7 @@
 
 #include <memory.h>
 
-DynamicMeshManager* DynamicMeshManager::m_Instance = NULL;
+DynamicMeshManager* DynamicMeshManager::m_Instance = nullptr;
 
 DynamicMeshManager::DynamicMeshManager() : m_Meshes() {}
 
@@ -34,7 +34,7 @@ Mesh* DynamicMeshManager::GetMesh(MeshFactory* pFactory, const char* Filename) {
 
   if (!m_Meshes[HashedFilename]) {
     m_Meshes[HashedFilename] =
-        pFactory->Read(PackStream(Filename), Filename, NULL, NULL);
+        pFactory->Read(PackStream(Filename), Filename, nullptr, nullptr);
   }
 
   return m_Meshes[HashedFilename];

@@ -46,7 +46,7 @@
 
 #endif
 
-WBWorld* WBWorld::m_Instance = NULL;
+WBWorld* WBWorld::m_Instance = nullptr;
 
 /*static*/ void WBWorld::CreateInstance() {
   ASSERT(!m_Instance);
@@ -63,10 +63,10 @@ WBWorld* WBWorld::m_Instance = NULL;
 /*static*/ void WBWorld::DeleteInstance() { SafeDelete(m_Instance); }
 
 WBWorld::WBWorld()
-    : m_EventManager(NULL),
+    : m_EventManager(nullptr),
       m_Entities(),
       m_NextEntityUID(0x1d000000),
-      m_DefaultScene(NULL),
+      m_DefaultScene(nullptr),
       m_Scenes(),
       m_NextSceneUID(0x5c000000)
 #if BUILD_DEBUG
@@ -83,7 +83,7 @@ WBWorld::WBWorld()
 
 WBWorld::~WBWorld() {
   m_EventManager->Destroy();
-  m_EventManager = NULL;
+  m_EventManager = nullptr;
 
   ShutDown();
 }
@@ -100,7 +100,7 @@ void WBWorld::ShutDown() {
   }
   END_ITERATING_SCENES;
 
-  m_DefaultScene = NULL;
+  m_DefaultScene = nullptr;
   m_Scenes.Clear();
   m_Entities.Clear();
 }
@@ -181,17 +181,17 @@ WBEntity* WBWorld::GetEntity(const uint EntityUID) const {
   if (EntityIter.IsValid()) {
     return EntityIter.GetValue();
   } else {
-    return NULL;
+    return nullptr;
   }
 }
 
 WBEntity* WBWorld::CreateEntity(const SimpleString& Archetype,
                                 WBScene* Scene /*= NULL*/) {
   if (Archetype == "") {
-    return NULL;
+    return nullptr;
   }
 
-  WBEntity* const pNewEntity = new WBEntity;
+  auto  const pNewEntity = new WBEntity;
 
   // Add it immediately, before initialization, so it has a UID.
   AddEntity(pNewEntity);
@@ -246,12 +246,12 @@ WBScene* WBWorld::GetScene(const uint SceneUID) const {
   if (SceneIter.IsValid()) {
     return SceneIter.GetValue();
   } else {
-    return NULL;
+    return nullptr;
   }
 }
 
 WBScene* WBWorld::CreateScene() {
-  WBScene* const pNewScene = new WBScene;
+  auto  const pNewScene = new WBScene;
 
   AddScene(pNewScene);
 
@@ -334,7 +334,7 @@ void WBWorld::Load(const IDataStream& Stream) {
 
   uint NumScenes = Stream.ReadUInt32();
   for (uint SceneIndex = 0; SceneIndex < NumScenes; ++SceneIndex) {
-    WBScene* pNewScene = new WBScene;
+    auto  pNewScene = new WBScene;
     pNewScene->Load(Stream);
     AddScene(pNewScene, pNewScene->GetUID());
 

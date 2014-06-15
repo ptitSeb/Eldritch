@@ -25,7 +25,7 @@ WBCompEldMinimap::WBCompEldMinimap()
       m_LastAtlasIndices(),
       m_ActiveRoomIndex(-1),
       m_ActiveFloor(0),
-      m_RoomAtlasTexture(NULL),
+      m_RoomAtlasTexture(nullptr),
       m_Material() {
   WBEventManager* const pEventManager = GetEventManager();
   ASSERT(pEventManager);
@@ -306,7 +306,7 @@ Mesh* WBCompEldMinimap::CreateQuad(const uint AtlasIndex,
   pIndexBuffer->Init(kNumIndices, Indices.GetData());
   pIndexBuffer->SetPrimitiveType(EPT_TRIANGLELIST);
 
-  Mesh* pQuadMesh = NULL;
+  Mesh* pQuadMesh = nullptr;
   if (pMesh) {
     // HACK: Apparently deleting and allocating in place doesn't play nice with
     // my allocator?
@@ -357,7 +357,7 @@ void WBCompEldMinimap::CreateMinimapRoomMeshes() {
 
     for (int RoomY = 0; RoomY < MapSizeY; ++RoomY) {
       for (int RoomX = 0; RoomX < MapSizeX; ++RoomX) {
-        Mesh* const pRoomMesh = CreateQuad(0, NULL);
+        Mesh* const pRoomMesh = CreateQuad(0, nullptr);
 
         const float fRoomX = static_cast<float>(RoomX);
         const float fRoomY = static_cast<float>(RoomY);

@@ -14,9 +14,9 @@ WBParamEvaluator::SEvaluatedParam::SEvaluatedParam()
       m_Entity(),
       m_Vector() {}
 
-WBParamEvaluator::SPEContext::SPEContext() : m_Entity(NULL) {}
+WBParamEvaluator::SPEContext::SPEContext() : m_Entity(nullptr) {}
 
-WBParamEvaluator::WBParamEvaluator() : m_RootEvaluator(NULL) {}
+WBParamEvaluator::WBParamEvaluator() : m_RootEvaluator(nullptr) {}
 
 WBParamEvaluator::~WBParamEvaluator() { SafeDelete(m_RootEvaluator); }
 
@@ -48,7 +48,7 @@ bool WBParamEvaluator::SEvaluatedParam::GetBool() const {
     case WBParamEvaluator::EPT_Float:
       return (m_Float != 0.0f);
     case WBParamEvaluator::EPT_Entity:
-      return (m_Entity.Get() != NULL);
+      return (m_Entity.Get() != nullptr);
     case WBParamEvaluator::EPT_String:
       return (m_String != "");
     default:
@@ -75,7 +75,7 @@ SimpleString WBParamEvaluator::SEvaluatedParam::GetString() const {
 }
 
 WBEntity* WBParamEvaluator::SEvaluatedParam::GetEntity() const {
-  return m_Type == WBParamEvaluator::EPT_Entity ? m_Entity.Get() : NULL;
+  return m_Type == WBParamEvaluator::EPT_Entity ? m_Entity.Get() : nullptr;
 }
 
 Vector WBParamEvaluator::SEvaluatedParam::GetVector() const {

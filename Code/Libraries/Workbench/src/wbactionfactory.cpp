@@ -33,7 +33,7 @@ WBAction* WBActionFactory::Create(const SimpleString& DefinitionName) {
   if (FactoryIter.IsNull()) {
     PRINTF("Invalid type requested for WBAction %s.\n", DefinitionName.CStr());
     WARNDESC("Invalid WBAction type requested.");
-    return NULL;
+    return nullptr;
   }
 
   WBActionFactoryFunc pFactory = (*FactoryIter);

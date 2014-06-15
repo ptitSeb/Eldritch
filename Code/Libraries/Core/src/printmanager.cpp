@@ -13,7 +13,7 @@
 
 #define STRINGBUFFERSIZE 2048
 
-PrintManager* PrintManager::m_Instance = NULL;
+PrintManager* PrintManager::m_Instance = nullptr;
 
 static Map<HashedString, int> sPrintLevels;
 
@@ -29,11 +29,11 @@ PrintManager* PrintManager::GetInstance_NoAlloc() { return m_Instance; }
 void PrintManager::DeleteInstance() { SafeDelete(m_Instance); }
 
 PrintManager::PrintManager()
-    : m_StringBuffer(NULL),
+    : m_StringBuffer(nullptr),
       m_Channels(PRINTCHANNEL_Console | PRINTCHANNEL_Output | PRINTCHANNEL_Log)
 #if OPENLOGFILE
       ,
-      m_LogFilename(NULL)
+      m_LogFilename(nullptr)
 #else
       ,
       m_LogStream(NULL)
@@ -132,7 +132,7 @@ void PrintManager::LoadPrintLevels() {
   int NumPrintLevels = ConfigManager::GetInt(sNumPrintLevels, 0, sPrintManager);
   for (int i = 0; i < NumPrintLevels; ++i) {
     const char* Category = ConfigManager::GetSequenceString(
-        "PrintLevelCategory%d", i, NULL, sPrintManager);
+        "PrintLevelCategory%d", i, nullptr, sPrintManager);
     int Level =
         ConfigManager::GetSequenceInt("PrintLevel%d", i, 0, sPrintManager);
     SetPrintLevel(Category, Level);

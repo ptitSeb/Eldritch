@@ -18,9 +18,9 @@
 // That's the whole point of using XML.
 
 void GetXMLMatrix(TiXmlAttribute* Attr, Matrix& m) {
-  for (int i = 0; i < 4; ++i) {
+  for (auto & elem : m.m) {
     for (int j = 0; j < 4; ++j) {
-      m.m[i][j] = (float)Attr->DoubleValue();
+      elem[j] = (float)Attr->DoubleValue();
       Attr = Attr->Next();
     }
   }
@@ -481,7 +481,7 @@ void MeshCompiler::CalculateTangents() {
 
   // Write the handedness (direction of bitangent) in w
 
-  Vector* tan1 = new Vector[m_Header.m_NumVertices * 2];
+  auto  tan1 = new Vector[m_Header.m_NumVertices * 2];
   Vector* tan2 = tan1 + m_Header.m_NumVertices;
   memset(tan1, 0, m_Header.m_NumVertices * 2 * sizeof(Vector));
 
@@ -557,8 +557,8 @@ void MeshCompiler::NormalizeWeights() {
     SBoneData& ByteBoneWeights = m_ByteBoneWeights[VertexIndex];
 
     float WeightSum = 0.0f;
-    for (uint BoneIndex = 0; BoneIndex < MAX_BONES; ++BoneIndex) {
-      WeightSum += FloatBoneWeights.m_Data[BoneIndex];
+    for (auto & elem : FloatBoneWeights.m_Data) {
+      WeightSum += elem;
     }
 
     for (uint BoneIndex = 0; BoneIndex < MAX_BONES; ++BoneIndex) {

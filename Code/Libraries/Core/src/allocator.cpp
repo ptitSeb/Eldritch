@@ -14,7 +14,7 @@ const uint Allocator::m_BlockHeaderSize =
     ~Allocator::m_GranularityMask;
 
 bool Allocator::m_DefaultEnabled = false;
-Allocator* Allocator::m_DefaultOverride = NULL;
+Allocator* Allocator::m_DefaultOverride = nullptr;
 
 SScopedAllocator::SScopedAllocator(Allocator* const pOverride)
     : m_PreviousAllocator(Allocator::GetDefaultOverride()) {
@@ -34,7 +34,7 @@ struct SAllocatorChunk {
 
 Allocator::Allocator(const char* const AllocatorName)
     : m_NumChunks(0),
-      m_Chunks(NULL)
+      m_Chunks(nullptr)
 #if BUILD_DEV
       ,
       m_NumAllocs(0),
@@ -96,7 +96,7 @@ void Allocator::ShutDown() {
   }
 
   free(m_Chunks);
-  m_Chunks = NULL;
+  m_Chunks = nullptr;
   m_NumChunks = 0;
 }
 
@@ -112,7 +112,7 @@ void* Allocator::Allocate(const uint Size,
   // No allocator chunk supported the requested size
   DEBUGBREAKPOINT;
 
-  return NULL;
+  return nullptr;
 }
 
 void Allocator::Flush() {

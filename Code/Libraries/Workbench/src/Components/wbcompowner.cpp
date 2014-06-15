@@ -13,7 +13,7 @@ WBEntity* WBCompOwner::GetOwner() const { return m_Owner.Get(); }
 
 /*static*/ WBEntity* WBCompOwner::GetTopmostOwner(WBEntity* pEntity) {
   if (!pEntity) {
-    return NULL;
+    return nullptr;
   }
 
   for (;;) {

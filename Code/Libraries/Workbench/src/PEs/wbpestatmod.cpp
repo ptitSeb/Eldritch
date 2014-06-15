@@ -4,7 +4,7 @@
 #include "Components/wbcompstatmod.h"
 #include "wbparamevaluatorfactory.h"
 
-WBPEStatMod::WBPEStatMod() : m_StatName(), m_EntityPE(NULL) {}
+WBPEStatMod::WBPEStatMod() : m_StatName(), m_EntityPE(nullptr) {}
 
 WBPEStatMod::~WBPEStatMod() { SafeDelete(m_EntityPE); }
 

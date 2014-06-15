@@ -16,8 +16,8 @@ OpenALAudioSystem::OpenALAudioSystem() : m_ReverbCategories() {
   const int MaxChannels = ConfigManager::GetInt(sMaxChannels, 32, sAudioSystem);
 
   // Create OpenAL device and context
-  device = alcOpenDevice(0);
-  context = alcCreateContext(device, 0);
+  device = alcOpenDevice(nullptr);
+  context = alcCreateContext(device, nullptr);
   alcMakeContextCurrent(context);
 
   STATICHASH(DefaultReverb);
@@ -43,7 +43,7 @@ OpenALAudioSystem::~OpenALAudioSystem() {
 
   SafeDelete(m_SoundManager);
 
-  alcMakeContextCurrent(0);
+  alcMakeContextCurrent(nullptr);
   if (context) alcDestroyContext(context);
   if (device) alcCloseDevice(device);
 }
@@ -55,7 +55,7 @@ void OpenALAudioSystem::Tick(float DeltaTime, bool GamePaused) {
 }
 
 ISound* OpenALAudioSystem::CreateSound(const SSoundInit& SoundInit) {
-  OpenALSound* const pSound = new OpenALSound(this, SoundInit);
+  auto  const pSound = new OpenALSound(this, SoundInit);
   pSound->Initialize(SoundInit);
   return pSound;
 }

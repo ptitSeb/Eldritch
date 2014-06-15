@@ -31,27 +31,27 @@ Allocator SimpleString::m_AllocatorLarge("SimpleString/Large");
 bool SimpleString::m_UsingAllocator = false;
 
 /*explicit*/ SimpleString::SimpleString(bool NoInit)
-    : m_String(NULL), m_Length(0) {
+    : m_String(nullptr), m_Length(0) {
   Unused(NoInit);
 }
 
 SimpleString::SimpleString(const char* pString /*=""*/)
-    : m_String(NULL), m_Length(0) {
+    : m_String(nullptr), m_Length(0) {
   Initialize(pString);
 }
 
 SimpleString::SimpleString(const char* pNonTerminatedString, uint Length)
-    : m_String(NULL), m_Length(0) {
+    : m_String(nullptr), m_Length(0) {
   InitializeNonTerminated(pNonTerminatedString, Length);
 }
 
 SimpleString::SimpleString(const SimpleString& String)
-    : m_String(NULL), m_Length(0) {
+    : m_String(nullptr), m_Length(0) {
   Initialize(String.m_String);
 }
 
 SimpleString::SimpleString(const Array<char>& String)
-    : m_String(NULL), m_Length(0) {
+    : m_String(nullptr), m_Length(0) {
   Initialize(String.GetData());
 }
 
@@ -203,7 +203,7 @@ void SimpleString::InitializeNonTerminated(const char* pString, uint Length) {
 }
 
 bool SimpleString::Contains(const SimpleString& String) const {
-  return (strstr(m_String, String.m_String) != NULL);
+  return (strstr(m_String, String.m_String) != nullptr);
 }
 
 bool SimpleString::BeginsWith(const SimpleString& String) const {

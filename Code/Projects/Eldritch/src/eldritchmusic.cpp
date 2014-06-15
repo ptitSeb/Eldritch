@@ -3,7 +3,7 @@
 #include "isoundinstance.h"
 #include "eldritchframework.h"
 
-EldritchMusic::EldritchMusic() : m_MusicInstance(NULL) {
+EldritchMusic::EldritchMusic() : m_MusicInstance(nullptr) {
   IAudioSystem* const pAudioSystem =
       EldritchFramework::GetInstance()->GetAudioSystem();
   ASSERT(pAudioSystem);
@@ -63,6 +63,6 @@ void EldritchMusic::StopMusic() {
 
 void EldritchMusic::OnInstanceDeleted(ISoundInstance* const pInstance) {
   if (pInstance == m_MusicInstance) {
-    m_MusicInstance = NULL;
+    m_MusicInstance = nullptr;
   }
 }

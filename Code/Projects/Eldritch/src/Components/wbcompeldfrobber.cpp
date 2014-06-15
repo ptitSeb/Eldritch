@@ -109,19 +109,19 @@ void WBCompEldFrobber::TryFrob(const int InputEdge) {
 
 WBEntity* WBCompEldFrobber::FindTargetFrobbable() const {
   if (m_FrobDisabled) {
-    return NULL;
+    return nullptr;
   }
 
   InputSystem* const pInputSystem = GetFramework()->GetInputSystem();
   STATIC_HASHED_STRING(Frob);
   if (pInputSystem->IsSuppressed(sFrob)) {
-    return NULL;
+    return nullptr;
   }
 
   const Array<WBCompEldFrobbable*>* const pFrobbablesArrays =
       WBComponentArrays::GetComponents<WBCompEldFrobbable>();
   if (!pFrobbablesArrays) {
-    return NULL;
+    return nullptr;
   }
 
   WBEntity* const pEntity = GetEntity();
@@ -153,7 +153,7 @@ WBEntity* WBCompEldFrobber::FindTargetFrobbable() const {
 
   const Array<WBCompEldFrobbable*>& Frobbables = *pFrobbablesArrays;
 
-  WBEntity* pNearestEntity = NULL;
+  WBEntity* pNearestEntity = nullptr;
   float NearestT = 0.0f;
 
   const uint NumFrobbables = Frobbables.Size();
@@ -180,7 +180,7 @@ WBEntity* WBCompEldFrobber::FindTargetFrobbable() const {
       if (Info.m_HitT <=
           CollidableT)  // Check if trace was blocked by some collision
       {
-        if (Info.m_HitT < NearestT || pNearestEntity == NULL) {
+        if (Info.m_HitT < NearestT || pNearestEntity == nullptr) {
           pNearestEntity = pFrobbableEntity;
           NearestT = Info.m_HitT;
         }

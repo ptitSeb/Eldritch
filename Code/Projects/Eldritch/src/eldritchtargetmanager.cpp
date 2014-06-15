@@ -9,10 +9,10 @@
 
 EldritchTargetManager::EldritchTargetManager(IRenderer* const pRenderer)
     : m_Renderer(pRenderer),
-      m_OriginalRenderTarget(NULL),
-      m_PrimaryRenderTarget(NULL),
-      m_MirrorRenderTarget(NULL),
-      m_MinimapRenderTarget(NULL) {}
+      m_OriginalRenderTarget(nullptr),
+      m_PrimaryRenderTarget(nullptr),
+      m_MirrorRenderTarget(nullptr),
+      m_MinimapRenderTarget(nullptr) {}
 
 EldritchTargetManager::~EldritchTargetManager() { ReleaseTargets(); }
 

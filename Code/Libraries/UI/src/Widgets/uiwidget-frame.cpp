@@ -13,10 +13,10 @@
 #include "texturemanager.h"
 
 UIWidgetFrame::UIWidgetFrame()
-    : m_Texture(NULL),
+    : m_Texture(nullptr),
       m_Dimensions(),
       m_Border(0.0f),
-      m_Mesh(NULL),
+      m_Mesh(nullptr),
       m_Material() {}
 
 UIWidgetFrame::~UIWidgetFrame() { SafeDelete(m_Mesh); }
@@ -105,7 +105,7 @@ Mesh* UIWidgetFrame::CreateMesh() const {
   IndexBuffer->Init(kNumIndices, Indices.GetData());
   IndexBuffer->SetPrimitiveType(EPT_TRIANGLELIST);
 
-  Mesh* const pMesh = new Mesh(VertexBuffer, VertexDeclaration, IndexBuffer);
+  auto  const pMesh = new Mesh(VertexBuffer, VertexDeclaration, IndexBuffer);
 
   pMesh->m_AABB = AABB(TopLeft, BottomRight);
 

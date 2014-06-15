@@ -43,14 +43,14 @@ EldritchGame::EldritchGame()
       m_NextWorldDef(),
       m_CurrentLevelName(),
       m_TravelPersistence(),
-      m_SaveLoad(NULL),
-      m_GenerationPersistence(NULL),
-      m_Bank(NULL),
-      m_Music(NULL),
+      m_SaveLoad(nullptr),
+      m_GenerationPersistence(nullptr),
+      m_Bank(nullptr),
+      m_Music(nullptr),
       m_Gamma(0.0f),
-      m_PostQuad(NULL),
+      m_PostQuad(nullptr),
       m_ColorGradingTexture(),
-      m_FogTexture(NULL),
+      m_FogTexture(nullptr),
       m_FogParams() {
   m_ColorGradingTexture = DEFAULT_TEXTURE;
   m_SaveLoad = new EldritchSaveLoad;
@@ -612,12 +612,12 @@ void EldritchGame::LaunchRIPTweet() {
   const Array<WBCompEldPlayer*>* const pPlayers =
       WBComponentArrays::GetComponents<WBCompEldPlayer>();
   if (!pPlayers) {
-    return NULL;
+    return nullptr;
   }
 
   const Array<WBCompEldPlayer*>& Players = *pPlayers;
   if (Players.Empty()) {
-    return NULL;
+    return nullptr;
   }
 
   WBCompEldPlayer* const pPlayer = Players[0];
@@ -731,7 +731,7 @@ void EldritchGame::LaunchRIPTweet() {
   STATIC_HASHED_STRING(HUD);
   UIScreen* const pHUDScreen = pUIManager->GetScreen(sHUD);
   if (!pHUDScreen) {
-    return NULL;
+    return nullptr;
   }
 
   STATIC_HASHED_STRING(Minimap);

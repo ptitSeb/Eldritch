@@ -24,7 +24,7 @@ WBCompEldPowerTeleport::~WBCompEldPowerTeleport() {}
     STATIC_HASHED_STRING(SpawnedEntity);
     WBEntity* const pSpawnedEntity = Event.GetEntity(sSpawnedEntity);
 
-    ASSERT(m_Beacon.Get() == NULL);
+    ASSERT(m_Beacon.Get() == nullptr);
     m_Beacon = pSpawnedEntity;
   } else if (EventName == sTryTeleport) {
     TryTeleport();

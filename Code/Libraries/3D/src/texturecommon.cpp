@@ -32,10 +32,10 @@ struct TGAHeader {
 TextureCommon::TextureCommon() : m_Width(0), m_Height(0) {}
 
 void TextureCommon::Initialize(const char* const Filename) {
-  byte* ARGBImage = NULL;
+  byte* ARGBImage = nullptr;
   InitializeFromFile(Filename, ARGBImage);
 
-  if (ARGBImage == NULL) {
+  if (ARGBImage == nullptr) {
     // This typically means we loaded a DDS.
     return;
   }
@@ -51,7 +51,7 @@ void TextureCommon::InitializeFromFile(const char* const Filename,
   size_t ExtOffset = strlen(Filename) - 3;
   unsigned int Ext = *(unsigned int*)(Filename + ExtOffset);
 
-  OutARGBImage = NULL;
+  OutARGBImage = nullptr;
   int Width = 0;
   int Height = 0;
 
@@ -87,7 +87,7 @@ void TextureCommon::LoadBMP(const IDataStream& Stream, int& Width, int& Height,
   Width = BMPInfoHeader.m_Width;
   Height = BMPInfoHeader.m_Height;
   int Stride = ((Width + 1) * 3) & 0xffffffc;
-  uint8* ImageData = new uint8[Stride * Height];
+  auto  ImageData = new uint8[Stride * Height];
   uint8* Dest = ImageData + (Stride * (Height - 1));
 
   // Flip BMP (stored bottom-to-top)
@@ -214,7 +214,7 @@ void TextureCommon::LoadTGA(const IDataStream& Stream, int& Width, int& Height,
       PROFILE_SCOPE(TGA_RLE_Flip);
 
       // Flip image vertically
-      byte* RowT = new byte[Stride];
+      auto  RowT = new byte[Stride];
       const int HalfHeight = Height / 2;
       for (int Row = 0; Row < HalfHeight; ++Row) {
         byte* const RowA = ARGBImage + Stride * Row;
@@ -249,7 +249,7 @@ int TextureCommon::CountMipLevels() {
 // WARNING: ALLOCATES NEW DATA
 unsigned char* TextureCommon::ConvertRGBtoARGB(int Width, int Height,
                                                unsigned char* Image) {
-  uint8* NewImage = new uint8[Width * Height * 4];
+  auto  NewImage = new uint8[Width * Height * 4];
   uint8* DestPixels = NewImage;
   uint8* SrcPixels = Image;
   int Padding = Width % 4;
@@ -272,7 +272,7 @@ unsigned char* TextureCommon::ConvertRGBtoARGB(int Width, int Height,
 unsigned char* TextureCommon::MakeMip(int Width, int Height, int& MipWidth,
                                       int& MipHeight, unsigned char* Image) {
   if (Width == 1 && Height == 1) {
-    return NULL;
+    return nullptr;
   }
 
   MipWidth = Width >> 1;
@@ -285,7 +285,7 @@ unsigned char* TextureCommon::MakeMip(int Width, int Height, int& MipWidth,
     MipHeight = 1;
   }
 
-  uint8* NewMip = new uint8[4 * MipWidth * MipHeight];
+  auto  NewMip = new uint8[4 * MipWidth * MipHeight];
   uint8* DestPixels = NewMip;
 
   uint16 SrcSum;
@@ -321,7 +321,7 @@ unsigned char* TextureCommon::MakeMip(int Width, int Height, int& MipWidth,
 unsigned char* TextureCommon::MakeDebugMip(int MipLevel, int Width, int Height,
                                            int& MipWidth, int& MipHeight) {
   if (Width == 1 && Height == 1) {
-    return NULL;
+    return nullptr;
   }
 
   MipWidth = Width >> 1;
@@ -334,7 +334,7 @@ unsigned char* TextureCommon::MakeDebugMip(int MipLevel, int Width, int Height,
     MipHeight = 1;
   }
 
-  uint8* NewMip = new uint8[4 * MipWidth * MipHeight];
+  auto  NewMip = new uint8[4 * MipWidth * MipHeight];
   uint8* DestPixels = NewMip;
 
   uint8 Blue = 0xff * (uint8)(MipLevel & 1);

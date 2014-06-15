@@ -48,7 +48,7 @@ UIScreen* UIFactory::CreateScreen(const SimpleString& DefinitionName) {
   if (FactoryIter.IsNull()) {
     PRINTF("Invalid type requested for UIScreen %s.\n", DefinitionName.CStr());
     WARNDESC("Invalid UIScreen type requested.");
-    return NULL;
+    return nullptr;
   }
 
   UIScreenFactoryFunc pFactory = (*FactoryIter);
@@ -65,7 +65,7 @@ UIScreen* UIFactory::CreateScreen(const SimpleString& DefinitionName) {
 UIWidget* UIFactory::CreateWidget(const SimpleString& DefinitionName,
                                   UIScreen* const pOwnerScreen) {
   if (DefinitionName == "") {
-    return NULL;
+    return nullptr;
   }
 
   MAKEHASH(DefinitionName);
@@ -87,7 +87,7 @@ UIWidget* UIFactory::CreateWidget(const SimpleString& DefinitionName,
   if (FactoryIter.IsNull()) {
     PRINTF("Invalid type requested for UIWidget %s.\n", DefinitionName.CStr());
     WARNDESC("Invalid UIWidget type requested.");
-    return NULL;
+    return nullptr;
   }
 
   UIWidgetFactoryFunc pFactory = (*FactoryIter);
