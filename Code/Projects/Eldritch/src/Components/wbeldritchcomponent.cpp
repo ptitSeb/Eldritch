@@ -3,25 +3,18 @@
 #include "eldritchframework.h"
 #include "wbworld.h"
 
-WBEldritchComponent::WBEldritchComponent()
-{
+WBEldritchComponent::WBEldritchComponent() {}
+
+WBEldritchComponent::~WBEldritchComponent() {}
+
+EldritchFramework* WBEldritchComponent::GetFramework() const {
+  return EldritchFramework::GetInstance();
 }
 
-WBEldritchComponent::~WBEldritchComponent()
-{
+EldritchGame* WBEldritchComponent::GetGame() const {
+  return EldritchFramework::GetInstance()->GetGame();
 }
 
-EldritchFramework* WBEldritchComponent::GetFramework() const
-{
-	return EldritchFramework::GetInstance();
-}
-
-EldritchGame* WBEldritchComponent::GetGame() const
-{
-	return EldritchFramework::GetInstance()->GetGame();
-}
-
-EldritchWorld* WBEldritchComponent::GetWorld() const
-{
-	return EldritchFramework::GetInstance()->GetWorld();
+EldritchWorld* WBEldritchComponent::GetWorld() const {
+  return EldritchFramework::GetInstance()->GetWorld();
 }

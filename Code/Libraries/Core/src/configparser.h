@@ -6,12 +6,12 @@
 
 class IDataStream;
 
-namespace ConfigParser
-{
-	void Parse( const IDataStream& Stream );
-	void ParseTiny( const IDataStream& Stream );	// Parse compact form ([Context:]Name=Value)
+namespace ConfigParser {
+void Parse(const IDataStream& Stream);
+void ParseTiny(
+    const IDataStream& Stream);  // Parse compact form ([Context:]Name=Value)
 
-	bool EvaluateConditional( const IDataStream& Stream );
+bool EvaluateConditional(const IDataStream& Stream);
 };
 
-#endif // CONFIGPARSER_H
+#endif  // CONFIGPARSER_H

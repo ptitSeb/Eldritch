@@ -6,46 +6,44 @@
 #include "animation.h"
 
 RodinBTNodeEldPlayBark::RodinBTNodeEldPlayBark()
-:	m_SoundDef()
-,	m_SoundDefPE()
-,	m_Category()
-{
+    : m_SoundDef(), m_SoundDefPE(), m_Category() {}
+
+RodinBTNodeEldPlayBark::~RodinBTNodeEldPlayBark() {}
+
+void RodinBTNodeEldPlayBark::InitializeFromDefinition(
+    const SimpleString& DefinitionName) {
+  MAKEHASH(DefinitionName);
+
+  STATICHASH(Sound);
+  m_SoundDef = ConfigManager::GetString(sSound, "", sDefinitionName);
+
+  STATICHASH(SoundPE);
+  const SimpleString SoundPE =
+      ConfigManager::GetString(sSoundPE, "", sDefinitionName);
+  m_SoundDefPE.InitializeFromDefinition(SoundPE);
+
+  STATICHASH(Category);
+  m_Category = ConfigManager::GetHash(sCategory, HashedString::NullString,
+                                      sDefinitionName);
 }
 
-RodinBTNodeEldPlayBark::~RodinBTNodeEldPlayBark()
-{
-}
+RodinBTNode::ETickStatus RodinBTNodeEldPlayBark::Tick(float DeltaTime) {
+  Unused(DeltaTime);
 
-void RodinBTNodeEldPlayBark::InitializeFromDefinition( const SimpleString& DefinitionName )
-{
-	MAKEHASH( DefinitionName );
+  WBEntity* const pEntity = GetEntity();
 
-	STATICHASH( Sound );
-	m_SoundDef = ConfigManager::GetString( sSound, "", sDefinitionName );
+  WBParamEvaluator::SPEContext PEContext;
+  PEContext.m_Entity = pEntity;
+  m_SoundDefPE.Evaluate(PEContext);
+  const SimpleString SoundDef =
+      (m_SoundDefPE.GetType() == WBParamEvaluator::EPT_String)
+          ? m_SoundDefPE.GetString()
+          : m_SoundDef;
 
-	STATICHASH( SoundPE );
-	const SimpleString SoundPE = ConfigManager::GetString( sSoundPE, "", sDefinitionName );
-	m_SoundDefPE.InitializeFromDefinition( SoundPE );
+  WB_MAKE_EVENT(PlayBark, pEntity);
+  WB_SET_AUTO(PlayBark, Hash, Sound, SoundDef);
+  WB_SET_AUTO(PlayBark, Hash, Category, m_Category);
+  WB_DISPATCH_EVENT(GetEventManager(), PlayBark, pEntity);
 
-	STATICHASH( Category );
-	m_Category = ConfigManager::GetHash( sCategory, HashedString::NullString, sDefinitionName );
-}
-
-RodinBTNode::ETickStatus RodinBTNodeEldPlayBark::Tick( float DeltaTime )
-{
-	Unused( DeltaTime );
-
-	WBEntity* const pEntity = GetEntity();
-
-	WBParamEvaluator::SPEContext PEContext;
-	PEContext.m_Entity = pEntity;
-	m_SoundDefPE.Evaluate( PEContext );
-	const SimpleString SoundDef = ( m_SoundDefPE.GetType() == WBParamEvaluator::EPT_String ) ? m_SoundDefPE.GetString() : m_SoundDef;
-
-	WB_MAKE_EVENT( PlayBark, pEntity );
-	WB_SET_AUTO( PlayBark, Hash, Sound, SoundDef );
-	WB_SET_AUTO( PlayBark, Hash, Category, m_Category );
-	WB_DISPATCH_EVENT( GetEventManager(), PlayBark, pEntity );
-
-	return ETS_Success;
+  return ETS_Success;
 }

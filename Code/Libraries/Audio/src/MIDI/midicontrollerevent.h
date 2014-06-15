@@ -3,18 +3,17 @@
 
 #include "midimidievent.h"
 
-class MIDIControllerEvent : public MIDIMIDIEvent
-{
-public:
-	MIDIControllerEvent();
-	~MIDIControllerEvent();
+class MIDIControllerEvent : public MIDIMIDIEvent {
+ public:
+  MIDIControllerEvent();
+  ~MIDIControllerEvent();
 
-	virtual void Load( const IDataStream& Stream );
-	virtual void Save( const IDataStream& Stream );
+  virtual void Load(const IDataStream& Stream);
+  virtual void Save(const IDataStream& Stream);
 
-protected:
-	uint8	m_ControllerType;
-	uint8	m_ControllerValue;
+ protected:
+  uint8 m_ControllerType;
+  uint8 m_ControllerValue;
 };
 
-#endif // MIDICONTROLLEREVENT_H
+#endif  // MIDICONTROLLEREVENT_H

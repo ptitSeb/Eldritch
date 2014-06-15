@@ -6,25 +6,25 @@
 class Angles;
 class ISoundInstance;
 
-class Sound3DListener
-{
-public:
-	Sound3DListener();
-	~Sound3DListener();
+class Sound3DListener {
+ public:
+  Sound3DListener();
+  ~Sound3DListener();
 
-	void			SetLocation( const Vector& Location )	{ m_Location = Location; }
-	const Vector&	GetLocation() const						{ return m_Location; }
+  void SetLocation(const Vector& Location) { m_Location = Location; }
+  const Vector& GetLocation() const { return m_Location; }
 
-	void			SetRotation( const Angles& Rotation );
-	const Vector&	GetForward() const						{ return m_Forward; }
-	const Vector&	GetRight() const						{ return m_Right; }
+  void SetRotation(const Angles& Rotation);
+  const Vector& GetForward() const { return m_Forward; }
+  const Vector& GetRight() const { return m_Right; }
 
-	virtual void	ModifyAttenuation( ISoundInstance* const pSoundInstance, float& Attenuation ) const;
+  virtual void ModifyAttenuation(ISoundInstance* const pSoundInstance,
+                                 float& Attenuation) const;
 
-protected:
-	Vector	m_Location;
-	Vector	m_Forward;
-	Vector	m_Right;
+ protected:
+  Vector m_Location;
+  Vector m_Forward;
+  Vector m_Right;
 };
 
-#endif // SOUND3DLISTENER_H
+#endif  // SOUND3DLISTENER_H

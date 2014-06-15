@@ -9,18 +9,17 @@
 class IRenderer;
 class Font;
 
-class FontManager
-{
-public:
-	FontManager( IRenderer* Renderer );
-	~FontManager();
+class FontManager {
+ public:
+  FontManager(IRenderer* Renderer);
+  ~FontManager();
 
-	void	FreeFonts();
-	Font*	GetFont( const char* Filename );
+  void FreeFonts();
+  Font* GetFont(const char* Filename);
 
-private:
-	Map<HashedString, Font*>	m_FontTable;
-	IRenderer*					m_Renderer;
+ private:
+  Map<HashedString, Font*> m_FontTable;
+  IRenderer* m_Renderer;
 };
 
-#endif // FONTMANAGER_H
+#endif  // FONTMANAGER_H

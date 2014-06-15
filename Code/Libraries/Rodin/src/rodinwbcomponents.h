@@ -7,9 +7,9 @@
 
 #else
 
-ADDWBCOMPONENT( RodinBehaviorTree )
-ADDWBCOMPONENT( RodinBlackboard )
-ADDWBCOMPONENT( RodinKnowledge )
-ADDWBCOMPONENT( RodinResourceMap )
+ADDWBCOMPONENT(RodinBehaviorTree)
+ADDWBCOMPONENT(RodinBlackboard)
+ADDWBCOMPONENT(RodinKnowledge)
+ADDWBCOMPONENT(RodinResourceMap)
 
 #endif

@@ -5,23 +5,22 @@
 #include "wbpe.h"
 #include "map.h"
 
-class WBCompPEMap : public WBComponent
-{
-public:
-	WBCompPEMap();
-	virtual ~WBCompPEMap();
+class WBCompPEMap : public WBComponent {
+ public:
+  WBCompPEMap();
+  virtual ~WBCompPEMap();
 
-	DEFINE_WBCOMP( PEMap, WBComponent );
+  DEFINE_WBCOMP(PEMap, WBComponent);
 
-	virtual int		GetTickOrder() { return ETO_NoTick; }
+  virtual int GetTickOrder() { return ETO_NoTick; }
 
-	WBPE*			GetPE( const HashedString& Name ) const;
+  WBPE* GetPE(const HashedString& Name) const;
 
-protected:
-	virtual void	InitializeFromDefinition( const SimpleString& DefinitionName );
+ protected:
+  virtual void InitializeFromDefinition(const SimpleString& DefinitionName);
 
-private:
-	Map<HashedString, WBPE*>	m_PEMap;
+ private:
+  Map<HashedString, WBPE*> m_PEMap;
 };
 
-#endif // WBCOMPPEMAP_H
+#endif  // WBCOMPPEMAP_H

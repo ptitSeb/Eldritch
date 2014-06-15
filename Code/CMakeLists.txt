@@ -7,8 +7,6 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall")
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
-find_package (FMOD)
-
 add_subdirectory(Libraries/Core/)
 add_subdirectory(Libraries/Math/)
 add_subdirectory(Libraries/2D/)

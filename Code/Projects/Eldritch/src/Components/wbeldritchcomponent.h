@@ -7,16 +7,15 @@ class EldritchFramework;
 class EldritchGame;
 class EldritchWorld;
 
-class WBEldritchComponent : public WBComponent
-{
-public:
-	WBEldritchComponent();
-	virtual ~WBEldritchComponent();
+class WBEldritchComponent : public WBComponent {
+ public:
+  WBEldritchComponent();
+  virtual ~WBEldritchComponent();
 
-protected:
-	EldritchFramework*	GetFramework() const;
-	EldritchGame*		GetGame() const;
-	EldritchWorld*		GetWorld() const;
+ protected:
+  EldritchFramework* GetFramework() const;
+  EldritchGame* GetGame() const;
+  EldritchWorld* GetWorld() const;
 };
 
-#endif // WBCOMPELDRITCH_H
+#endif  // WBCOMPELDRITCH_H

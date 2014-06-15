@@ -3,19 +3,18 @@
 
 #include <Windows.h>
 
-typedef DWORD ( WINAPI *ThreadFunc )( void* );
+typedef DWORD(WINAPI* ThreadFunc)(void*);
 
-class Thread
-{
-public:
-	Thread( ThreadFunc Function, void* Parameter );
-	~Thread();
+class Thread {
+ public:
+  Thread(ThreadFunc Function, void* Parameter);
+  ~Thread();
 
-	void Wait();
-	bool IsDone();
+  void Wait();
+  bool IsDone();
 
-private:
-	HANDLE	m_Thread;
+ private:
+  HANDLE m_Thread;
 };
 
 #endif

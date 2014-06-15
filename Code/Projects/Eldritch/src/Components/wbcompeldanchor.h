@@ -4,39 +4,40 @@
 #include "wbeldritchcomponent.h"
 #include "vector.h"
 
-class WBCompEldAnchor : public WBEldritchComponent
-{
-public:
-	WBCompEldAnchor();
-	virtual ~WBCompEldAnchor();
+class WBCompEldAnchor : public WBEldritchComponent {
+ public:
+  WBCompEldAnchor();
+  virtual ~WBCompEldAnchor();
 
-	DEFINE_WBCOMP( EldAnchor, WBEldritchComponent );
+  DEFINE_WBCOMP(EldAnchor, WBEldritchComponent);
 
-	virtual int		GetTickOrder() { return ETO_NoTick; }
+  virtual int GetTickOrder() { return ETO_NoTick; }
 
-	virtual void	HandleEvent( const WBEvent& Event );
-	virtual void	AddContextToEvent( WBEvent& Event ) const;
+  virtual void HandleEvent(const WBEvent& Event);
+  virtual void AddContextToEvent(WBEvent& Event) const;
 
-	virtual uint	GetSerializationSize();
-	virtual void	Save( const IDataStream& Stream );
-	virtual void	Load( const IDataStream& Stream );
+  virtual uint GetSerializationSize();
+  virtual void Save(const IDataStream& Stream);
+  virtual void Load(const IDataStream& Stream);
 
-	bool			IsAnchored() const { return m_IsAnchored; }
+  bool IsAnchored() const { return m_IsAnchored; }
 
-	// HACKHACK: Only works when called immediately after spawning.
-	void			SetAnchorDirection( const Vector& AnchorDirection ) { m_AnchorDirection = AnchorDirection; }
+  // HACKHACK: Only works when called immediately after spawning.
+  void SetAnchorDirection(const Vector& AnchorDirection) {
+    m_AnchorDirection = AnchorDirection;
+  }
 
-protected:
-	virtual void	InitializeFromDefinition( const SimpleString& DefinitionName );
+ protected:
+  virtual void InitializeFromDefinition(const SimpleString& DefinitionName);
 
-private:
-	void			SetAnchor();
-	void			CheckAnchor();
-	void			Unanchor();
+ private:
+  void SetAnchor();
+  void CheckAnchor();
+  void Unanchor();
 
-	bool	m_IsAnchored;		// Serialized
-	Vector	m_AnchorPoint;		// Serialized
-	Vector	m_AnchorDirection;	// Config
+  bool m_IsAnchored;         // Serialized
+  Vector m_AnchorPoint;      // Serialized
+  Vector m_AnchorDirection;  // Config
 };
 
-#endif // WBCOMPELDANCHOR_H
+#endif  // WBCOMPELDANCHOR_H

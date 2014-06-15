@@ -6,4 +6,4 @@
 #include "surface.h"
 #include "sprite.h"
 
-#endif // TWOD_H
+#endif  // TWOD_H

@@ -3,15 +3,16 @@
 
 #include "wbpebinaryop.h"
 
-class WBPEXOR : public WBPEBinaryOp
-{
-public:
-	WBPEXOR();
-	virtual ~WBPEXOR();
+class WBPEXOR : public WBPEBinaryOp {
+ public:
+  WBPEXOR();
+  virtual ~WBPEXOR();
 
-	DEFINE_WBPE_FACTORY( XOR );
+  DEFINE_WBPE_FACTORY(XOR);
 
-	virtual void	Evaluate( const WBParamEvaluator::SPEContext& Context, WBParamEvaluator::SEvaluatedParam& EvaluatedParam ) const;
+  virtual void Evaluate(
+      const WBParamEvaluator::SPEContext& Context,
+      WBParamEvaluator::SEvaluatedParam& EvaluatedParam) const;
 };
 
-#endif // WBPEXOR_H
+#endif  // WBPEXOR_H

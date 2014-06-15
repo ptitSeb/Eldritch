@@ -4,16 +4,15 @@
 #include "triangle.h"
 #include "aabb.h"
 
-class CollisionTriangle
-{
-public:
-	CollisionTriangle();
-	CollisionTriangle( const Triangle& t );
+class CollisionTriangle {
+ public:
+  CollisionTriangle();
+  CollisionTriangle(const Triangle& t);
 
-	Triangle	m_Triangle;
-	AABB		m_AABB;
+  Triangle m_Triangle;
+  AABB m_AABB;
 
-	void	UpdateAABB();
+  void UpdateAABB();
 };
 
-#endif // COLLISIONTRIANGLE_H
+#endif  // COLLISIONTRIANGLE_H

@@ -5,15 +5,15 @@
 
 class SimpleString;
 
-namespace SDPFactory
-{
-	void	RegisterSDPFactory( const HashedString& TypeName, SDPFactoryFunc Factory );
+namespace SDPFactory {
+void RegisterSDPFactory(const HashedString& TypeName, SDPFactoryFunc Factory);
 
-	void	InitializeBaseFactories();
-	void	ShutDown();
+void InitializeBaseFactories();
+void ShutDown();
 
-	// NOTE: SDPs work different than other factories; we want a singular instance, not a new one
-	ShaderDataProvider*	GetSDPInstance( const HashedString& TypeName );
+// NOTE: SDPs work different than other factories; we want a singular instance,
+// not a new one
+ShaderDataProvider* GetSDPInstance(const HashedString& TypeName);
 };
 
-#endif // SDPFACTORY_H
+#endif  // SDPFACTORY_H

@@ -4,58 +4,53 @@
 #include "Components/wbcomprodinblackboard.h"
 #include "wbeventmanager.h"
 
-RodinBTNodeEldLookAt::RodinBTNodeEldLookAt()
-:	m_LookTargetBlackboardKey()
-{
+RodinBTNodeEldLookAt::RodinBTNodeEldLookAt() : m_LookTargetBlackboardKey() {}
+
+RodinBTNodeEldLookAt::~RodinBTNodeEldLookAt() {}
+
+void RodinBTNodeEldLookAt::InitializeFromDefinition(
+    const SimpleString& DefinitionName) {
+  MAKEHASH(DefinitionName);
+
+  STATICHASH(LookTargetBlackboardKey);
+  m_LookTargetBlackboardKey = ConfigManager::GetHash(
+      sLookTargetBlackboardKey, HashedString::NullString, sDefinitionName);
 }
 
-RodinBTNodeEldLookAt::~RodinBTNodeEldLookAt()
-{
-}
+RodinBTNode::ETickStatus RodinBTNodeEldLookAt::Tick(float DeltaTime) {
+  Unused(DeltaTime);
 
-void RodinBTNodeEldLookAt::InitializeFromDefinition( const SimpleString& DefinitionName )
-{
-	MAKEHASH( DefinitionName );
+  WBEntity* const pEntity = GetEntity();
 
-	STATICHASH( LookTargetBlackboardKey );
-	m_LookTargetBlackboardKey = ConfigManager::GetHash( sLookTargetBlackboardKey, HashedString::NullString, sDefinitionName );
-}
+  WBCompRodinBlackboard* const pAIBlackboard =
+      GET_WBCOMP(pEntity, RodinBlackboard);
+  ASSERT(pAIBlackboard);
 
-RodinBTNode::ETickStatus RodinBTNodeEldLookAt::Tick( float DeltaTime )
-{
-	Unused( DeltaTime );
+  const WBEvent::EType TargetType =
+      pAIBlackboard->GetType(m_LookTargetBlackboardKey);
 
-	WBEntity* const		pEntity		= GetEntity();
+  if (TargetType == WBEvent::EWBEPT_Vector) {
+    const Vector LookTarget =
+        pAIBlackboard->GetVector(m_LookTargetBlackboardKey);
 
-	WBCompRodinBlackboard* const	pAIBlackboard	= GET_WBCOMP( pEntity, RodinBlackboard );
-	ASSERT( pAIBlackboard );
+    WB_MAKE_EVENT(LookAt, pEntity);
+    WB_SET_AUTO(LookAt, Vector, LookAtLocation, LookTarget);
+    WB_DISPATCH_EVENT(GetEventManager(), LookAt, pEntity);
 
-	const WBEvent::EType			TargetType		= pAIBlackboard->GetType( m_LookTargetBlackboardKey );
+    return ETS_Success;
+  } else if (TargetType == WBEvent::EWBEPT_Entity) {
+    WBEntity* const pLookTargetEntity =
+        pAIBlackboard->GetEntity(m_LookTargetBlackboardKey);
+    if (!pLookTargetEntity) {
+      return ETS_Fail;
+    }
 
-	if( TargetType == WBEvent::EWBEPT_Vector )
-	{
-		const Vector LookTarget = pAIBlackboard->GetVector( m_LookTargetBlackboardKey );
+    WB_MAKE_EVENT(LookAt, pEntity);
+    WB_SET_AUTO(LookAt, Entity, LookAtEntity, pLookTargetEntity);
+    WB_DISPATCH_EVENT(GetEventManager(), LookAt, pEntity);
 
-		WB_MAKE_EVENT( LookAt, pEntity );
-		WB_SET_AUTO( LookAt, Vector, LookAtLocation, LookTarget );
-		WB_DISPATCH_EVENT( GetEventManager(), LookAt, pEntity );
+    return ETS_Success;
+  }
 
-		return ETS_Success;
-	}
-	else if( TargetType == WBEvent::EWBEPT_Entity )
-	{
-		WBEntity* const pLookTargetEntity = pAIBlackboard->GetEntity( m_LookTargetBlackboardKey );
-		if( !pLookTargetEntity )
-		{
-			return ETS_Fail;
-		}
-
-		WB_MAKE_EVENT( LookAt, pEntity );
-		WB_SET_AUTO( LookAt, Entity, LookAtEntity, pLookTargetEntity );
-		WB_DISPATCH_EVENT( GetEventManager(), LookAt, pEntity );
-
-		return ETS_Success;
-	}
-
-	return ETS_Fail;
+  return ETS_Fail;
 }

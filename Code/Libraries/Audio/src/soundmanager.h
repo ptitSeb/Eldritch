@@ -16,20 +16,20 @@ class IAudioSystem;
 class ISound;
 struct SSoundInit;
 
-class SoundManager
-{
-public:
-	SoundManager( IAudioSystem* pAudioSystem );
-	~SoundManager();
+class SoundManager {
+ public:
+  SoundManager(IAudioSystem* pAudioSystem);
+  ~SoundManager();
 
-	void	FreeSounds();
+  void FreeSounds();
 
-	ISound*	GetSound( const SSoundInit& SoundInit, const SimpleString& SoundDefinitionName );
+  ISound* GetSound(const SSoundInit& SoundInit,
+                   const SimpleString& SoundDefinitionName);
 
-private:
-	typedef Map<HashedString, ISound*> TSoundMap;
-	TSoundMap		m_SoundTable;
-	IAudioSystem*	m_AudioSystem;
+ private:
+  typedef Map<HashedString, ISound*> TSoundMap;
+  TSoundMap m_SoundTable;
+  IAudioSystem* m_AudioSystem;
 };
 
-#endif // SOUNDMANAGER_H
+#endif  // SOUNDMANAGER_H

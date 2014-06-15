@@ -6,98 +6,82 @@
 #include "Components/wbcomprodinblackboard.h"
 
 RodinBTNodeEldTurnToward::RodinBTNodeEldTurnToward()
-:	m_TurnTargetBlackboardKey()
-,	m_TurnState( ETTS_Begin )
-{
+    : m_TurnTargetBlackboardKey(), m_TurnState(ETTS_Begin) {}
+
+RodinBTNodeEldTurnToward::~RodinBTNodeEldTurnToward() {}
+
+void RodinBTNodeEldTurnToward::InitializeFromDefinition(
+    const SimpleString& DefinitionName) {
+  MAKEHASH(DefinitionName);
+
+  STATICHASH(TurnTargetBlackboardKey);
+  m_TurnTargetBlackboardKey = ConfigManager::GetHash(
+      sTurnTargetBlackboardKey, HashedString::NullString, sDefinitionName);
 }
 
-RodinBTNodeEldTurnToward::~RodinBTNodeEldTurnToward()
-{
+void RodinBTNodeEldTurnToward::OnStart() { m_TurnState = ETTS_Begin; }
+
+void RodinBTNodeEldTurnToward::OnFinish() {
+  WBCompEldAIMotion* pAIMotion = GET_WBCOMP(GetEntity(), EldAIMotion);
+  ASSERT(pAIMotion);
+
+  if (m_TurnState == ETTS_StartedTurn) {
+    pAIMotion->StopMove();
+  }
 }
 
-void RodinBTNodeEldTurnToward::InitializeFromDefinition( const SimpleString& DefinitionName )
-{
-	MAKEHASH( DefinitionName );
+RodinBTNode::ETickStatus RodinBTNodeEldTurnToward::Tick(float DeltaTime) {
+  Unused(DeltaTime);
 
-	STATICHASH( TurnTargetBlackboardKey );
-	m_TurnTargetBlackboardKey = ConfigManager::GetHash( sTurnTargetBlackboardKey, HashedString::NullString, sDefinitionName );
-}
+  WBEntity* const pEntity = GetEntity();
+  WBCompEldAIMotion* pAIMotion = GET_WBCOMP(pEntity, EldAIMotion);
+  ASSERT(pAIMotion);
 
-void RodinBTNodeEldTurnToward::OnStart()
-{
-	m_TurnState = ETTS_Begin;
-}
+  if (m_TurnState == ETTS_Begin) {
+    WBCompRodinBlackboard* const pAIBlackboard =
+        GET_WBCOMP(pEntity, RodinBlackboard);
+    ASSERT(pAIBlackboard);
 
-void RodinBTNodeEldTurnToward::OnFinish()
-{
-	WBCompEldAIMotion* pAIMotion = GET_WBCOMP( GetEntity(), EldAIMotion );
-	ASSERT( pAIMotion );
+    const WBEvent::EType TargetType =
+        pAIBlackboard->GetType(m_TurnTargetBlackboardKey);
 
-	if( m_TurnState == ETTS_StartedTurn )
-	{
-		pAIMotion->StopMove();
-	}
-}
+    if (TargetType == WBEvent::EWBEPT_Vector) {
+      const Vector TurnTarget =
+          pAIBlackboard->GetVector(m_TurnTargetBlackboardKey);
 
-RodinBTNode::ETickStatus RodinBTNodeEldTurnToward::Tick( float DeltaTime )
-{
-	Unused( DeltaTime );
+      pAIMotion->StartTurn(TurnTarget);
+      m_TurnState = ETTS_StartedTurn;
 
-	WBEntity* const		pEntity		= GetEntity();
-	WBCompEldAIMotion*	pAIMotion	= GET_WBCOMP( pEntity, EldAIMotion );
-	ASSERT( pAIMotion );
+      return ETS_Running;
+    } else if (TargetType == WBEvent::EWBEPT_Entity) {
+      WBEntity* const pTurnTargetEntity =
+          pAIBlackboard->GetEntity(m_TurnTargetBlackboardKey);
+      if (!pTurnTargetEntity) {
+        return ETS_Fail;
+      }
 
-	if( m_TurnState == ETTS_Begin )
-	{
-		WBCompRodinBlackboard* const	pAIBlackboard	= GET_WBCOMP( pEntity, RodinBlackboard );
-		ASSERT( pAIBlackboard );
+      WBCompEldTransform* const pTransform =
+          pTurnTargetEntity->GetTransformComponent<WBCompEldTransform>();
+      if (!pTransform) {
+        return ETS_Fail;
+      }
 
-		const WBEvent::EType			TargetType		= pAIBlackboard->GetType( m_TurnTargetBlackboardKey );
+      const Vector TurnTarget = pTransform->GetLocation();
 
-		if( TargetType == WBEvent::EWBEPT_Vector )
-		{
-			const Vector TurnTarget = pAIBlackboard->GetVector( m_TurnTargetBlackboardKey );
+      pAIMotion->StartTurn(TurnTarget);
+      m_TurnState = ETTS_StartedTurn;
 
-			pAIMotion->StartTurn( TurnTarget );
-			m_TurnState = ETTS_StartedTurn;
+      return ETS_Running;
+    }
+  } else {
+    ASSERT(m_TurnState == ETTS_StartedTurn);
 
-			return ETS_Running;
-		}
-		else if( TargetType == WBEvent::EWBEPT_Entity )
-		{
-			WBEntity* const pTurnTargetEntity = pAIBlackboard->GetEntity( m_TurnTargetBlackboardKey );
-			if( !pTurnTargetEntity )
-			{
-				return ETS_Fail;
-			}
+    if (pAIMotion->IsMoving()) {
+      return ETS_Running;
+    } else if (pAIMotion->DidMoveSucceed()) {
+      return ETS_Success;
+    }
+  }
 
-			WBCompEldTransform* const pTransform = pTurnTargetEntity->GetTransformComponent<WBCompEldTransform>();
-			if( !pTransform )
-			{
-				return ETS_Fail;
-			}
-
-			const Vector TurnTarget = pTransform->GetLocation();
-
-			pAIMotion->StartTurn( TurnTarget );
-			m_TurnState = ETTS_StartedTurn;
-
-			return ETS_Running;
-		}
-	}
-	else
-	{
-		ASSERT( m_TurnState == ETTS_StartedTurn );
-
-		if( pAIMotion->IsMoving() )
-		{
-			return ETS_Running;
-		}
-		else if( pAIMotion->DidMoveSucceed() )
-		{
-			return ETS_Success;
-		}
-	}
-
-	return ETS_Fail;
+  return ETS_Fail;
 }

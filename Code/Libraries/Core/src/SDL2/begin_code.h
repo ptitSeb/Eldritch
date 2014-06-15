@@ -35,29 +35,29 @@
 
 /* Some compilers use a special export keyword */
 #ifndef DECLSPEC
-# if defined(__BEOS__) || defined(__HAIKU__)
-#  if defined(__GNUC__)
-#   define DECLSPEC __declspec(dllexport)
-#  else
-#   define DECLSPEC __declspec(export)
-#  endif
-# elif defined(__WIN32__)
-#  ifdef __BORLANDC__
-#   ifdef BUILD_SDL
-#    define DECLSPEC
-#   else
-#    define DECLSPEC    __declspec(dllimport)
-#   endif
-#  else
-#   define DECLSPEC __declspec(dllexport)
-#  endif
-# else
-#  if defined(__GNUC__) && __GNUC__ >= 4
-#   define DECLSPEC __attribute__ ((visibility("default")))
-#  else
-#   define DECLSPEC
-#  endif
-# endif
+#if defined(__BEOS__) || defined(__HAIKU__)
+#if defined(__GNUC__)
+#define DECLSPEC __declspec(dllexport)
+#else
+#define DECLSPEC __declspec(export)
+#endif
+#elif defined(__WIN32__)
+#ifdef __BORLANDC__
+#ifdef BUILD_SDL
+#define DECLSPEC
+#else
+#define DECLSPEC __declspec(dllimport)
+#endif
+#else
+#define DECLSPEC __declspec(dllexport)
+#endif
+#else
+#if defined(__GNUC__) && __GNUC__ >= 4
+#define DECLSPEC __attribute__((visibility("default")))
+#else
+#define DECLSPEC
+#endif
+#endif
 #endif
 
 /* By default SDL uses the C calling convention */
@@ -82,16 +82,16 @@
  */
 #if defined(_MSC_VER) || defined(__MWERKS__) || defined(__BORLANDC__)
 #ifdef _MSC_VER
-#pragma warning(disable: 4103)
+#pragma warning(disable : 4103)
 #endif
 #ifdef __BORLANDC__
 #pragma nopackwarning
 #endif
 #ifdef _M_X64
 /* Use 8-byte alignment on 64-bit architectures, so pointers are aligned */
-#pragma pack(push,8)
+#pragma pack(push, 8)
 #else
-#pragma pack(push,4)
+#pragma pack(push, 4)
 #endif
 #endif /* Compiler needs structure packing set */
 
@@ -101,12 +101,11 @@
 #define SDL_INLINE_OKAY
 #else
 /* Add any special compiler-specific cases here */
-#if defined(_MSC_VER) || defined(__BORLANDC__) || \
-    defined(__DMC__) || defined(__SC__) || \
-    defined(__WATCOMC__) || defined(__LCC__) || \
+#if defined(_MSC_VER) || defined(__BORLANDC__) || defined(__DMC__) || \
+    defined(__SC__) || defined(__WATCOMC__) || defined(__LCC__) ||    \
     defined(__DECC)
 #ifndef __inline__
-#define __inline__  __inline
+#define __inline__ __inline
 #endif
 #define SDL_INLINE_OKAY
 #else
@@ -131,7 +130,7 @@
 #ifndef SDL_FORCE_INLINE
 #if defined(_MSC_VER)
 #define SDL_FORCE_INLINE __forceinline
-#elif ( (defined(__GNUC__) && (__GNUC__ >= 4)) || defined(__clang__) )
+#elif((defined(__GNUC__) && (__GNUC__ >= 4)) || defined(__clang__))
 #define SDL_FORCE_INLINE __attribute__((always_inline)) static inline
 #else
 #define SDL_FORCE_INLINE static __inline__

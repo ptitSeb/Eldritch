@@ -7,47 +7,41 @@
 #include "uistack.h"
 #include "uiscreen.h"
 
-WBActionEldBindInput::WBActionEldBindInput()
-:	m_Input()
-{
+WBActionEldBindInput::WBActionEldBindInput() : m_Input() {}
+
+WBActionEldBindInput::~WBActionEldBindInput() {}
+
+/*virtual*/ void WBActionEldBindInput::InitializeFromDefinition(
+    const SimpleString& DefinitionName) {
+  WBAction::InitializeFromDefinition(DefinitionName);
+
+  MAKEHASH(DefinitionName);
+
+  STATICHASH(Input);
+  m_Input = ConfigManager::GetString(sInput, "", sDefinitionName);
 }
 
-WBActionEldBindInput::~WBActionEldBindInput()
-{
-}
+/*virtual*/ void WBActionEldBindInput::Execute() {
+  WBAction::Execute();
 
-/*virtual*/ void WBActionEldBindInput::InitializeFromDefinition( const SimpleString& DefinitionName )
-{
-	WBAction::InitializeFromDefinition( DefinitionName );
+  EldritchFramework* const pFramework = EldritchFramework::GetInstance();
+  ASSERT(pFramework);
 
-	MAKEHASH( DefinitionName );
+  UIManager* const pUIManager = pFramework->GetUIManager();
+  ASSERT(pUIManager);
 
-	STATICHASH( Input );
-	m_Input = ConfigManager::GetString( sInput, "", sDefinitionName );
-}
+  UIStack* const pUIStack = pUIManager->GetUIStack();
+  ASSERT(pUIStack);
 
-/*virtual*/ void WBActionEldBindInput::Execute()
-{
-	WBAction::Execute();
+  STATIC_HASHED_STRING(BindDialog);
 
-	EldritchFramework* const	pFramework		= EldritchFramework::GetInstance();
-	ASSERT( pFramework );
+  UIScreen* const pUIBindDialog = pUIManager->GetScreen(sBindDialog);
+  ASSERT(pUIBindDialog);
 
-	UIManager* const			pUIManager		= pFramework->GetUIManager();
-	ASSERT( pUIManager );
+  InputSystem* const pInputSystem = pFramework->GetInputSystem();
+  ASSERT(pInputSystem);
 
-	UIStack* const				pUIStack		= pUIManager->GetUIStack();
-	ASSERT( pUIStack );
+  pUIStack->Push(pUIBindDialog);
 
-	STATIC_HASHED_STRING( BindDialog );
-
-	UIScreen* const				pUIBindDialog	= pUIManager->GetScreen( sBindDialog );
-	ASSERT( pUIBindDialog );
-
-	InputSystem* const			pInputSystem	= pFramework->GetInputSystem();
-	ASSERT( pInputSystem );
-
-	pUIStack->Push( pUIBindDialog );
-
-	pInputSystem->BindInput( m_Input );
+  pInputSystem->BindInput(m_Input);
 }

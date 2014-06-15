@@ -5,20 +5,13 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 include_directories(../Math/src)
 include_directories(../Core/src)
 include_directories(../GLEW/src)
-include_directories(src/FMOD)
-include_directories(${FMOD_INCLUDE_DIR})
+
 
 set(audio_src
 src/audio.cpp
 src/audio.h
 src/audiosystemcommon.cpp
 src/audiosystemcommon.h
-src/fmodaudiosystem.cpp
-src/fmodaudiosystem.h
-src/fmodsound.cpp
-src/fmodsound.h
-src/fmodsoundinstance.cpp
-src/fmodsoundinstance.h
 src/openalaudiosystem.cpp
 src/openalaudiosystem.h
 src/openalsound.cpp

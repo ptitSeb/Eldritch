@@ -3,20 +3,18 @@
 
 class HashedString;
 
-namespace EldritchFactions
-{
-	enum EFactionCon
-	{
-		EFR_Hostile,
-		EFR_Neutral,
-		EFR_Friendly,
-	};
+namespace EldritchFactions {
+enum EFactionCon {
+  EFR_Hostile,
+  EFR_Neutral,
+  EFR_Friendly,
+};
 
-	// For managing statically allocated memory
-	void		AddRef();
-	void		Release();
+// For managing statically allocated memory
+void AddRef();
+void Release();
 
-	EFactionCon	GetCon( const HashedString& FactionA, const HashedString& FactionB );
+EFactionCon GetCon(const HashedString& FactionA, const HashedString& FactionB);
 }
 
-#endif // ELDRITCHFACTIONS_H
+#endif  // ELDRITCHFACTIONS_H

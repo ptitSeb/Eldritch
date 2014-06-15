@@ -5,15 +5,15 @@
 
 struct SVoxelIrradiance;
 
-class SDPEldLit : public SDPBase
-{
-public:
-	SDPEldLit();
-	virtual ~SDPEldLit();
+class SDPEldLit : public SDPBase {
+ public:
+  SDPEldLit();
+  virtual ~SDPEldLit();
 
-	DEFINE_SDP_FACTORY( EldLit );
+  DEFINE_SDP_FACTORY(EldLit);
 
-	virtual void	SetShaderParameters( IRenderer* const pRenderer, Mesh* const pMesh, const View& View ) const;
+  virtual void SetShaderParameters(IRenderer* const pRenderer,
+                                   Mesh* const pMesh, const View& View) const;
 };
 
-#endif // SDPELDLIT_H
+#endif  // SDPELDLIT_H

@@ -5,39 +5,38 @@
 #include "vector.h"
 #include "angles.h"
 
-class WBCompEldRespawner : public WBEldritchComponent
-{
-public:
-	WBCompEldRespawner();
-	virtual ~WBCompEldRespawner();
+class WBCompEldRespawner : public WBEldritchComponent {
+ public:
+  WBCompEldRespawner();
+  virtual ~WBCompEldRespawner();
 
-	DEFINE_WBCOMP( EldRespawner, WBEldritchComponent );
+  DEFINE_WBCOMP(EldRespawner, WBEldritchComponent);
 
-	virtual int		GetTickOrder() { return ETO_NoTick; }
+  virtual int GetTickOrder() { return ETO_NoTick; }
 
-	virtual void	HandleEvent( const WBEvent& Event );
+  virtual void HandleEvent(const WBEvent& Event);
 
-	virtual uint	GetSerializationSize();
-	virtual void	Save( const IDataStream& Stream );
-	virtual void	Load( const IDataStream& Stream );
+  virtual uint GetSerializationSize();
+  virtual void Save(const IDataStream& Stream);
+  virtual void Load(const IDataStream& Stream);
 
-protected:
-	virtual void	InitializeFromDefinition( const SimpleString& DefinitionName );
+ protected:
+  virtual void InitializeFromDefinition(const SimpleString& DefinitionName);
 
-private:
-	void	TryRespawn();
-	void	Respawn();
+ private:
+  void TryRespawn();
+  void Respawn();
 
-	bool	CanRespawn();
-	bool	IsOriginNearPlayer();
-	bool	CanOriginBeSeenByPlayer();
+  bool CanRespawn();
+  bool IsOriginNearPlayer();
+  bool CanOriginBeSeenByPlayer();
 
-	bool	m_OriginSet;			// Serialized
-	Vector	m_OriginLocation;		// Serialized
-	Angles	m_OriginOrientation;	// Serialized
+  bool m_OriginSet;            // Serialized
+  Vector m_OriginLocation;     // Serialized
+  Angles m_OriginOrientation;  // Serialized
 
-	float	m_RetryRespawnTime;				// Config
-	float	m_RespawnMinPlayerDistanceSq;	// Config
+  float m_RetryRespawnTime;            // Config
+  float m_RespawnMinPlayerDistanceSq;  // Config
 };
 
-#endif // WBCOMPELDRESPAWNER_H
+#endif  // WBCOMPELDRESPAWNER_H

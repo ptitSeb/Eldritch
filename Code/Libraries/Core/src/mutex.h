@@ -3,19 +3,18 @@
 
 #include <Windows.h>
 
-class Mutex
-{
-public:
-	Mutex();
-	~Mutex();
+class Mutex {
+ public:
+  Mutex();
+  ~Mutex();
 
-	void Create();
-	void Wait();
-	void Release();
-	void Destroy();
+  void Create();
+  void Wait();
+  void Release();
+  void Destroy();
 
-private:
-	HANDLE	m_hMutex;
+ private:
+  HANDLE m_hMutex;
 };
 
-#endif // MUTEX_H
+#endif  // MUTEX_H

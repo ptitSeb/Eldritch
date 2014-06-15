@@ -3,25 +3,24 @@
 
 #include "wbcompeldthinker.h"
 
-class WBCompEldThinkerTarget : public WBCompEldThinker
-{
-public:
-	WBCompEldThinkerTarget();
-	virtual ~WBCompEldThinkerTarget();
+class WBCompEldThinkerTarget : public WBCompEldThinker {
+ public:
+  WBCompEldThinkerTarget();
+  virtual ~WBCompEldThinkerTarget();
 
-	DEFINE_WBCOMP( EldThinkerTarget, WBCompEldThinker );
+  DEFINE_WBCOMP(EldThinkerTarget, WBCompEldThinker);
 
-	virtual void	Tick( float DeltaTime );
+  virtual void Tick(float DeltaTime);
 
-protected:
-	virtual void	InitializeFromDefinition( const SimpleString& DefinitionName );
+ protected:
+  virtual void InitializeFromDefinition(const SimpleString& DefinitionName);
 
-private:
-	HashedString	m_OutputCombatTargetBlackboardKey;
-	HashedString	m_OutputSearchTargetBlackboardKey;
+ private:
+  HashedString m_OutputCombatTargetBlackboardKey;
+  HashedString m_OutputSearchTargetBlackboardKey;
 
-	float			m_CombatTargetScoreThreshold;
-	float			m_SearchTargetScoreThreshold;
+  float m_CombatTargetScoreThreshold;
+  float m_SearchTargetScoreThreshold;
 };
 
-#endif // WBCOMPELDTHINKERTARGET_H
+#endif  // WBCOMPELDTHINKERTARGET_H

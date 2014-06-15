@@ -2,56 +2,43 @@
 #include "uimanagerframework.h"
 #include "framework3d.h"
 
-UIManagerFramework::UIManagerFramework( Framework3D* pFramework )
-:	m_Framework( pFramework )
-{
+UIManagerFramework::UIManagerFramework(Framework3D* pFramework)
+    : m_Framework(pFramework) {}
+
+UIManagerFramework::~UIManagerFramework() {}
+
+/*virtual*/ Window* UIManagerFramework::GetWindow() const {
+  return m_Framework->GetWindow();
 }
 
-UIManagerFramework::~UIManagerFramework()
-{
+/*virtual*/ Keyboard* UIManagerFramework::GetKeyboard() const {
+  return m_Framework->GetKeyboard();
 }
 
-/*virtual*/ Window* UIManagerFramework::GetWindow() const
-{
-	return m_Framework->GetWindow();
+/*virtual*/ Mouse* UIManagerFramework::GetMouse() const {
+  return m_Framework->GetMouse();
 }
 
-/*virtual*/ Keyboard* UIManagerFramework::GetKeyboard() const
-{
-	return m_Framework->GetKeyboard();
+/*virtual*/ IUIInputMap* UIManagerFramework::GetUIInputMap() const {
+  return m_Framework->GetUIInputMap();
 }
 
-/*virtual*/ Mouse* UIManagerFramework::GetMouse() const
-{
-	return m_Framework->GetMouse();
+/*virtual*/ Clock* UIManagerFramework::GetClock() const {
+  return m_Framework->GetClock();
 }
 
-/*virtual*/ IUIInputMap* UIManagerFramework::GetUIInputMap() const
-{
-	return m_Framework->GetUIInputMap();
+/*virtual*/ Display* UIManagerFramework::GetDisplay() const {
+  return m_Framework->GetDisplay();
 }
 
-/*virtual*/ Clock* UIManagerFramework::GetClock() const
-{
-	return m_Framework->GetClock();
+/*virtual*/ IRenderer* UIManagerFramework::GetRenderer() const {
+  return m_Framework->GetRenderer();
 }
 
-/*virtual*/ Display* UIManagerFramework::GetDisplay() const
-{
-	return m_Framework->GetDisplay();
+/*virtual*/ IAudioSystem* UIManagerFramework::GetAudioSystem() const {
+  return m_Framework->GetAudioSystem();
 }
 
-/*virtual*/ IRenderer* UIManagerFramework::GetRenderer() const
-{
-	return m_Framework->GetRenderer();
-}
-
-/*virtual*/ IAudioSystem* UIManagerFramework::GetAudioSystem() const
-{
-	return m_Framework->GetAudioSystem();
-}
-
-/*virtual*/ LineBatcher* UIManagerFramework::GetLineBatcher() const
-{
-	return NULL;
+/*virtual*/ LineBatcher* UIManagerFramework::GetLineBatcher() const {
+  return NULL;
 }

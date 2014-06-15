@@ -3,20 +3,19 @@
 
 #include "wbaction.h"
 
-class WBActionEldSetLight : public WBAction
-{
-public:
-	WBActionEldSetLight();
-	virtual ~WBActionEldSetLight();
+class WBActionEldSetLight : public WBAction {
+ public:
+  WBActionEldSetLight();
+  virtual ~WBActionEldSetLight();
 
-	DEFINE_WBACTION_FACTORY( EldSetLight );
+  DEFINE_WBACTION_FACTORY(EldSetLight);
 
-	virtual void	InitializeFromDefinition( const SimpleString& DefinitionName );
+  virtual void InitializeFromDefinition(const SimpleString& DefinitionName);
 
-	virtual void	Execute();
+  virtual void Execute();
 
-private:
-	bool			m_AddLight;
+ private:
+  bool m_AddLight;
 };
 
-#endif // WBACTIONELDPLAYANIM_H
+#endif  // WBACTIONELDPLAYANIM_H

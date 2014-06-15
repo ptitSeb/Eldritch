@@ -4,23 +4,22 @@
 #include "wbeldritchcomponent.h"
 #include "simplestring.h"
 
-class WBCompEldDamager : public WBEldritchComponent
-{
-public:
-	WBCompEldDamager();
-	virtual ~WBCompEldDamager();
+class WBCompEldDamager : public WBEldritchComponent {
+ public:
+  WBCompEldDamager();
+  virtual ~WBCompEldDamager();
 
-	DEFINE_WBCOMP( EldDamager, WBEldritchComponent );
+  DEFINE_WBCOMP(EldDamager, WBEldritchComponent);
 
-	virtual int		GetTickOrder() { return ETO_NoTick; }
+  virtual int GetTickOrder() { return ETO_NoTick; }
 
-	SimpleString	GetDamagerName() const { return m_DamagerName; }
+  SimpleString GetDamagerName() const { return m_DamagerName; }
 
-protected:
-	virtual void	InitializeFromDefinition( const SimpleString& DefinitionName );
+ protected:
+  virtual void InitializeFromDefinition(const SimpleString& DefinitionName);
 
-private:
-	SimpleString	m_DamagerName;
+ private:
+  SimpleString m_DamagerName;
 };
 
-#endif // WBCOMPELDDAMAGER_H
+#endif  // WBCOMPELDDAMAGER_H

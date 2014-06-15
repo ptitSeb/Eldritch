@@ -4,20 +4,19 @@
 #include "uiwidget.h"
 #include "vector2.h"
 
-class UIWidgetSpacer : public UIWidget
-{
-public:
-	UIWidgetSpacer();
-	virtual ~UIWidgetSpacer();
+class UIWidgetSpacer : public UIWidget {
+ public:
+  UIWidgetSpacer();
+  virtual ~UIWidgetSpacer();
 
-	DEFINE_UIWIDGET_FACTORY( Spacer );
+  DEFINE_UIWIDGET_FACTORY(Spacer);
 
-	virtual void	InitializeFromDefinition( const SimpleString& DefinitionName );
-	virtual void	GetBounds( SRect& OutBounds );
-	virtual float	GetWidth() { return m_Dimensions.x; }
-	virtual float	GetHeight() { return m_Dimensions.y; }
+  virtual void InitializeFromDefinition(const SimpleString& DefinitionName);
+  virtual void GetBounds(SRect& OutBounds);
+  virtual float GetWidth() { return m_Dimensions.x; }
+  virtual float GetHeight() { return m_Dimensions.y; }
 
-	Vector2			m_Dimensions;
+  Vector2 m_Dimensions;
 };
 
-#endif // UIWIDGETSPACER_H
+#endif  // UIWIDGETSPACER_H

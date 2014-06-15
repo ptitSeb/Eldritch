@@ -3,15 +3,16 @@
 
 #include "wbpe.h"
 
-class WBPESelf : public WBPE
-{
-public:
-	WBPESelf();
-	virtual ~WBPESelf();
+class WBPESelf : public WBPE {
+ public:
+  WBPESelf();
+  virtual ~WBPESelf();
 
-	DEFINE_WBPE_FACTORY( Self );
+  DEFINE_WBPE_FACTORY(Self);
 
-	virtual void	Evaluate( const WBParamEvaluator::SPEContext& Context, WBParamEvaluator::SEvaluatedParam& EvaluatedParam ) const;
+  virtual void Evaluate(
+      const WBParamEvaluator::SPEContext& Context,
+      WBParamEvaluator::SEvaluatedParam& EvaluatedParam) const;
 };
 
-#endif // WBPESELF_H
+#endif  // WBPESELF_H

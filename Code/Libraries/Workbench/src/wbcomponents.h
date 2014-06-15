@@ -1,7 +1,9 @@
-// For components declared in external libraries, make another header of this form
+// For components declared in external libraries, make another header of this
+// form
 // and include it where needed to register these names.
 
-// #define ADDWBCOMPONENT( type ) before including this file, then include it inline
+// #define ADDWBCOMPONENT( type ) before including this file, then include it
+// inline
 // to handle every component type as needed.
 
 #ifndef ADDWBCOMPONENT
@@ -17,13 +19,13 @@
 
 #else
 
-ADDWBCOMPONENT( Transform )
-ADDWBCOMPONENT( Reactions )
-ADDWBCOMPONENT( StatMod )
-ADDWBCOMPONENT( Owner )
-ADDWBCOMPONENT( State )
-ADDWBCOMPONENT( PEMap )
-ADDWBCOMPONENT( VariableMap )
-ADDWBCOMPONENT( Label )
+ADDWBCOMPONENT(Transform)
+ADDWBCOMPONENT(Reactions)
+ADDWBCOMPONENT(StatMod)
+ADDWBCOMPONENT(Owner)
+ADDWBCOMPONENT(State)
+ADDWBCOMPONENT(PEMap)
+ADDWBCOMPONENT(VariableMap)
+ADDWBCOMPONENT(Label)
 
 #endif

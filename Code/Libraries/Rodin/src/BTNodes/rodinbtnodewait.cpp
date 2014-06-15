@@ -6,85 +6,71 @@
 #include "Components/wbcomprodinbehaviortree.h"
 
 RodinBTNodeWait::RodinBTNodeWait()
-:	m_TimePE()
-,	m_TimerStarted( false )
-,	m_EventHandle( 0 )
-{
+    : m_TimePE(), m_TimerStarted(false), m_EventHandle(0) {}
+
+RodinBTNodeWait::~RodinBTNodeWait() {
+  WBEventManager* const pEventManager = GetEventManager();
+  if (pEventManager) {
+    pEventManager->UnqueueEvent(m_EventHandle);
+  }
 }
 
-RodinBTNodeWait::~RodinBTNodeWait()
-{
-	WBEventManager* const pEventManager = GetEventManager();
-	if( pEventManager )
-	{
-		pEventManager->UnqueueEvent( m_EventHandle );
-	}
+void RodinBTNodeWait::InitializeFromDefinition(
+    const SimpleString& DefinitionName) {
+  MAKEHASH(DefinitionName);
+
+  STATICHASH(TimePE);
+  m_TimePE.InitializeFromDefinition(
+      ConfigManager::GetString(sTimePE, "", sDefinitionName));
 }
 
-void RodinBTNodeWait::InitializeFromDefinition( const SimpleString& DefinitionName )
-{
-	MAKEHASH( DefinitionName );
+RodinBTNode::ETickStatus RodinBTNodeWait::Tick(float DeltaTime) {
+  Unused(DeltaTime);
 
-	STATICHASH( TimePE );
-	m_TimePE.InitializeFromDefinition( ConfigManager::GetString( sTimePE, "", sDefinitionName ) );
+  if (m_TimerStarted) {
+    return ETS_Success;
+  } else {
+    WBParamEvaluator::SPEContext Context;
+    Context.m_Entity = GetEntity();
+    m_TimePE.Evaluate(Context);
+
+    WB_MAKE_EVENT(OnWaitElapsed, NULL);
+    m_EventHandle = WB_QUEUE_EVENT_DELAY(GetEventManager(), OnWaitElapsed, this,
+                                         m_TimePE.GetFloat());
+
+    m_TimerStarted = true;
+
+    // Go to sleep and wait for animation to complete.
+    m_BehaviorTree->Sleep(this);
+    return ETS_Running;
+  }
 }
 
-RodinBTNode::ETickStatus RodinBTNodeWait::Tick( float DeltaTime )
-{
-	Unused( DeltaTime );
+void RodinBTNodeWait::OnStart() {
+  RodinBTNode::OnStart();
 
-	if( m_TimerStarted )
-	{
-		return ETS_Success;
-	}
-	else
-	{
-		WBParamEvaluator::SPEContext Context;
-		Context.m_Entity = GetEntity();
-		m_TimePE.Evaluate( Context );
-
-		WB_MAKE_EVENT( OnWaitElapsed, NULL );
-		m_EventHandle = WB_QUEUE_EVENT_DELAY( GetEventManager(), OnWaitElapsed, this, m_TimePE.GetFloat() );
-
-		m_TimerStarted = true;
-
-		// Go to sleep and wait for animation to complete.
-		m_BehaviorTree->Sleep( this );
-		return ETS_Running;
-	}
+  m_TimerStarted = false;
 }
 
-void RodinBTNodeWait::OnStart()
-{
-	RodinBTNode::OnStart();
+void RodinBTNodeWait::OnFinish() {
+  RodinBTNode::OnFinish();
 
-	m_TimerStarted = false;
+  GetEventManager()->UnqueueEvent(m_EventHandle);
+
+  if (m_IsSleeping) {
+    m_BehaviorTree->Wake(this);
+  }
 }
 
-void RodinBTNodeWait::OnFinish()
-{
-	RodinBTNode::OnFinish();
+/*virtual*/ void RodinBTNodeWait::HandleEvent(const WBEvent& Event) {
+  XTRACE_FUNCTION;
 
-	GetEventManager()->UnqueueEvent( m_EventHandle );
+  STATIC_HASHED_STRING(OnWaitElapsed);
 
-	if( m_IsSleeping )
-	{
-		m_BehaviorTree->Wake( this );
-	}
-}
-
-/*virtual*/ void RodinBTNodeWait::HandleEvent( const WBEvent& Event )
-{
-	XTRACE_FUNCTION;
-
-	STATIC_HASHED_STRING( OnWaitElapsed );
-
-	const HashedString EventName = Event.GetEventName();
-	if( EventName == sOnWaitElapsed )
-	{
-		if( m_IsSleeping )
-		{
-			m_BehaviorTree->Wake( this );
-		}
-	}
+  const HashedString EventName = Event.GetEventName();
+  if (EventName == sOnWaitElapsed) {
+    if (m_IsSleeping) {
+      m_BehaviorTree->Wake(this);
+    }
+  }
 }

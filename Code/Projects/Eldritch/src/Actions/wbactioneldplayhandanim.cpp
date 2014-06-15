@@ -6,37 +6,32 @@
 #include "eldritchmesh.h"
 #include "Components/wbcompowner.h"
 
-WBActionEldPlayHandAnim::WBActionEldPlayHandAnim()
-:	m_AnimationName( "" )
-{
+WBActionEldPlayHandAnim::WBActionEldPlayHandAnim() : m_AnimationName("") {}
+
+WBActionEldPlayHandAnim::~WBActionEldPlayHandAnim() {}
+
+/*virtual*/ void WBActionEldPlayHandAnim::InitializeFromDefinition(
+    const SimpleString& DefinitionName) {
+  WBAction::InitializeFromDefinition(DefinitionName);
+
+  MAKEHASH(DefinitionName);
+
+  STATICHASH(Animation);
+  m_AnimationName = ConfigManager::GetHash(sAnimation, HashedString::NullString,
+                                           sDefinitionName);
 }
 
-WBActionEldPlayHandAnim::~WBActionEldPlayHandAnim()
-{
-}
+/*virtual*/ void WBActionEldPlayHandAnim::Execute() {
+  WBAction::Execute();
 
-/*virtual*/ void WBActionEldPlayHandAnim::InitializeFromDefinition( const SimpleString& DefinitionName )
-{
-	WBAction::InitializeFromDefinition( DefinitionName );
+  STATIC_HASHED_STRING(EventOwner);
+  WBEntity* const pEntity = WBActionStack::Top().GetEntity(sEventOwner);
 
-	MAKEHASH( DefinitionName );
-
-	STATICHASH( Animation );
-	m_AnimationName = ConfigManager::GetHash( sAnimation, HashedString::NullString, sDefinitionName );
-}
-
-/*virtual*/ void WBActionEldPlayHandAnim::Execute()
-{
-	WBAction::Execute();
-
-	STATIC_HASHED_STRING( EventOwner );
-	WBEntity* const pEntity = WBActionStack::Top().GetEntity( sEventOwner );
-
-	if( pEntity )
-	{
-		WB_MAKE_EVENT( PlayHandAnim, pEntity );
-		WB_SET_AUTO( PlayHandAnim, Hash, AnimationName, m_AnimationName );
-		WB_SET_AUTO( PlayHandAnim, Entity, AnimatingEntity, pEntity );
-		WB_DISPATCH_EVENT( WBWorld::GetInstance()->GetEventManager(), PlayHandAnim, WBCompOwner::GetTopmostOwner( pEntity ) );
-	}
+  if (pEntity) {
+    WB_MAKE_EVENT(PlayHandAnim, pEntity);
+    WB_SET_AUTO(PlayHandAnim, Hash, AnimationName, m_AnimationName);
+    WB_SET_AUTO(PlayHandAnim, Entity, AnimatingEntity, pEntity);
+    WB_DISPATCH_EVENT(WBWorld::GetInstance()->GetEventManager(), PlayHandAnim,
+                      WBCompOwner::GetTopmostOwner(pEntity));
+  }
 }

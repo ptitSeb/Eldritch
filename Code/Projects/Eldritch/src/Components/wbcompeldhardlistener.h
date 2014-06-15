@@ -3,21 +3,20 @@
 
 #include "wbeldritchcomponent.h"
 
-class WBCompEldHardListener : public WBEldritchComponent
-{
-public:
-	WBCompEldHardListener();
-	virtual ~WBCompEldHardListener();
+class WBCompEldHardListener : public WBEldritchComponent {
+ public:
+  WBCompEldHardListener();
+  virtual ~WBCompEldHardListener();
 
-	DEFINE_WBCOMP( EldHardListener, WBEldritchComponent );
+  DEFINE_WBCOMP(EldHardListener, WBEldritchComponent);
 
-	virtual int		GetTickOrder() { return ETO_NoTick; }
+  virtual int GetTickOrder() { return ETO_NoTick; }
 
-	virtual void	HandleEvent( const WBEvent& Event );
+  virtual void HandleEvent(const WBEvent& Event);
 
-private:
-	void			RegisterForEvents();
-	void			UnregisterForEvents();
+ private:
+  void RegisterForEvents();
+  void UnregisterForEvents();
 };
 
-#endif // WBCOMPELDHARDLISTENER_H
+#endif  // WBCOMPELDHARDLISTENER_H

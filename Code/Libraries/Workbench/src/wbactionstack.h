@@ -6,15 +6,14 @@
 
 class WBEvent;
 
-namespace WBActionStack
-{
-	void Initialize();
-	void ShutDown();
+namespace WBActionStack {
+void Initialize();
+void ShutDown();
 
-	void Push( const WBEvent& Event );
-	void Pop();
+void Push(const WBEvent& Event);
+void Pop();
 
-	const WBEvent& Top();
+const WBEvent& Top();
 }
 
-#endif // WBACTIONSTACK_H
+#endif  // WBACTIONSTACK_H

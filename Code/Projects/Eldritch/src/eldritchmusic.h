@@ -3,21 +3,20 @@
 
 class ISoundInstance;
 
-class EldritchMusic
-{
-public:
-	EldritchMusic();
-	~EldritchMusic();
+class EldritchMusic {
+ public:
+  EldritchMusic();
+  ~EldritchMusic();
 
-	void	PlayMusic( const SimpleString& MusicSoundDef );
-	void	StopMusic();
+  void PlayMusic(const SimpleString& MusicSoundDef);
+  void StopMusic();
 
-	static void		InstanceDeleteCallback( void* pVoid, ISoundInstance* pInstance );
+  static void InstanceDeleteCallback(void* pVoid, ISoundInstance* pInstance);
 
-private:
-	void			OnInstanceDeleted( ISoundInstance* const pInstance );
+ private:
+  void OnInstanceDeleted(ISoundInstance* const pInstance);
 
-	ISoundInstance*	m_MusicInstance;
+  ISoundInstance* m_MusicInstance;
 };
 
-#endif // ELDRITCHMUSIC_H
+#endif  // ELDRITCHMUSIC_H

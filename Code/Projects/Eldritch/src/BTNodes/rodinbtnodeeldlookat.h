@@ -3,19 +3,18 @@
 
 #include "rodinbtnode.h"
 
-class RodinBTNodeEldLookAt : public RodinBTNode
-{
-public:
-	RodinBTNodeEldLookAt();
-	virtual ~RodinBTNodeEldLookAt();
+class RodinBTNodeEldLookAt : public RodinBTNode {
+ public:
+  RodinBTNodeEldLookAt();
+  virtual ~RodinBTNodeEldLookAt();
 
-	DEFINE_RODINBTNODE_FACTORY( EldLookAt );
+  DEFINE_RODINBTNODE_FACTORY(EldLookAt);
 
-	virtual void		InitializeFromDefinition( const SimpleString& DefinitionName );
-	virtual ETickStatus	Tick( float DeltaTime );
+  virtual void InitializeFromDefinition(const SimpleString& DefinitionName);
+  virtual ETickStatus Tick(float DeltaTime);
 
-private:
-	HashedString	m_LookTargetBlackboardKey;	// Config
+ private:
+  HashedString m_LookTargetBlackboardKey;  // Config
 };
 
-#endif // RODINBTNODEELDLOOKAT_H
+#endif  // RODINBTNODEELDLOOKAT_H

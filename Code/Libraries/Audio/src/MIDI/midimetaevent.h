@@ -3,9 +3,8 @@
 
 #include "midievent.h"
 
-class MIDIMetaEvent : public MIDIEvent
-{
-	// TODO
+class MIDIMetaEvent : public MIDIEvent {
+  // TODO
 };
 
-#endif // MIDIMETAEVENT_H
+#endif  // MIDIMETAEVENT_H

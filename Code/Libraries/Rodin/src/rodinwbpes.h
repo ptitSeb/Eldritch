@@ -6,8 +6,8 @@
 
 #else
 
-ADDWBPEFACTORY( RodinBlackboardGet );
-ADDWBPEFACTORY( RodinGetLastKnownLocation );
-ADDWBPEFACTORY( RodinGetLastKnownTime );
+ADDWBPEFACTORY(RodinBlackboardGet);
+ADDWBPEFACTORY(RodinGetLastKnownLocation);
+ADDWBPEFACTORY(RodinGetLastKnownTime);
 
 #endif

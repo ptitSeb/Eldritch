@@ -3,20 +3,19 @@
 
 #include "wbeldritchcomponent.h"
 
-class WBCompEldSensor : public WBEldritchComponent
-{
-public:
-	WBCompEldSensor();
-	virtual ~WBCompEldSensor();
+class WBCompEldSensor : public WBEldritchComponent {
+ public:
+  WBCompEldSensor();
+  virtual ~WBCompEldSensor();
 
-	virtual void	HandleEvent( const WBEvent& Event );
+  virtual void HandleEvent(const WBEvent& Event);
 
-	virtual uint	GetSerializationSize();
-	virtual void	Save( const IDataStream& Stream );
-	virtual void	Load( const IDataStream& Stream );
+  virtual uint GetSerializationSize();
+  virtual void Save(const IDataStream& Stream);
+  virtual void Load(const IDataStream& Stream);
 
-protected:
-	bool	m_Paused;	// Serialized
+ protected:
+  bool m_Paused;  // Serialized
 };
 
-#endif // WBCOMPELDSENSOR_H
+#endif  // WBCOMPELDSENSOR_H

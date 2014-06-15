@@ -3,20 +3,21 @@
 
 #include "wbpe.h"
 
-class WBPEEldGetCharacterVO : public WBPE
-{
-public:
-	WBPEEldGetCharacterVO();
-	virtual ~WBPEEldGetCharacterVO();
+class WBPEEldGetCharacterVO : public WBPE {
+ public:
+  WBPEEldGetCharacterVO();
+  virtual ~WBPEEldGetCharacterVO();
 
-	DEFINE_WBPE_FACTORY( EldGetCharacterVO );
+  DEFINE_WBPE_FACTORY(EldGetCharacterVO);
 
-	virtual void	InitializeFromDefinition( const SimpleString& DefinitionName );
-	virtual void	Evaluate( const WBParamEvaluator::SPEContext& Context, WBParamEvaluator::SEvaluatedParam& EvaluatedParam ) const;
+  virtual void InitializeFromDefinition(const SimpleString& DefinitionName);
+  virtual void Evaluate(
+      const WBParamEvaluator::SPEContext& Context,
+      WBParamEvaluator::SEvaluatedParam& EvaluatedParam) const;
 
-protected:
-	WBPE*			m_EntityPE;
-	SimpleString	m_VO;
+ protected:
+  WBPE* m_EntityPE;
+  SimpleString m_VO;
 };
 
-#endif // WBPEELDGETCHARACTERVO_H
+#endif  // WBPEELDGETCHARACTERVO_H

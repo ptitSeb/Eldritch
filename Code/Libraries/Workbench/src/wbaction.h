@@ -4,21 +4,21 @@
 class SimpleString;
 class WBEntity;
 
-#define DEFINE_WBACTION_FACTORY( type ) static class WBAction* Factory() { return new WBAction##type; }
-typedef class WBAction* ( *WBActionFactoryFunc )( void );
+#define DEFINE_WBACTION_FACTORY(type) \
+  static class WBAction* Factory() { return new WBAction##type; }
+typedef class WBAction* (*WBActionFactoryFunc)(void);
 
-class WBAction
-{
-public:
-	WBAction();
-	virtual ~WBAction();
+class WBAction {
+ public:
+  WBAction();
+  virtual ~WBAction();
 
-	virtual void	InitializeFromDefinition( const SimpleString& DefinitionName );
+  virtual void InitializeFromDefinition(const SimpleString& DefinitionName);
 
-	virtual void	Execute();
+  virtual void Execute();
 
-	WBEntity*		GetEntity() const;
-	WBEntity*		GetOwner() const;
+  WBEntity* GetEntity() const;
+  WBEntity* GetOwner() const;
 };
 
-#endif // WBACTION_H
+#endif  // WBACTION_H

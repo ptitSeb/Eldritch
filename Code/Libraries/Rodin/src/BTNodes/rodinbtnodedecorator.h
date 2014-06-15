@@ -3,23 +3,23 @@
 
 #include "rodinbtnode.h"
 
-class RodinBTNodeDecorator : public RodinBTNode
-{
-public:
-	RodinBTNodeDecorator();
-	virtual ~RodinBTNodeDecorator();
+class RodinBTNodeDecorator : public RodinBTNode {
+ public:
+  RodinBTNodeDecorator();
+  virtual ~RodinBTNodeDecorator();
 
-	virtual void		InitializeFromDefinition( const SimpleString& DefinitionName );
-	virtual ETickStatus Tick( float DeltaTime );
-	virtual void		OnStart();
-	virtual void		OnFinish();
-	virtual void		OnChildCompleted( RodinBTNode* pChildNode, ETickStatus TickStatus );
+  virtual void InitializeFromDefinition(const SimpleString& DefinitionName);
+  virtual ETickStatus Tick(float DeltaTime);
+  virtual void OnStart();
+  virtual void OnFinish();
+  virtual void OnChildCompleted(RodinBTNode* pChildNode,
+                                ETickStatus TickStatus);
 
-	virtual void		Report( uint Depth );
+  virtual void Report(uint Depth);
 
-protected:
-	RodinBTNode*	m_Child;
-	ETickStatus		m_ChildStatus;
+ protected:
+  RodinBTNode* m_Child;
+  ETickStatus m_ChildStatus;
 };
 
-#endif // RODINBTNODEDECORATOR_H
+#endif  // RODINBTNODEDECORATOR_H

@@ -6,38 +6,33 @@
 #include "wbactionstack.h"
 #include "eldritchframework.h"
 
-WBActionEldDamageWorld::WBActionEldDamageWorld()
-:	m_Radius( 0.0f )
-{
+WBActionEldDamageWorld::WBActionEldDamageWorld() : m_Radius(0.0f) {}
+
+WBActionEldDamageWorld::~WBActionEldDamageWorld() {}
+
+/*virtual*/ void WBActionEldDamageWorld::InitializeFromDefinition(
+    const SimpleString& DefinitionName) {
+  WBAction::InitializeFromDefinition(DefinitionName);
+
+  MAKEHASH(DefinitionName);
+
+  STATICHASH(Radius);
+  m_Radius = ConfigManager::GetFloat(sRadius, 0.0f, sDefinitionName);
 }
 
-WBActionEldDamageWorld::~WBActionEldDamageWorld()
-{
-}
+/*virtual*/ void WBActionEldDamageWorld::Execute() {
+  WBAction::Execute();
 
-/*virtual*/ void WBActionEldDamageWorld::InitializeFromDefinition( const SimpleString& DefinitionName )
-{
-	WBAction::InitializeFromDefinition( DefinitionName );
+  STATIC_HASHED_STRING(EventOwner);
+  WBEntity* const pEntity = WBActionStack::Top().GetEntity(sEventOwner);
+  DEVASSERT(pEntity);
 
-	MAKEHASH( DefinitionName );
+  WBCompEldTransform* const pTransform =
+      pEntity->GetTransformComponent<WBCompEldTransform>();
+  DEVASSERT(pTransform);
 
-	STATICHASH( Radius );
-	m_Radius = ConfigManager::GetFloat( sRadius, 0.0f, sDefinitionName );
-}
+  EldritchWorld* const pWorld = EldritchFramework::GetInstance()->GetWorld();
+  ASSERT(pWorld);
 
-/*virtual*/ void WBActionEldDamageWorld::Execute()
-{
-	WBAction::Execute();
-
-	STATIC_HASHED_STRING( EventOwner );
-	WBEntity* const				pEntity		= WBActionStack::Top().GetEntity( sEventOwner );
-	DEVASSERT( pEntity );
-
-	WBCompEldTransform* const	pTransform	= pEntity->GetTransformComponent<WBCompEldTransform>();
-	DEVASSERT( pTransform );
-
-	EldritchWorld* const		pWorld		= EldritchFramework::GetInstance()->GetWorld();
-	ASSERT( pWorld );
-
-	pWorld->RemoveVoxelsAt( pTransform->GetLocation(), m_Radius );
+  pWorld->RemoveVoxelsAt(pTransform->GetLocation(), m_Radius);
 }

@@ -6,16 +6,18 @@
 
 class SimpleString;
 
-namespace UIFactory
-{
-	void	RegisterUIScreenFactory( const HashedString& TypeName, UIScreenFactoryFunc Factory );
-	void	RegisterUIWidgetFactory( const HashedString& TypeName, UIWidgetFactoryFunc Factory );
+namespace UIFactory {
+void RegisterUIScreenFactory(const HashedString& TypeName,
+                             UIScreenFactoryFunc Factory);
+void RegisterUIWidgetFactory(const HashedString& TypeName,
+                             UIWidgetFactoryFunc Factory);
 
-	void	InitializeBaseFactories();
-	void	ShutDown();
+void InitializeBaseFactories();
+void ShutDown();
 
-	UIScreen*	CreateScreen( const SimpleString& DefinitionName );
-	UIWidget*	CreateWidget( const SimpleString& DefinitionName, UIScreen* const pOwnerScreen );
+UIScreen* CreateScreen(const SimpleString& DefinitionName);
+UIWidget* CreateWidget(const SimpleString& DefinitionName,
+                       UIScreen* const pOwnerScreen);
 };
 
-#endif // UIFACTORY_H
+#endif  // UIFACTORY_H

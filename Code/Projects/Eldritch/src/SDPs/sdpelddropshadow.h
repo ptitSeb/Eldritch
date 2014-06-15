@@ -3,15 +3,15 @@
 
 #include "SDPs/sdpbase.h"
 
-class SDPEldDropShadow : public SDPBase
-{
-public:
-	SDPEldDropShadow();
-	virtual ~SDPEldDropShadow();
+class SDPEldDropShadow : public SDPBase {
+ public:
+  SDPEldDropShadow();
+  virtual ~SDPEldDropShadow();
 
-	DEFINE_SDP_FACTORY( EldDropShadow );
+  DEFINE_SDP_FACTORY(EldDropShadow);
 
-	virtual void	SetShaderParameters( IRenderer* const pRenderer, Mesh* const pMesh, const View& View ) const;
+  virtual void SetShaderParameters(IRenderer* const pRenderer,
+                                   Mesh* const pMesh, const View& View) const;
 };
 
-#endif // SDPELDDROPSHADOW_H
+#endif  // SDPELDDROPSHADOW_H

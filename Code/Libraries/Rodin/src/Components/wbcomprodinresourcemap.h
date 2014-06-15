@@ -8,24 +8,25 @@
 
 class IRodinResourceUser;
 
-class WBCompRodinResourceMap : public WBComponent
-{
-public:
-	WBCompRodinResourceMap();
-	virtual ~WBCompRodinResourceMap();
+class WBCompRodinResourceMap : public WBComponent {
+ public:
+  WBCompRodinResourceMap();
+  virtual ~WBCompRodinResourceMap();
 
-	DEFINE_WBCOMP( RodinResourceMap, WBComponent );
+  DEFINE_WBCOMP(RodinResourceMap, WBComponent);
 
-	virtual int		GetTickOrder() { return ETO_NoTick; }
+  virtual int GetTickOrder() { return ETO_NoTick; }
 
-	// It's always ok for a user to try to claim a resource it already has.
-	bool			ClaimResource( IRodinResourceUser* const pResourceUser, const HashedString& Resource, const bool ForceClaim );
-	void			ReleaseResource( IRodinResourceUser* const pResourceUser, const HashedString& Resource );
+  // It's always ok for a user to try to claim a resource it already has.
+  bool ClaimResource(IRodinResourceUser* const pResourceUser,
+                     const HashedString& Resource, const bool ForceClaim);
+  void ReleaseResource(IRodinResourceUser* const pResourceUser,
+                       const HashedString& Resource);
 
-private:
-	typedef Array<IRodinResourceUser*> TResourceStack;
-	typedef Map<HashedString, TResourceStack> TResourceMap;
-	TResourceMap	m_ResourceMap;	// Transient
+ private:
+  typedef Array<IRodinResourceUser*> TResourceStack;
+  typedef Map<HashedString, TResourceStack> TResourceMap;
+  TResourceMap m_ResourceMap;  // Transient
 };
 
-#endif // WBCOMPRODINRESOURCEMAP_H
+#endif  // WBCOMPRODINRESOURCEMAP_H

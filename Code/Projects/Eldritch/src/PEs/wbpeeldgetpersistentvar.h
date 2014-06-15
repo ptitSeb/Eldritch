@@ -3,19 +3,20 @@
 
 #include "wbpe.h"
 
-class WBPEEldGetPersistentVar : public WBPE
-{
-public:
-	WBPEEldGetPersistentVar();
-	virtual ~WBPEEldGetPersistentVar();
+class WBPEEldGetPersistentVar : public WBPE {
+ public:
+  WBPEEldGetPersistentVar();
+  virtual ~WBPEEldGetPersistentVar();
 
-	DEFINE_WBPE_FACTORY( EldGetPersistentVar );
+  DEFINE_WBPE_FACTORY(EldGetPersistentVar);
 
-	virtual void	InitializeFromDefinition( const SimpleString& DefinitionName );
-	virtual void	Evaluate( const WBParamEvaluator::SPEContext& Context, WBParamEvaluator::SEvaluatedParam& EvaluatedParam ) const;
+  virtual void InitializeFromDefinition(const SimpleString& DefinitionName);
+  virtual void Evaluate(
+      const WBParamEvaluator::SPEContext& Context,
+      WBParamEvaluator::SEvaluatedParam& EvaluatedParam) const;
 
-protected:
-	HashedString	m_Key;
+ protected:
+  HashedString m_Key;
 };
 
-#endif // WBPEELDGETFACTION_H
+#endif  // WBPEELDGETFACTION_H

@@ -3,15 +3,15 @@
 
 #include "SDPs/sdpbase.h"
 
-class SDPEldWorld : public SDPBase
-{
-public:
-	SDPEldWorld();
-	virtual ~SDPEldWorld();
+class SDPEldWorld : public SDPBase {
+ public:
+  SDPEldWorld();
+  virtual ~SDPEldWorld();
 
-	DEFINE_SDP_FACTORY( EldWorld );
+  DEFINE_SDP_FACTORY(EldWorld);
 
-	virtual void	SetShaderParameters( IRenderer* const pRenderer, Mesh* const pMesh, const View& View ) const;
+  virtual void SetShaderParameters(IRenderer* const pRenderer,
+                                   Mesh* const pMesh, const View& View) const;
 };
 
-#endif // SDPELDWORLD_H
+#endif  // SDPELDWORLD_H

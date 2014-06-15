@@ -3,15 +3,14 @@
 
 #include "rodinbtnode.h"
 
-class RodinBTNodeNull : public RodinBTNode
-{
-public:
-	RodinBTNodeNull();
-	virtual ~RodinBTNodeNull();
+class RodinBTNodeNull : public RodinBTNode {
+ public:
+  RodinBTNodeNull();
+  virtual ~RodinBTNodeNull();
 
-	DEFINE_RODINBTNODE_FACTORY( Null );
+  DEFINE_RODINBTNODE_FACTORY(Null);
 
-	virtual ETickStatus Tick( float DeltaTime );
+  virtual ETickStatus Tick(float DeltaTime);
 };
 
-#endif // RODINBTNODENULL_H
+#endif  // RODINBTNODENULL_H

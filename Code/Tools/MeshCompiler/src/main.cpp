@@ -7,7 +7,8 @@
 // all the necessary wrangling to get it ready to load right
 // into a game project.
 
-// Syntax: MeshCompiler.exe inmesh.xml outmesh.cms -l	(-l specifies long indices; else shorts are used)
+// Syntax: MeshCompiler.exe inmesh.xml outmesh.cms -l	(-l specifies long
+// indices; else shorts are used)
 
 // Output format: (.cms for compiled mesh)
 // Header: 22 bytes
@@ -30,24 +31,23 @@
 // Array of i indices (unsigned shorts or unsigned long)
 // Array of b bones per f frames (optional)
 //		Bones consist of interlaced Quats and Vectors
-//		This is in "frame-major order", or all bones for a frame packed together
+//		This is in "frame-major order", or all bones for a frame packed
+//together
 // Array of a animations
-//		Animations consist of a 32-byte name, an unsigned short start frame, and an unsigned short length
+//		Animations consist of a 32-byte name, an unsigned short start
+//frame, and an unsigned short length
 
-int main( int argc, char* argv[] )
-{
-	if( argc < 3 || argc > 4 )
-	{
-		printf( "Syntax: MeshCompiler.exe <infile> <outfile> [-l]\n" );
-		return 0;
-	}
+int main(int argc, char* argv[]) {
+  if (argc < 3 || argc > 4) {
+    printf("Syntax: MeshCompiler.exe <infile> <outfile> [-l]\n");
+    return 0;
+  }
 
-	bool LongIndices = false;
-	if( argc == 4 && strcmp( argv[3], "-l" ) == 0 )
-	{
-		LongIndices = true;
-	}
+  bool LongIndices = false;
+  if (argc == 4 && strcmp(argv[3], "-l") == 0) {
+    LongIndices = true;
+  }
 
-	MeshCompiler Compiler;
-	return Compiler.Compile( argv[1], argv[2], LongIndices );
+  MeshCompiler Compiler;
+  return Compiler.Compile(argv[1], argv[2], LongIndices);
 }

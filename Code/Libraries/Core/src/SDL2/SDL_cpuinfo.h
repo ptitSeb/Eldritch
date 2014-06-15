@@ -74,7 +74,7 @@ extern "C" {
  * The 64-bit PowerPC processors have a 128 byte cache line.
  * We'll use the larger value to be generally safe.
  */
-#define SDL_CACHELINE_SIZE  128
+#define SDL_CACHELINE_SIZE 128
 
 /**
  *  This function returns the number of CPU cores available.
@@ -133,7 +133,6 @@ extern DECLSPEC SDL_bool SDLCALL SDL_HasSSE41(void);
  *  This function returns true if the CPU has SSE4.2 features.
  */
 extern DECLSPEC SDL_bool SDLCALL SDL_HasSSE42(void);
-
 
 /* Ends C function definitions when using C++ */
 #ifdef __cplusplus

@@ -13,21 +13,19 @@
 
 // Syntax: ConfigCompiler.exe inconfig.config outconfig.ccf
 
-int main( int argc, char* argv[] )
-{
-	SETPRINTLEVEL( PRINTLEVEL_Spam );
+int main(int argc, char* argv[]) {
+  SETPRINTLEVEL(PRINTLEVEL_Spam);
 
-	if( argc != 3 )
-	{
-		printf( "Syntax: ConfigCompiler.exe <infile> <outfile>\n" );
-		return 0;
-	}
+  if (argc != 3) {
+    printf("Syntax: ConfigCompiler.exe <infile> <outfile>\n");
+    return 0;
+  }
 
-	ConfigParser::Parse( FileStream( argv[1], FileStream::EFM_Read ) );
+  ConfigParser::Parse(FileStream(argv[1], FileStream::EFM_Read));
 
-	ConfigManager::Report();
+  ConfigManager::Report();
 
-	ConfigManager::Save( FileStream( argv[2], FileStream::EFM_Write ) );
+  ConfigManager::Save(FileStream(argv[2], FileStream::EFM_Write));
 
-	return 0;
+  return 0;
 }

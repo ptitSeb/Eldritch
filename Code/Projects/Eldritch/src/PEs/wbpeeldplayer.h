@@ -3,15 +3,16 @@
 
 #include "wbpe.h"
 
-class WBPEEldPlayer : public WBPE
-{
-public:
-	WBPEEldPlayer();
-	virtual ~WBPEEldPlayer();
+class WBPEEldPlayer : public WBPE {
+ public:
+  WBPEEldPlayer();
+  virtual ~WBPEEldPlayer();
 
-	DEFINE_WBPE_FACTORY( EldPlayer );
+  DEFINE_WBPE_FACTORY(EldPlayer);
 
-	virtual void	Evaluate( const WBParamEvaluator::SPEContext& Context, WBParamEvaluator::SEvaluatedParam& EvaluatedParam ) const;
+  virtual void Evaluate(
+      const WBParamEvaluator::SPEContext& Context,
+      WBParamEvaluator::SEvaluatedParam& EvaluatedParam) const;
 };
 
-#endif // WBPEELDGETITEM_H
+#endif  // WBPEELDGETITEM_H

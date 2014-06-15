@@ -3,10 +3,9 @@
 
 #include "vector.h"
 
-namespace HSV
-{
-	Vector RGBToHSV( const Vector& ColorRGB );
-	Vector HSVToRGB( const Vector& ColorHSV );
+namespace HSV {
+Vector RGBToHSV(const Vector& ColorRGB);
+Vector HSVToRGB(const Vector& ColorHSV);
 }
 
-#endif // HSV
+#endif  // HSV

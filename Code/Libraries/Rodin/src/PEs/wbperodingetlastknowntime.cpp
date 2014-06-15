@@ -4,51 +4,48 @@
 #include "wbparamevaluatorfactory.h"
 #include "Components/wbcomprodinknowledge.h"
 
-WBPERodinGetLastKnownTime::WBPERodinGetLastKnownTime()
-:	m_EntityPE( NULL )
-{
+WBPERodinGetLastKnownTime::WBPERodinGetLastKnownTime() : m_EntityPE(NULL) {}
+
+WBPERodinGetLastKnownTime::~WBPERodinGetLastKnownTime() {
+  SafeDelete(m_EntityPE);
 }
 
-WBPERodinGetLastKnownTime::~WBPERodinGetLastKnownTime()
-{
-	SafeDelete( m_EntityPE );
+/*virtual*/ void WBPERodinGetLastKnownTime::InitializeFromDefinition(
+    const SimpleString& DefinitionName) {
+  MAKEHASH(DefinitionName);
+
+  STATICHASH(Entity);
+  m_EntityPE = WBParamEvaluatorFactory::Create(
+      ConfigManager::GetString(sEntity, "", sDefinitionName));
 }
 
-/*virtual*/ void WBPERodinGetLastKnownTime::InitializeFromDefinition( const SimpleString& DefinitionName )
-{
-	MAKEHASH( DefinitionName );
+/*virtual*/ void WBPERodinGetLastKnownTime::Evaluate(
+    const WBParamEvaluator::SPEContext& Context,
+    WBParamEvaluator::SEvaluatedParam& EvaluatedParam) const {
+  ASSERT(Context.m_Entity);
 
-	STATICHASH( Entity );
-	m_EntityPE = WBParamEvaluatorFactory::Create( ConfigManager::GetString( sEntity, "", sDefinitionName ) );
-}
+  WBParamEvaluator::SEvaluatedParam Value;
+  m_EntityPE->Evaluate(Context, Value);
 
-/*virtual*/ void WBPERodinGetLastKnownTime::Evaluate( const WBParamEvaluator::SPEContext& Context, WBParamEvaluator::SEvaluatedParam& EvaluatedParam ) const
-{
-	ASSERT( Context.m_Entity );
+  WBEntity* const pKnowledgeEntity = Value.GetEntity();
 
-	WBParamEvaluator::SEvaluatedParam Value;
-	m_EntityPE->Evaluate( Context, Value );
+  if (!pKnowledgeEntity) {
+    return;
+  }
 
-	WBEntity* const pKnowledgeEntity = Value.GetEntity();
+  WBCompRodinKnowledge* const pKnowledge =
+      GET_WBCOMP(Context.m_Entity, RodinKnowledge);
+  if (!pKnowledge) {
+    return;
+  }
 
-	if( !pKnowledgeEntity )
-	{
-		return;
-	}
+  const WBCompRodinKnowledge::TKnowledge* const pKnowledgeEntry =
+      pKnowledge->GetKnowledge(pKnowledgeEntity);
+  if (!pKnowledgeEntry) {
+    return;
+  }
 
-	WBCompRodinKnowledge* const pKnowledge = GET_WBCOMP( Context.m_Entity, RodinKnowledge );
-	if( !pKnowledge )
-	{
-		return;
-	}
-
-	const WBCompRodinKnowledge::TKnowledge* const pKnowledgeEntry = pKnowledge->GetKnowledge( pKnowledgeEntity );
-	if( !pKnowledgeEntry )
-	{
-		return;
-	}
-
-	STATIC_HASHED_STRING( LastKnownTime );
-	EvaluatedParam.m_Type	= WBParamEvaluator::EPT_Float;
-	EvaluatedParam.m_Float	= pKnowledgeEntry->GetFloat( sLastKnownTime );
+  STATIC_HASHED_STRING(LastKnownTime);
+  EvaluatedParam.m_Type = WBParamEvaluator::EPT_Float;
+  EvaluatedParam.m_Float = pKnowledgeEntry->GetFloat(sLastKnownTime);
 }

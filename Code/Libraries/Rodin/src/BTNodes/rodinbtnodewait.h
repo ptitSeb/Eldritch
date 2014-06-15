@@ -5,26 +5,25 @@
 #include "wbparamevaluator.h"
 #include "wbeventmanager.h"
 
-class RodinBTNodeWait : public RodinBTNode, public IWBEventObserver
-{
-public:
-	RodinBTNodeWait();
-	virtual ~RodinBTNodeWait();
+class RodinBTNodeWait : public RodinBTNode, public IWBEventObserver {
+ public:
+  RodinBTNodeWait();
+  virtual ~RodinBTNodeWait();
 
-	DEFINE_RODINBTNODE_FACTORY( Wait );
+  DEFINE_RODINBTNODE_FACTORY(Wait);
 
-	virtual void		InitializeFromDefinition( const SimpleString& DefinitionName );
-	virtual ETickStatus Tick( float DeltaTime );
-	virtual void		OnStart();
-	virtual void		OnFinish();
+  virtual void InitializeFromDefinition(const SimpleString& DefinitionName);
+  virtual ETickStatus Tick(float DeltaTime);
+  virtual void OnStart();
+  virtual void OnFinish();
 
-	// IWBEventObserver
-	virtual void		HandleEvent( const WBEvent& Event );
+  // IWBEventObserver
+  virtual void HandleEvent(const WBEvent& Event);
 
-private:
-	WBParamEvaluator	m_TimePE;		// Config
-	bool				m_TimerStarted;
-	TEventUID			m_EventHandle;
+ private:
+  WBParamEvaluator m_TimePE;  // Config
+  bool m_TimerStarted;
+  TEventUID m_EventHandle;
 };
 
-#endif // RODINBTNODEWAIT_H
+#endif  // RODINBTNODEWAIT_H

@@ -3,18 +3,17 @@
 
 #include "wbcompeldsensor.h"
 
-class WBCompEldSensorDamage : public WBCompEldSensor
-{
-public:
-	WBCompEldSensorDamage();
-	virtual ~WBCompEldSensorDamage();
+class WBCompEldSensorDamage : public WBCompEldSensor {
+ public:
+  WBCompEldSensorDamage();
+  virtual ~WBCompEldSensorDamage();
 
-	DEFINE_WBCOMP( EldSensorDamage, WBCompEldSensor );
+  DEFINE_WBCOMP(EldSensorDamage, WBCompEldSensor);
 
-	virtual void	HandleEvent( const WBEvent& Event );
+  virtual void HandleEvent(const WBEvent& Event);
 
-private:
-	void	HandleDamage( WBEntity* const pDamager ) const;
+ private:
+  void HandleDamage(WBEntity* const pDamager) const;
 };
 
-#endif // WBCOMPELDSENSORDAMAGE_H
+#endif  // WBCOMPELDSENSORDAMAGE_H

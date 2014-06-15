@@ -8,41 +8,44 @@
 
 class IDataStream;
 
-class EldritchPersistence : public IWBEventObserver
-{
-public:
-	EldritchPersistence();
-	~EldritchPersistence();
+class EldritchPersistence : public IWBEventObserver {
+ public:
+  EldritchPersistence();
+  ~EldritchPersistence();
 
-	void			Save( const IDataStream& Stream ) const;
-	void			Load( const IDataStream& Stream );
+  void Save(const IDataStream& Stream) const;
+  void Load(const IDataStream& Stream);
 
-	// IWBEventObserver
-	virtual void	HandleEvent( const WBEvent& Event );
-	void			RegisterForEvents();
+  // IWBEventObserver
+  virtual void HandleEvent(const WBEvent& Event);
+  void RegisterForEvents();
 
-	uint			GetBankMoney() const { return m_BankMoney; }
-	void			SetBankMoney( const uint BankMoney ) { m_BankMoney = BankMoney; }
+  uint GetBankMoney() const { return m_BankMoney; }
+  void SetBankMoney(const uint BankMoney) { m_BankMoney = BankMoney; }
 
-	bool			IsOpenLock( const HashedString& Lock ) const;
-	void			AddOpenLock( const HashedString& Lock );
+  bool IsOpenLock(const HashedString& Lock) const;
+  void AddOpenLock(const HashedString& Lock);
 
-	uint			GetCharacterHeadIndex() const { return m_CharacterHeadIndex; }
-	uint			GetCharacterBodyIndex() const { return m_CharacterBodyIndex; }
-	void			SetCharacterHeadIndex( const uint HeadIndex ) { m_CharacterHeadIndex = HeadIndex; }
-	void			SetCharacterBodyIndex( const uint BodyIndex ) { m_CharacterBodyIndex = BodyIndex; }
+  uint GetCharacterHeadIndex() const { return m_CharacterHeadIndex; }
+  uint GetCharacterBodyIndex() const { return m_CharacterBodyIndex; }
+  void SetCharacterHeadIndex(const uint HeadIndex) {
+    m_CharacterHeadIndex = HeadIndex;
+  }
+  void SetCharacterBodyIndex(const uint BodyIndex) {
+    m_CharacterBodyIndex = BodyIndex;
+  }
 
-	WBEvent&		GetVariableMap() { return m_VariableMap; }
+  WBEvent& GetVariableMap() { return m_VariableMap; }
 
-private:
-	uint				m_BankMoney;
+ private:
+  uint m_BankMoney;
 
-	Set<HashedString>	m_OpenLocks;
+  Set<HashedString> m_OpenLocks;
 
-	uint				m_CharacterHeadIndex;
-	uint				m_CharacterBodyIndex;
+  uint m_CharacterHeadIndex;
+  uint m_CharacterBodyIndex;
 
-	WBEvent				m_VariableMap;
+  WBEvent m_VariableMap;
 };
 
-#endif // ELDRITCHPERSISTENCE_H
+#endif  // ELDRITCHPERSISTENCE_H

@@ -6,19 +6,18 @@
 
 class IDataStream;
 
-class GL2PixelShader : public IPixelShader
-{
-public:
-	GL2PixelShader();
-	virtual ~GL2PixelShader();
+class GL2PixelShader : public IPixelShader {
+ public:
+  GL2PixelShader();
+  virtual ~GL2PixelShader();
 
-	virtual void*	GetHandle() { return &m_PixelShader; }
-	virtual bool	GetRegister( const HashedString& Parameter, uint& Register ) const;
+  virtual void* GetHandle() { return &m_PixelShader; }
+  virtual bool GetRegister(const HashedString& Parameter, uint& Register) const;
 
-	void			Initialize( const IDataStream& Stream );
+  void Initialize(const IDataStream& Stream);
 
-private:
-	GLuint	m_PixelShader;
+ private:
+  GLuint m_PixelShader;
 };
 
-#endif // GL2PIXELSHADER_H
+#endif  // GL2PIXELSHADER_H

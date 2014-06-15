@@ -4,19 +4,18 @@
 #include "rodinbtnodedecorator.h"
 #include "wbparamevaluator.h"
 
-class RodinBTNodeCastResult : public RodinBTNodeDecorator
-{
-public:
-	RodinBTNodeCastResult();
-	virtual ~RodinBTNodeCastResult();
+class RodinBTNodeCastResult : public RodinBTNodeDecorator {
+ public:
+  RodinBTNodeCastResult();
+  virtual ~RodinBTNodeCastResult();
 
-	DEFINE_RODINBTNODE_FACTORY( CastResult );
+  DEFINE_RODINBTNODE_FACTORY(CastResult);
 
-	virtual void		InitializeFromDefinition( const SimpleString& DefinitionName );
-	virtual ETickStatus	Tick( float DeltaTime );
+  virtual void InitializeFromDefinition(const SimpleString& DefinitionName);
+  virtual ETickStatus Tick(float DeltaTime);
 
-protected:
-	WBParamEvaluator	m_ValuePE;
+ protected:
+  WBParamEvaluator m_ValuePE;
 };
 
-#endif // RODINBTNODECASTRESULT_H
+#endif  // RODINBTNODECASTRESULT_H

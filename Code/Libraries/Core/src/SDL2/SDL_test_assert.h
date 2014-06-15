@@ -45,33 +45,39 @@ extern "C" {
 /**
  * \brief Fails the assert.
  */
-#define ASSERT_FAIL     0
+#define ASSERT_FAIL 0
 
 /**
  * \brief Passes the assert.
  */
-#define ASSERT_PASS     1
+#define ASSERT_PASS 1
 
 /**
  * \brief Assert that logs and break execution flow on failures.
  *
- * \param assertCondition Evaluated condition or variable to assert; fail (==0) or pass (!=0).
+ * \param assertCondition Evaluated condition or variable to assert; fail (==0)
+ *or pass (!=0).
  * \param assertDescription Message to log with the assert describing it.
  */
 void SDLTest_Assert(int assertCondition, const char *assertDescription, ...);
 
 /**
- * \brief Assert for test cases that logs but does not break execution flow on failures. Updates assertion counters.
+ * \brief Assert for test cases that logs but does not break execution flow on
+ *failures. Updates assertion counters.
  *
- * \param assertCondition Evaluated condition or variable to assert; fail (==0) or pass (!=0).
+ * \param assertCondition Evaluated condition or variable to assert; fail (==0)
+ *or pass (!=0).
  * \param assertDescription Message to log with the assert describing it.
  *
- * \returns Returns the assertCondition so it can be used to externally to break execution flow if desired.
+ * \returns Returns the assertCondition so it can be used to externally to break
+ *execution flow if desired.
  */
-int SDLTest_AssertCheck(int assertCondition, const char *assertDescription, ...);
+int SDLTest_AssertCheck(int assertCondition, const char *assertDescription,
+                        ...);
 
 /**
- * \brief Explicitely pass without checking an assertion condition. Updates assertion counter.
+ * \brief Explicitely pass without checking an assertion condition. Updates
+ *assertion counter.
  *
  * \param assertDescription Message to log with the assert describing it.
  */
@@ -83,10 +89,10 @@ void SDLTest_AssertPass(const char *assertDescription, ...);
 void SDLTest_ResetAssertSummary();
 
 /**
- * \brief Logs summary of all assertions (total, pass, fail) since last reset as INFO or ERROR.
+ * \brief Logs summary of all assertions (total, pass, fail) since last reset as
+ * INFO or ERROR.
  */
 void SDLTest_LogAssertSummary();
-
 
 /**
  * \brief Converts the current assert summary state to a test result.

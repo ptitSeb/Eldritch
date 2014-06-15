@@ -6,19 +6,18 @@
 
 class WBAction;
 
-class RodinBTNodePlayActions : public RodinBTNode
-{
-public:
-	RodinBTNodePlayActions();
-	virtual ~RodinBTNodePlayActions();
+class RodinBTNodePlayActions : public RodinBTNode {
+ public:
+  RodinBTNodePlayActions();
+  virtual ~RodinBTNodePlayActions();
 
-	DEFINE_RODINBTNODE_FACTORY( PlayActions );
+  DEFINE_RODINBTNODE_FACTORY(PlayActions);
 
-	virtual void		InitializeFromDefinition( const SimpleString& DefinitionName );
-	virtual ETickStatus	Tick( float DeltaTime );
+  virtual void InitializeFromDefinition(const SimpleString& DefinitionName);
+  virtual ETickStatus Tick(float DeltaTime);
 
-private:
-	Array<WBAction*>	m_Actions;
+ private:
+  Array<WBAction*> m_Actions;
 };
 
-#endif // RODINBTNODEPLAYACTIONS_H
+#endif  // RODINBTNODEPLAYACTIONS_H

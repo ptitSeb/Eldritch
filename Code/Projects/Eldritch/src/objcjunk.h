@@ -3,9 +3,8 @@
 
 class SimpleString;
 
-namespace ObjCJunk
-{
-    SimpleString GetUserDirectory();
+namespace ObjCJunk {
+SimpleString GetUserDirectory();
 }
 
-#endif // OBJCJUNK_H
+#endif  // OBJCJUNK_H

@@ -3,31 +3,30 @@
 
 #include "wbeldritchcomponent.h"
 
-class WBCompEldLock : public WBEldritchComponent
-{
-public:
-	WBCompEldLock();
-	virtual ~WBCompEldLock();
+class WBCompEldLock : public WBEldritchComponent {
+ public:
+  WBCompEldLock();
+  virtual ~WBCompEldLock();
 
-	DEFINE_WBCOMP( EldLock, WBEldritchComponent );
+  DEFINE_WBCOMP(EldLock, WBEldritchComponent);
 
-	virtual int		GetTickOrder() { return ETO_NoTick; }
+  virtual int GetTickOrder() { return ETO_NoTick; }
 
-	virtual void	HandleEvent( const WBEvent& Event );
-	virtual void	AddContextToEvent( WBEvent& Event ) const;
+  virtual void HandleEvent(const WBEvent& Event);
+  virtual void AddContextToEvent(WBEvent& Event) const;
 
-	virtual uint	GetSerializationSize();
-	virtual void	Save( const IDataStream& Stream );
-	virtual void	Load( const IDataStream& Stream );
+  virtual uint GetSerializationSize();
+  virtual void Save(const IDataStream& Stream);
+  virtual void Load(const IDataStream& Stream);
 
-protected:
-	virtual void	InitializeFromDefinition( const SimpleString& DefinitionName );
+ protected:
+  virtual void InitializeFromDefinition(const SimpleString& DefinitionName);
 
-private:
-	void			Unlock();
+ private:
+  void Unlock();
 
-	bool			m_Locked;
-	HashedString	m_Key;
+  bool m_Locked;
+  HashedString m_Key;
 };
 
-#endif // WBCOMPELDLOCK_H
+#endif  // WBCOMPELDLOCK_H

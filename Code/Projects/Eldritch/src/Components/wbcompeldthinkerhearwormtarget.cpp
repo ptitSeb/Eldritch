@@ -7,124 +7,126 @@
 #include "configmanager.h"
 
 WBCompEldThinkerHearWormTarget::WBCompEldThinkerHearWormTarget()
-:	m_OutputAlarmTargetBlackboardKey()
-,	m_OutputWatchTargetBlackboardKey()
-,	m_AlarmTargetScoreThreshold( 0.0f )
-,	m_WatchTargetScoreThreshold( 0.0f )
-{
+    : m_OutputAlarmTargetBlackboardKey(),
+      m_OutputWatchTargetBlackboardKey(),
+      m_AlarmTargetScoreThreshold(0.0f),
+      m_WatchTargetScoreThreshold(0.0f) {}
+
+WBCompEldThinkerHearWormTarget::~WBCompEldThinkerHearWormTarget() {}
+
+/*virtual*/ void WBCompEldThinkerHearWormTarget::InitializeFromDefinition(
+    const SimpleString& DefinitionName) {
+  Super::InitializeFromDefinition(DefinitionName);
+
+  MAKEHASH(DefinitionName);
+
+  STATICHASH(OutputAlarmTargetBlackboardKey);
+  m_OutputAlarmTargetBlackboardKey = ConfigManager::GetInheritedHash(
+      sOutputAlarmTargetBlackboardKey, HashedString::NullString,
+      sDefinitionName);
+
+  STATICHASH(OutputWatchTargetBlackboardKey);
+  m_OutputWatchTargetBlackboardKey = ConfigManager::GetInheritedHash(
+      sOutputWatchTargetBlackboardKey, HashedString::NullString,
+      sDefinitionName);
+
+  STATICHASH(AlarmTargetScoreThreshold);
+  m_AlarmTargetScoreThreshold = ConfigManager::GetInheritedFloat(
+      sAlarmTargetScoreThreshold, 0.0f, sDefinitionName);
+
+  STATICHASH(WatchTargetScoreThreshold);
+  m_WatchTargetScoreThreshold = ConfigManager::GetInheritedFloat(
+      sWatchTargetScoreThreshold, 0.0f, sDefinitionName);
 }
 
-WBCompEldThinkerHearWormTarget::~WBCompEldThinkerHearWormTarget()
-{
-}
+/*virtual*/ void WBCompEldThinkerHearWormTarget::Tick(float DeltaTime) {
+  XTRACE_FUNCTION;
 
-/*virtual*/ void WBCompEldThinkerHearWormTarget::InitializeFromDefinition( const SimpleString& DefinitionName )
-{
-	Super::InitializeFromDefinition( DefinitionName );
+  Unused(DeltaTime);
 
-	MAKEHASH( DefinitionName );
+  WBEntity* const pEntity = GetEntity();
+  DEVASSERT(pEntity);
 
-	STATICHASH( OutputAlarmTargetBlackboardKey );
-	m_OutputAlarmTargetBlackboardKey = ConfigManager::GetInheritedHash( sOutputAlarmTargetBlackboardKey, HashedString::NullString, sDefinitionName );
+  WBCompRodinKnowledge* const pKnowledge = GET_WBCOMP(pEntity, RodinKnowledge);
+  ASSERT(pKnowledge);
 
-	STATICHASH( OutputWatchTargetBlackboardKey );
-	m_OutputWatchTargetBlackboardKey = ConfigManager::GetInheritedHash( sOutputWatchTargetBlackboardKey, HashedString::NullString, sDefinitionName );
+  WBCompRodinBlackboard* const pBlackboard =
+      GET_WBCOMP(pEntity, RodinBlackboard);
+  ASSERT(pBlackboard);
 
-	STATICHASH( AlarmTargetScoreThreshold );
-	m_AlarmTargetScoreThreshold = ConfigManager::GetInheritedFloat( sAlarmTargetScoreThreshold, 0.0f, sDefinitionName );
+  WBEntity* pSelectedAlarmTarget = NULL;
+  float SelectedAlarmTargetScore = 0.0f;
 
-	STATICHASH( WatchTargetScoreThreshold );
-	m_WatchTargetScoreThreshold = ConfigManager::GetInheritedFloat( sWatchTargetScoreThreshold, 0.0f, sDefinitionName );
-}
+  WBEntity* pSelectedWatchTarget = NULL;
+  float SelectedWatchTargetScore = 0.0f;
 
-/*virtual*/ void WBCompEldThinkerHearWormTarget::Tick( float DeltaTime )
-{
-	XTRACE_FUNCTION;
+  const WBCompRodinKnowledge::TKnowledgeMap& KnowledgeMap =
+      pKnowledge->GetKnowledgeMap();
+  FOR_EACH_MAP(KnowledgeIter, KnowledgeMap, WBEntityRef,
+               WBCompRodinKnowledge::TKnowledge) {
+    WBEntity* const pKnowledgeEntity = KnowledgeIter.GetKey().Get();
+    const WBCompRodinKnowledge::TKnowledge& Knowledge =
+        KnowledgeIter.GetValue();
 
-	Unused( DeltaTime );
+    if (!pKnowledgeEntity) {
+      continue;
+    }
 
-	WBEntity* const					pEntity		= GetEntity();
-	DEVASSERT( pEntity );
+    // Filter out knowledge entities that aren't potential targets
+    STATIC_HASHED_STRING(KnowledgeType);
+    STATIC_HASHED_STRING(Target);
+    const HashedString KnowledgeType = Knowledge.GetHash(sKnowledgeType);
+    if (KnowledgeType != sTarget) {
+      continue;
+    }
 
-	WBCompRodinKnowledge* const		pKnowledge	= GET_WBCOMP( pEntity, RodinKnowledge );
-	ASSERT( pKnowledge );
+    // Filter out dead entities
+    WBCompEldHealth* const pHealth = GET_WBCOMP(pKnowledgeEntity, EldHealth);
+    if (pHealth && pHealth->IsDead()) {
+      continue;
+    }
 
-	WBCompRodinBlackboard* const	pBlackboard	= GET_WBCOMP( pEntity, RodinBlackboard );
-	ASSERT( pBlackboard );
+    // Filter out knowledge entities that are friendly to us
+    const EldritchFactions::EFactionCon Con =
+        WBCompEldFaction::GetCon(pEntity, pKnowledgeEntity);
+    if (Con == EldritchFactions::EFR_Friendly) {
+      continue;
+    }
 
-	WBEntity*	pSelectedAlarmTarget		= NULL;
-	float		SelectedAlarmTargetScore	= 0.0f;
+    // Filter out knowledge entities that are neutral and not yet regarded as
+    // hostile
+    if (Con == EldritchFactions::EFR_Neutral) {
+      STATIC_HASHED_STRING(RegardAsHostile);
+      const bool RegardAsHostile = Knowledge.GetBool(sRegardAsHostile);
+      if (!RegardAsHostile) {
+        continue;
+      }
+    }
 
-	WBEntity*	pSelectedWatchTarget		= NULL;
-	float		SelectedWatchTargetScore	= 0.0f;
+    float Score = 0.0f;
+    float HearingScore = 1.0f;
 
-	const WBCompRodinKnowledge::TKnowledgeMap& KnowledgeMap = pKnowledge->GetKnowledgeMap();
-	FOR_EACH_MAP( KnowledgeIter, KnowledgeMap, WBEntityRef, WBCompRodinKnowledge::TKnowledge )
-	{
-		WBEntity* const							pKnowledgeEntity	= KnowledgeIter.GetKey().Get();
-		const WBCompRodinKnowledge::TKnowledge&	Knowledge			= KnowledgeIter.GetValue();
+    STATIC_HASHED_STRING(HearingCertainty);
+    const float HearingCertainty = Knowledge.GetFloat(sHearingCertainty);
+    HearingScore *= HearingCertainty;
 
-		if( !pKnowledgeEntity )
-		{
-			continue;
-		}
+    Score += HearingScore;
 
-		// Filter out knowledge entities that aren't potential targets
-		STATIC_HASHED_STRING( KnowledgeType );
-		STATIC_HASHED_STRING( Target );
-		const HashedString KnowledgeType = Knowledge.GetHash( sKnowledgeType );
-		if( KnowledgeType != sTarget )
-		{
-			continue;
-		}
+    if (Score >= m_AlarmTargetScoreThreshold &&
+        Score > SelectedAlarmTargetScore) {
+      pSelectedAlarmTarget = pKnowledgeEntity;
+      SelectedAlarmTargetScore = Score;
+    }
 
-		// Filter out dead entities
-		WBCompEldHealth* const pHealth = GET_WBCOMP( pKnowledgeEntity, EldHealth );
-		if( pHealth && pHealth->IsDead() )
-		{
-			continue;
-		}
+    if (Score >= m_WatchTargetScoreThreshold &&
+        Score > SelectedWatchTargetScore) {
+      pSelectedWatchTarget = pKnowledgeEntity;
+      SelectedWatchTargetScore = Score;
+    }
+  }
 
-		// Filter out knowledge entities that are friendly to us
-		const EldritchFactions::EFactionCon Con = WBCompEldFaction::GetCon( pEntity, pKnowledgeEntity );
-		if( Con == EldritchFactions::EFR_Friendly )
-		{
-			continue;
-		}
-
-		// Filter out knowledge entities that are neutral and not yet regarded as hostile
-		if( Con == EldritchFactions::EFR_Neutral )
-		{
-			STATIC_HASHED_STRING( RegardAsHostile );
-			const bool RegardAsHostile = Knowledge.GetBool( sRegardAsHostile );
-			if( !RegardAsHostile )
-			{
-				continue;
-			}
-		}
-
-		float Score			= 0.0f;
-		float HearingScore	= 1.0f;
-
-		STATIC_HASHED_STRING( HearingCertainty );
-		const float HearingCertainty = Knowledge.GetFloat( sHearingCertainty );
-		HearingScore *= HearingCertainty;
-
-		Score += HearingScore;
-
-		if( Score >= m_AlarmTargetScoreThreshold && Score > SelectedAlarmTargetScore )
-		{
-			pSelectedAlarmTarget		= pKnowledgeEntity;
-			SelectedAlarmTargetScore	= Score;
-		}
-
-		if( Score >= m_WatchTargetScoreThreshold && Score > SelectedWatchTargetScore )
-		{
-			pSelectedWatchTarget		= pKnowledgeEntity;
-			SelectedWatchTargetScore	= Score;
-		}
-	}
-
-	pBlackboard->SetEntity( m_OutputAlarmTargetBlackboardKey, pSelectedAlarmTarget );
-	pBlackboard->SetEntity( m_OutputWatchTargetBlackboardKey, pSelectedWatchTarget );
+  pBlackboard->SetEntity(m_OutputAlarmTargetBlackboardKey,
+                         pSelectedAlarmTarget);
+  pBlackboard->SetEntity(m_OutputWatchTargetBlackboardKey,
+                         pSelectedWatchTarget);
 }

@@ -4,22 +4,21 @@
 #include "map.h"
 #include "surface.h"
 
-class SurfaceManager
-{
-public:
-	static SurfaceManager* GetInstance();
-	static void DeleteInstance();
+class SurfaceManager {
+ public:
+  static SurfaceManager* GetInstance();
+  static void DeleteInstance();
 
-	Surface* GetSurface( const char* Filename, Surface::ESurfaceFileType FileType );
+  Surface* GetSurface(const char* Filename, Surface::ESurfaceFileType FileType);
 
-private:
-	SurfaceManager();
-	~SurfaceManager();
+ private:
+  SurfaceManager();
+  ~SurfaceManager();
 
-	static SurfaceManager*	m_Instance;
+  static SurfaceManager* m_Instance;
 
-	typedef Map< HashedString, Surface* > SurfaceMap;
-	SurfaceMap	m_Surfaces;
+  typedef Map<HashedString, Surface*> SurfaceMap;
+  SurfaceMap m_Surfaces;
 };
 
-#endif // SURFACEMANAGER_H
+#endif  // SURFACEMANAGER_H

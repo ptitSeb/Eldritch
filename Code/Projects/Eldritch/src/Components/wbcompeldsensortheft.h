@@ -3,18 +3,17 @@
 
 #include "wbcompeldsensor.h"
 
-class WBCompEldSensorTheft : public WBCompEldSensor
-{
-public:
-	WBCompEldSensorTheft();
-	virtual ~WBCompEldSensorTheft();
+class WBCompEldSensorTheft : public WBCompEldSensor {
+ public:
+  WBCompEldSensorTheft();
+  virtual ~WBCompEldSensorTheft();
 
-	DEFINE_WBCOMP( EldSensorTheft, WBCompEldSensor );
+  DEFINE_WBCOMP(EldSensorTheft, WBCompEldSensor);
 
-	virtual void	HandleEvent( const WBEvent& Event );
+  virtual void HandleEvent(const WBEvent& Event);
 
-private:
-	void	HandleTheft( WBEntity* const pThief ) const;
+ private:
+  void HandleTheft(WBEntity* const pThief) const;
 };
 
-#endif // WBCOMPELDSENSORTHEFT_H
+#endif  // WBCOMPELDSENSORTHEFT_H

@@ -7,19 +7,18 @@
 #include "wbaction.h"
 #include "wbparamevaluator.h"
 
-class WBActionEldDamageWorld : public WBAction
-{
-public:
-	WBActionEldDamageWorld();
-	virtual ~WBActionEldDamageWorld();
+class WBActionEldDamageWorld : public WBAction {
+ public:
+  WBActionEldDamageWorld();
+  virtual ~WBActionEldDamageWorld();
 
-	DEFINE_WBACTION_FACTORY( EldDamageWorld );
+  DEFINE_WBACTION_FACTORY(EldDamageWorld);
 
-	virtual void	InitializeFromDefinition( const SimpleString& DefinitionName );
-	virtual void	Execute();
+  virtual void InitializeFromDefinition(const SimpleString& DefinitionName);
+  virtual void Execute();
 
-private:
-	float	m_Radius;
+ private:
+  float m_Radius;
 };
 
-#endif // WBACTIONELDDAMAGEWORLD_H
+#endif  // WBACTIONELDDAMAGEWORLD_H

@@ -16,22 +16,21 @@ class Mesh;
 // around so that the vertex buffers can be shared and aren't
 // automatically freed when every instance is deleted.
 
-class DynamicMeshManager
-{
-private:
-	DynamicMeshManager();
-	~DynamicMeshManager();
+class DynamicMeshManager {
+ private:
+  DynamicMeshManager();
+  ~DynamicMeshManager();
 
-public:
-	static DynamicMeshManager*	GetInstance();
-	static void					DeleteInstance();
+ public:
+  static DynamicMeshManager* GetInstance();
+  static void DeleteInstance();
 
-	void						FreeMeshes();
-	Mesh*						GetMesh( MeshFactory* pFactory, const char* Filename );
+  void FreeMeshes();
+  Mesh* GetMesh(MeshFactory* pFactory, const char* Filename);
 
-	Map< HashedString, Mesh* >	m_Meshes;
+  Map<HashedString, Mesh*> m_Meshes;
 
-	static DynamicMeshManager*	m_Instance;
+  static DynamicMeshManager* m_Instance;
 };
 
-#endif // DYNAMICMESHMANAGER_H
+#endif  // DYNAMICMESHMANAGER_H

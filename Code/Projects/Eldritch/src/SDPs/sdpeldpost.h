@@ -3,15 +3,15 @@
 
 #include "SDPs/sdpbase.h"
 
-class SDPEldPost : public SDPBase
-{
-public:
-	SDPEldPost();
-	virtual ~SDPEldPost();
+class SDPEldPost : public SDPBase {
+ public:
+  SDPEldPost();
+  virtual ~SDPEldPost();
 
-	DEFINE_SDP_FACTORY( EldPost );
+  DEFINE_SDP_FACTORY(EldPost);
 
-	virtual void	SetShaderParameters( IRenderer* const pRenderer, Mesh* const pMesh, const View& View ) const;
+  virtual void SetShaderParameters(IRenderer* const pRenderer,
+                                   Mesh* const pMesh, const View& View) const;
 };
 
-#endif // SDPELDPOST_H
+#endif  // SDPELDPOST_H

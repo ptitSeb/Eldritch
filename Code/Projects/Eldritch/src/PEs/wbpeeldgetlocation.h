@@ -3,19 +3,20 @@
 
 #include "wbpe.h"
 
-class WBPEEldGetLocation : public WBPE
-{
-public:
-	WBPEEldGetLocation();
-	virtual ~WBPEEldGetLocation();
+class WBPEEldGetLocation : public WBPE {
+ public:
+  WBPEEldGetLocation();
+  virtual ~WBPEEldGetLocation();
 
-	DEFINE_WBPE_FACTORY( EldGetLocation );
+  DEFINE_WBPE_FACTORY(EldGetLocation);
 
-	virtual void	InitializeFromDefinition( const SimpleString& DefinitionName );
-	virtual void	Evaluate( const WBParamEvaluator::SPEContext& Context, WBParamEvaluator::SEvaluatedParam& EvaluatedParam ) const;
+  virtual void InitializeFromDefinition(const SimpleString& DefinitionName);
+  virtual void Evaluate(
+      const WBParamEvaluator::SPEContext& Context,
+      WBParamEvaluator::SEvaluatedParam& EvaluatedParam) const;
 
-private:
-	WBPE*	m_EntityPE;
+ private:
+  WBPE* m_EntityPE;
 };
 
-#endif // WBPEELDGETLOCATION_H
+#endif  // WBPEELDGETLOCATION_H

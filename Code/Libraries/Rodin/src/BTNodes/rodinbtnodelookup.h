@@ -3,15 +3,14 @@
 
 #include "rodinbtnodedecorator.h"
 
-class RodinBTNodeLookup : public RodinBTNodeDecorator
-{
-public:
-	RodinBTNodeLookup();
-	virtual ~RodinBTNodeLookup();
+class RodinBTNodeLookup : public RodinBTNodeDecorator {
+ public:
+  RodinBTNodeLookup();
+  virtual ~RodinBTNodeLookup();
 
-	DEFINE_RODINBTNODE_FACTORY( Lookup );
+  DEFINE_RODINBTNODE_FACTORY(Lookup);
 
-	virtual void		InitializeFromDefinition( const SimpleString& DefinitionName );
+  virtual void InitializeFromDefinition(const SimpleString& DefinitionName);
 };
 
-#endif // RODINBTNODELOOKUP_H
+#endif  // RODINBTNODELOOKUP_H

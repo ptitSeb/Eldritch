@@ -3,15 +3,14 @@
 
 #include "wbaction.h"
 
-class WBActionEldStopMotion : public WBAction
-{
-public:
-	WBActionEldStopMotion();
-	virtual ~WBActionEldStopMotion();
+class WBActionEldStopMotion : public WBAction {
+ public:
+  WBActionEldStopMotion();
+  virtual ~WBActionEldStopMotion();
 
-	DEFINE_WBACTION_FACTORY( EldStopMotion );
+  DEFINE_WBACTION_FACTORY(EldStopMotion);
 
-	virtual void	Execute();
+  virtual void Execute();
 };
 
-#endif // WBACTIONELDSTOPMOTION_H
+#endif  // WBACTIONELDSTOPMOTION_H

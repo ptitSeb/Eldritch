@@ -6,18 +6,17 @@
 
 #include "ivertexdeclaration.h"
 
-class GL2VertexDeclaration : public IVertexDeclaration
-{
-public:
-	GL2VertexDeclaration();
-	virtual ~GL2VertexDeclaration();
+class GL2VertexDeclaration : public IVertexDeclaration {
+ public:
+  GL2VertexDeclaration();
+  virtual ~GL2VertexDeclaration();
 
-	virtual void	Initialize( uint VertexSignature );
-	virtual void*	GetDeclaration();
-	virtual uint	GetSignature();
+  virtual void Initialize(uint VertexSignature);
+  virtual void* GetDeclaration();
+  virtual uint GetSignature();
 
-private:
-	uint	m_VertexSignature;
+ private:
+  uint m_VertexSignature;
 };
 
-#endif // GL2VERTEXDECLARATION_H
+#endif  // GL2VERTEXDECLARATION_H

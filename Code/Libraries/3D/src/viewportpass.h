@@ -6,21 +6,22 @@
 
 class View;
 
-class ViewportPass
-{
-public:
-	ViewportPass();
-	~ViewportPass();
+class ViewportPass {
+ public:
+  ViewportPass();
+  ~ViewportPass();
 
-	View*			GetView( View* const pView ) const;
-	const SRect&	GetBounds() const { return m_ViewportBounds; }
+  View* GetView(View* const pView) const;
+  const SRect& GetBounds() const { return m_ViewportBounds; }
 
-	void			SetBounds( const SRect Bounds ) { m_ViewportBounds = Bounds; }
-	void			SetViewOverride( View* const pOriginalView, View* const pNewView ) { m_ViewMap[ pOriginalView ] = pNewView; }
+  void SetBounds(const SRect Bounds) { m_ViewportBounds = Bounds; }
+  void SetViewOverride(View* const pOriginalView, View* const pNewView) {
+    m_ViewMap[pOriginalView] = pNewView;
+  }
 
-private:
-	SRect				m_ViewportBounds;
-	Map<View*, View*>	m_ViewMap;
+ private:
+  SRect m_ViewportBounds;
+  Map<View*, View*> m_ViewMap;
 };
 
-#endif // VIEWPORTPASS_H
+#endif  // VIEWPORTPASS_H

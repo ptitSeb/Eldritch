@@ -4,12 +4,11 @@
 class Matrix;
 class BoneArray;
 
-class IBoneModifier
-{
-public:
-	virtual ~IBoneModifier() {}
+class IBoneModifier {
+ public:
+  virtual ~IBoneModifier() {}
 
-	virtual void	Modify( const BoneArray* pBones, Matrix* pInOutBoneMatrices ) = 0;
+  virtual void Modify(const BoneArray* pBones, Matrix* pInOutBoneMatrices) = 0;
 };
 
-#endif // IBONEMODIFIER_H
+#endif  // IBONEMODIFIER_H

@@ -3,13 +3,12 @@
 
 #include "wbeldritchcomponent.h"
 
-class WBCompEldThinker : public WBEldritchComponent
-{
-public:
-	WBCompEldThinker();
-	virtual ~WBCompEldThinker();
+class WBCompEldThinker : public WBEldritchComponent {
+ public:
+  WBCompEldThinker();
+  virtual ~WBCompEldThinker();
 
-	virtual void	HandleEvent( const WBEvent& Event );
+  virtual void HandleEvent(const WBEvent& Event);
 };
 
-#endif // WBCOMPELDTHINKER_H
+#endif  // WBCOMPELDTHINKER_H

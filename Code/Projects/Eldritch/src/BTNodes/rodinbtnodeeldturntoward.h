@@ -3,28 +3,26 @@
 
 #include "rodinbtnode.h"
 
-class RodinBTNodeEldTurnToward : public RodinBTNode
-{
-public:
-	RodinBTNodeEldTurnToward();
-	virtual ~RodinBTNodeEldTurnToward();
+class RodinBTNodeEldTurnToward : public RodinBTNode {
+ public:
+  RodinBTNodeEldTurnToward();
+  virtual ~RodinBTNodeEldTurnToward();
 
-	DEFINE_RODINBTNODE_FACTORY( EldTurnToward );
+  DEFINE_RODINBTNODE_FACTORY(EldTurnToward);
 
-	virtual void		InitializeFromDefinition( const SimpleString& DefinitionName );
-	virtual ETickStatus	Tick( float DeltaTime );
-	virtual void		OnStart();
-	virtual void		OnFinish();
+  virtual void InitializeFromDefinition(const SimpleString& DefinitionName);
+  virtual ETickStatus Tick(float DeltaTime);
+  virtual void OnStart();
+  virtual void OnFinish();
 
-private:
-	enum ETurnTowardState
-	{
-		ETTS_Begin,
-		ETTS_StartedTurn,
-	};
+ private:
+  enum ETurnTowardState {
+    ETTS_Begin,
+    ETTS_StartedTurn,
+  };
 
-	HashedString		m_TurnTargetBlackboardKey;	// Config
-	ETurnTowardState	m_TurnState;				// Transient
+  HashedString m_TurnTargetBlackboardKey;  // Config
+  ETurnTowardState m_TurnState;            // Transient
 };
 
-#endif // RODINBTNODEELDTURNTOWARD_H
+#endif  // RODINBTNODEELDTURNTOWARD_H

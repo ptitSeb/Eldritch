@@ -2,33 +2,25 @@
 #include "rodinbtnodesleep.h"
 #include "Components/wbcomprodinbehaviortree.h"
 
-RodinBTNodeSleep::RodinBTNodeSleep()
-{
+RodinBTNodeSleep::RodinBTNodeSleep() {}
+
+RodinBTNodeSleep::~RodinBTNodeSleep() {}
+
+RodinBTNode::ETickStatus RodinBTNodeSleep::Tick(float DeltaTime) {
+  Unused(DeltaTime);
+  return ETS_Success;
 }
 
-RodinBTNodeSleep::~RodinBTNodeSleep()
-{
+void RodinBTNodeSleep::OnStart() {
+  RodinBTNode::OnStart();
+
+  m_BehaviorTree->Sleep(this);
 }
 
-RodinBTNode::ETickStatus RodinBTNodeSleep::Tick( float DeltaTime )
-{
-	Unused( DeltaTime );
-	return ETS_Success;
-}
+void RodinBTNodeSleep::OnFinish() {
+  RodinBTNode::OnFinish();
 
-void RodinBTNodeSleep::OnStart()
-{
-	RodinBTNode::OnStart();
-
-	m_BehaviorTree->Sleep( this );
-}
-
-void RodinBTNodeSleep::OnFinish()
-{
-	RodinBTNode::OnFinish();
-
-	if( m_IsSleeping )
-	{
-		m_BehaviorTree->Wake( this );
-	}
+  if (m_IsSleeping) {
+    m_BehaviorTree->Wake(this);
+  }
 }

@@ -7,49 +7,44 @@
 
 void InternalLoadConfigFiles();
 
-void FrameworkUtil::LoadConfigFiles()
-{
-	STATICHASH( PackageFile );
-	STATICHASH( NumConfigFiles );
+void FrameworkUtil::LoadConfigFiles() {
+  STATICHASH(PackageFile);
+  STATICHASH(NumConfigFiles);
 
-	// Must load defaults and initialize the package before we can access any other files
-	if( !FileUtil::Exists( "Config/default.cfg" ) )
-	{
-		return;
-	}
+  // Must load defaults and initialize the package before we can access any
+  // other files
+  if (!FileUtil::Exists("Config/default.cfg")) {
+    return;
+  }
 
-	ConfigManager::Load( FileStream( "Config/default.cfg", FileStream::EFM_Read ) );
+  ConfigManager::Load(FileStream("Config/default.cfg", FileStream::EFM_Read));
 
-	// Load user variables over the defaults if possible
-	if( FileUtil::Exists( "Config/user.cfg" ) )
-	{
-		ConfigManager::Load( FileStream( "Config/user.cfg", FileStream::EFM_Read ) );
-	}
+  // Load user variables over the defaults if possible
+  if (FileUtil::Exists("Config/user.cfg")) {
+    ConfigManager::Load(FileStream("Config/user.cfg", FileStream::EFM_Read));
+  }
 
-	// Initialize the packstream from whatever the default.cfg specifies.
-	PackStream::StaticAddPackageFile( ConfigManager::GetString( sPackageFile ) );
+  // Initialize the packstream from whatever the default.cfg specifies.
+  PackStream::StaticAddPackageFile(ConfigManager::GetString(sPackageFile));
 
-	InternalLoadConfigFiles();
+  InternalLoadConfigFiles();
 }
 
-void FrameworkUtil::MinimalLoadConfigFiles( const char* RootFilename )
-{
-	ConfigManager::Load( PackStream( RootFilename ) );
+void FrameworkUtil::MinimalLoadConfigFiles(const char* RootFilename) {
+  ConfigManager::Load(PackStream(RootFilename));
 
-	InternalLoadConfigFiles();
+  InternalLoadConfigFiles();
 }
 
-void InternalLoadConfigFiles()
-{
-	STATICHASH( NumConfigFiles );
+void InternalLoadConfigFiles() {
+  STATICHASH(NumConfigFiles);
 
-	int NumConfigFiles = ConfigManager::GetInt( sNumConfigFiles );
-	for( int i = 0; i < NumConfigFiles; ++i )
-	{
-		const char* ConfigFile = ConfigManager::GetSequenceString( "ConfigFile%d", i );
-		if( ConfigFile )
-		{
-			ConfigManager::Load( PackStream( ConfigFile ) );
-		}
-	}
+  int NumConfigFiles = ConfigManager::GetInt(sNumConfigFiles);
+  for (int i = 0; i < NumConfigFiles; ++i) {
+    const char* ConfigFile =
+        ConfigManager::GetSequenceString("ConfigFile%d", i);
+    if (ConfigFile) {
+      ConfigManager::Load(PackStream(ConfigFile));
+    }
+  }
 }

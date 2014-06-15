@@ -5,43 +5,37 @@
 #include "wbparamevaluatorfactory.h"
 #include "reversehash.h"
 
-WBPEEldGetSlot::WBPEEldGetSlot()
-:	m_EntityPE( NULL )
-{
+WBPEEldGetSlot::WBPEEldGetSlot() : m_EntityPE(NULL) {}
+
+WBPEEldGetSlot::~WBPEEldGetSlot() { SafeDelete(m_EntityPE); }
+
+/*virtual*/ void WBPEEldGetSlot::InitializeFromDefinition(
+    const SimpleString& DefinitionName) {
+  MAKEHASH(DefinitionName);
+
+  STATICHASH(EntityPE);
+  m_EntityPE = WBParamEvaluatorFactory::Create(
+      ConfigManager::GetString(sEntityPE, "", sDefinitionName));
 }
 
-WBPEEldGetSlot::~WBPEEldGetSlot()
-{
-	SafeDelete( m_EntityPE );
-}
+/*virtual*/ void WBPEEldGetSlot::Evaluate(
+    const WBParamEvaluator::SPEContext& Context,
+    WBParamEvaluator::SEvaluatedParam& EvaluatedParam) const {
+  WBParamEvaluator::SEvaluatedParam EntityValue;
+  m_EntityPE->Evaluate(Context, EntityValue);
 
-/*virtual*/ void WBPEEldGetSlot::InitializeFromDefinition( const SimpleString& DefinitionName )
-{
-	MAKEHASH( DefinitionName );
+  WBEntity* const pEntity = EntityValue.GetEntity();
+  if (!pEntity) {
+    return;
+  }
 
-	STATICHASH( EntityPE );
-	m_EntityPE = WBParamEvaluatorFactory::Create( ConfigManager::GetString( sEntityPE, "", sDefinitionName ) );
-}
+  WBCompEldItem* const pItem = GET_WBCOMP(pEntity, EldItem);
+  if (!pItem) {
+    return;
+  }
 
-/*virtual*/ void WBPEEldGetSlot::Evaluate( const WBParamEvaluator::SPEContext& Context, WBParamEvaluator::SEvaluatedParam& EvaluatedParam ) const
-{
-	WBParamEvaluator::SEvaluatedParam EntityValue;
-	m_EntityPE->Evaluate( Context, EntityValue );
+  const HashedString SlotHash = pItem->GetSlot();
 
-	WBEntity* const pEntity = EntityValue.GetEntity();
-	if( !pEntity )
-	{
-		return;
-	}
-
-	WBCompEldItem* const pItem = GET_WBCOMP( pEntity, EldItem );
-	if( !pItem )
-	{
-		return;
-	}
-
-	const HashedString	SlotHash	= pItem->GetSlot();
-
-	EvaluatedParam.m_Type	= WBParamEvaluator::EPT_String;
-	EvaluatedParam.m_String	= ReverseHash::ReversedHash( SlotHash );
+  EvaluatedParam.m_Type = WBParamEvaluator::EPT_String;
+  EvaluatedParam.m_String = ReverseHash::ReversedHash(SlotHash);
 }

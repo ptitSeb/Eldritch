@@ -4,27 +4,26 @@
 #include "rodinbtnode.h"
 #include "iwbeventobserver.h"
 
-class RodinBTNodeEldPlayAnim : public RodinBTNode, public IWBEventObserver
-{
-public:
-	RodinBTNodeEldPlayAnim();
-	virtual ~RodinBTNodeEldPlayAnim();
+class RodinBTNodeEldPlayAnim : public RodinBTNode, public IWBEventObserver {
+ public:
+  RodinBTNodeEldPlayAnim();
+  virtual ~RodinBTNodeEldPlayAnim();
 
-	DEFINE_RODINBTNODE_FACTORY( EldPlayAnim );
+  DEFINE_RODINBTNODE_FACTORY(EldPlayAnim);
 
-	virtual void		InitializeFromDefinition( const SimpleString& DefinitionName );
-	virtual ETickStatus	Tick( float DeltaTime );
-	virtual void		OnStart();
-	virtual void		OnFinish();
+  virtual void InitializeFromDefinition(const SimpleString& DefinitionName);
+  virtual ETickStatus Tick(float DeltaTime);
+  virtual void OnStart();
+  virtual void OnFinish();
 
-	// IWBEventObserver
-	virtual void		HandleEvent( const WBEvent& Event );
+  // IWBEventObserver
+  virtual void HandleEvent(const WBEvent& Event);
 
-private:
-	HashedString	m_AnimationName;
-	bool			m_Loop;
+ private:
+  HashedString m_AnimationName;
+  bool m_Loop;
 
-	bool			m_HasRequestedAnim;
+  bool m_HasRequestedAnim;
 };
 
-#endif // RODINBTNODEELDPLAYANIM_H
+#endif  // RODINBTNODEELDPLAYANIM_H

@@ -5,7 +5,7 @@
 
 #else
 
-ADDANIMEVENTFACTORY( EldExecuteAction );
-ADDANIMEVENTFACTORY( EldSendEvent );
+ADDANIMEVENTFACTORY(EldExecuteAction);
+ADDANIMEVENTFACTORY(EldSendEvent);
 
 #endif

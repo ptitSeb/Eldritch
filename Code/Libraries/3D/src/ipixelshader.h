@@ -1,13 +1,13 @@
 #ifndef IPIXELSHADER_H
 #define IPIXELSHADER_H
 
-class IPixelShader
-{
-public:
-	virtual ~IPixelShader() {}
+class IPixelShader {
+ public:
+  virtual ~IPixelShader() {}
 
-	virtual void*	GetHandle() = 0;
-	virtual bool	GetRegister( const HashedString& Parameter, uint& Register ) const = 0;
+  virtual void* GetHandle() = 0;
+  virtual bool GetRegister(const HashedString& Parameter,
+                           uint& Register) const = 0;
 };
 
-#endif // IPIXELSHADER_H
+#endif  // IPIXELSHADER_H

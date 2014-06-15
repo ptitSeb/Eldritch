@@ -4,24 +4,20 @@
 #include "Components/wbcomprodinbehaviortree.h"
 #include "configmanager.h"
 
-RodinBTNodeLookup::RodinBTNodeLookup()
-{
-}
+RodinBTNodeLookup::RodinBTNodeLookup() {}
 
-RodinBTNodeLookup::~RodinBTNodeLookup()
-{
-}
+RodinBTNodeLookup::~RodinBTNodeLookup() {}
 
-void RodinBTNodeLookup::InitializeFromDefinition( const SimpleString& DefinitionName )
-{
-	ASSERT( m_BehaviorTree );
+void RodinBTNodeLookup::InitializeFromDefinition(
+    const SimpleString& DefinitionName) {
+  ASSERT(m_BehaviorTree);
 
-	MAKEHASH( DefinitionName );
+  MAKEHASH(DefinitionName);
 
-	STATICHASH( Key );
-	const HashedString Key = ConfigManager::GetHash( sKey, "", sDefinitionName );
-	const SimpleString NodeDef = m_BehaviorTree->GetLookupNode( Key );
+  STATICHASH(Key);
+  const HashedString Key = ConfigManager::GetHash(sKey, "", sDefinitionName);
+  const SimpleString NodeDef = m_BehaviorTree->GetLookupNode(Key);
 
-	m_Child = RodinBTNodeFactory::Create( NodeDef, m_BehaviorTree );
-	ASSERT( m_Child );
+  m_Child = RodinBTNodeFactory::Create(NodeDef, m_BehaviorTree);
+  ASSERT(m_Child);
 }

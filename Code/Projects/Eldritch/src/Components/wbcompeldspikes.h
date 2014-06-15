@@ -3,29 +3,28 @@
 
 #include "wbeldritchcomponent.h"
 
-class WBCompEldSpikes : public WBEldritchComponent
-{
-public:
-	WBCompEldSpikes();
-	virtual ~WBCompEldSpikes();
+class WBCompEldSpikes : public WBEldritchComponent {
+ public:
+  WBCompEldSpikes();
+  virtual ~WBCompEldSpikes();
 
-	DEFINE_WBCOMP( EldSpikes, WBEldritchComponent );
+  DEFINE_WBCOMP(EldSpikes, WBEldritchComponent);
 
-	virtual int		GetTickOrder() { return ETO_NoTick; }
+  virtual int GetTickOrder() { return ETO_NoTick; }
 
-	virtual void	HandleEvent( const WBEvent& Event );
+  virtual void HandleEvent(const WBEvent& Event);
 
-protected:
-	virtual void	InitializeFromDefinition( const SimpleString& DefinitionName );
+ protected:
+  virtual void InitializeFromDefinition(const SimpleString& DefinitionName);
 
-private:
-	void	HandleOnTouched( WBEntity* const pTouched );
-	bool	ShouldSendSpikedEvent( WBEntity* const pTouched );
-	void	SendSpikedEvent( WBEntity* const pTouched );
+ private:
+  void HandleOnTouched(WBEntity* const pTouched);
+  bool ShouldSendSpikedEvent(WBEntity* const pTouched);
+  void SendSpikedEvent(WBEntity* const pTouched);
 
-	float	m_SpeedThresholdSq;			// Config
-	bool	m_CheckMovingDown;			// Config
-	float	m_RecentlyLandedThreshold;	// Config, only applies to CheckMovingDown
+  float m_SpeedThresholdSq;         // Config
+  bool m_CheckMovingDown;           // Config
+  float m_RecentlyLandedThreshold;  // Config, only applies to CheckMovingDown
 };
 
-#endif // WBCOMPELDSPIKES_H
+#endif  // WBCOMPELDSPIKES_H

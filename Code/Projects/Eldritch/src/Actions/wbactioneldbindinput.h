@@ -4,20 +4,19 @@
 #include "wbaction.h"
 #include "simplestring.h"
 
-class WBActionEldBindInput : public WBAction
-{
-public:
-	WBActionEldBindInput();
-	virtual ~WBActionEldBindInput();
+class WBActionEldBindInput : public WBAction {
+ public:
+  WBActionEldBindInput();
+  virtual ~WBActionEldBindInput();
 
-	DEFINE_WBACTION_FACTORY( EldBindInput );
+  DEFINE_WBACTION_FACTORY(EldBindInput);
 
-	virtual void	InitializeFromDefinition( const SimpleString& DefinitionName );
+  virtual void InitializeFromDefinition(const SimpleString& DefinitionName);
 
-	virtual void	Execute();
+  virtual void Execute();
 
-private:
-	SimpleString	m_Input;
+ private:
+  SimpleString m_Input;
 };
 
-#endif // WBACTIONELDBINDINPUT_H
+#endif  // WBACTIONELDBINDINPUT_H

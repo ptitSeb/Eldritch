@@ -10,62 +10,65 @@
 #include "multimap.h"
 #include "hashedstring.h"
 
-#define WB_MODIFY_FLOAT( name, var, statmod )									\
-	STATIC_HASHED_STRING( name );												\
-	ASSERT( ( statmod ) );														\
-	const float name##AutoVar = ( statmod )->ModifyFloat( ( var ), s##name )
+#define WB_MODIFY_FLOAT(name, var, statmod) \
+  STATIC_HASHED_STRING(name);               \
+  ASSERT((statmod));                        \
+  const float name##AutoVar = (statmod)->ModifyFloat((var), s##name)
 
-#define WB_MODIFY_FLOAT_SAFE( name, var, statmod )																\
-	STATIC_HASHED_STRING( name );																				\
-	WBCompStatMod* const name##StatMod = ( statmod );															\
-	const float name##Eval = ( var );																			\
-	const float name##AutoVar = name##StatMod ? name##StatMod->ModifyFloat( name##Eval, s##name ) : name##Eval
+#define WB_MODIFY_FLOAT_SAFE(name, var, statmod)                      \
+  STATIC_HASHED_STRING(name);                                         \
+  WBCompStatMod* const name##StatMod = (statmod);                     \
+  const float name##Eval = (var);                                     \
+  const float name##AutoVar =                                         \
+      name##StatMod ? name##StatMod->ModifyFloat(name##Eval, s##name) \
+                    : name##Eval
 
-#define WB_MODDED( name ) name##AutoVar
+#define WB_MODDED(name) name##AutoVar
 
-class WBCompStatMod : public WBComponent
-{
-public:
-	WBCompStatMod();
-	virtual ~WBCompStatMod();
+class WBCompStatMod : public WBComponent {
+ public:
+  WBCompStatMod();
+  virtual ~WBCompStatMod();
 
-	DEFINE_WBCOMP( StatMod, WBComponent );
+  DEFINE_WBCOMP(StatMod, WBComponent);
 
-	virtual int		GetTickOrder() { return ETO_NoTick; }
+  virtual int GetTickOrder() { return ETO_NoTick; }
 
-	virtual void	HandleEvent( const WBEvent& Event );
+  virtual void HandleEvent(const WBEvent& Event);
 
-	void			TriggerEvent( const HashedString& Event );
-	void			UnTriggerEvent( const HashedString& Event );
-	void			SetEventActive( const HashedString& Event, bool Active );
+  void TriggerEvent(const HashedString& Event);
+  void UnTriggerEvent(const HashedString& Event);
+  void SetEventActive(const HashedString& Event, bool Active);
 
-	float			ModifyFloat( const float Value, const HashedString& StatName );
+  float ModifyFloat(const float Value, const HashedString& StatName);
 
-protected:
-	virtual void	InitializeFromDefinition( const SimpleString& DefinitionName );
+ protected:
+  virtual void InitializeFromDefinition(const SimpleString& DefinitionName);
 
-private:
-	enum EModifierFunction
-	{
-		EMF_None,
-		EMF_Add,
-		EMF_Multiply,
-	};
+ private:
+  enum EModifierFunction {
+    EMF_None,
+    EMF_Add,
+    EMF_Multiply,
+  };
 
-	static EModifierFunction	GetModifierFunctionFromString( const HashedString& Function );
+  static EModifierFunction GetModifierFunctionFromString(
+      const HashedString& Function);
 
-	struct SStatModifier
-	{
-		SStatModifier();
+  struct SStatModifier {
+    SStatModifier();
 
-		bool				m_Active;
-		HashedString		m_Event;
-		HashedString		m_Stat;
-		EModifierFunction	m_Function;
-		float				m_Value;
-	};
+    bool m_Active;
+    HashedString m_Event;
+    HashedString m_Stat;
+    EModifierFunction m_Function;
+    float m_Value;
+  };
 
-	Multimap<HashedString, SStatModifier>	m_StatModMap;	// Map of stat names to structure, for fastest lookup when modifying value
+  Multimap<HashedString, SStatModifier> m_StatModMap;  // Map of stat names to
+                                                       // structure, for fastest
+                                                       // lookup when modifying
+                                                       // value
 };
 
-#endif // WBCOMPSTATMOD_H
+#endif  // WBCOMPSTATMOD_H

@@ -6,25 +6,24 @@
 #include "hashedstring.h"
 #include "display.h"
 
-class UIScreenEldSetRes : public UIScreen
-{
-public:
-	UIScreenEldSetRes();
-	virtual ~UIScreenEldSetRes();
+class UIScreenEldSetRes : public UIScreen {
+ public:
+  UIScreenEldSetRes();
+  virtual ~UIScreenEldSetRes();
 
-	DEFINE_UISCREEN_FACTORY( EldSetRes );
+  DEFINE_UISCREEN_FACTORY(EldSetRes);
 
-	virtual void	InitializeFromDefinition( const SimpleString& DefinitionName );
+  virtual void InitializeFromDefinition(const SimpleString& DefinitionName);
 
-	virtual void	Pushed();
+  virtual void Pushed();
 
-	void			SetUICallback( const SUICallback& Callback );
+  void SetUICallback(const SUICallback& Callback);
 
-	SDisplayMode	GetRes( const HashedString& Name );
+  SDisplayMode GetRes(const HashedString& Name);
 
-protected:
-	Map<HashedString, SDisplayMode>	m_ResMap;
-	SUICallback						m_Callback;
+ protected:
+  Map<HashedString, SDisplayMode> m_ResMap;
+  SUICallback m_Callback;
 };
 
-#endif // UISCREENELDSETRES_H
+#endif  // UISCREENELDSETRES_H

@@ -5,78 +5,76 @@
 #include "Components/wbcompeldtransform.h"
 #include "configmanager.h"
 
-WBCompEldThinkerPatrol::WBCompEldThinkerPatrol()
-:	m_OutputBlackboardKey()
-{
+WBCompEldThinkerPatrol::WBCompEldThinkerPatrol() : m_OutputBlackboardKey() {}
+
+WBCompEldThinkerPatrol::~WBCompEldThinkerPatrol() {}
+
+/*virtual*/ void WBCompEldThinkerPatrol::InitializeFromDefinition(
+    const SimpleString& DefinitionName) {
+  Super::InitializeFromDefinition(DefinitionName);
+
+  MAKEHASH(DefinitionName);
+
+  STATICHASH(OutputBlackboardKey);
+  m_OutputBlackboardKey = ConfigManager::GetInheritedHash(
+      sOutputBlackboardKey, HashedString::NullString, sDefinitionName);
 }
 
-WBCompEldThinkerPatrol::~WBCompEldThinkerPatrol()
-{
-}
+/*virtual*/ void WBCompEldThinkerPatrol::Tick(float DeltaTime) {
+  XTRACE_FUNCTION;
 
-/*virtual*/ void WBCompEldThinkerPatrol::InitializeFromDefinition( const SimpleString& DefinitionName )
-{
-	Super::InitializeFromDefinition( DefinitionName );
+  Unused(DeltaTime);
 
-	MAKEHASH( DefinitionName );
+  WBEntity* const pEntity = GetEntity();
+  DEVASSERT(pEntity);
 
-	STATICHASH( OutputBlackboardKey );
-	m_OutputBlackboardKey = ConfigManager::GetInheritedHash( sOutputBlackboardKey, HashedString::NullString, sDefinitionName );
-}
+  WBCompEldTransform* const pTransform =
+      pEntity->GetTransformComponent<WBCompEldTransform>();
+  DEVASSERT(pTransform);
 
-/*virtual*/ void WBCompEldThinkerPatrol::Tick( float DeltaTime )
-{
-	XTRACE_FUNCTION;
+  WBCompRodinKnowledge* const pKnowledge = GET_WBCOMP(pEntity, RodinKnowledge);
+  ASSERT(pKnowledge);
 
-	Unused( DeltaTime );
+  WBCompRodinBlackboard* const pBlackboard =
+      GET_WBCOMP(pEntity, RodinBlackboard);
+  ASSERT(pBlackboard);
 
-	WBEntity* const					pEntity		= GetEntity();
-	DEVASSERT( pEntity );
+  const Vector CurrentLocation = pTransform->GetLocation();
 
-	WBCompEldTransform* const		pTransform	= pEntity->GetTransformComponent<WBCompEldTransform>();
-	DEVASSERT( pTransform );
+  // Select the furthest patrol point that we know about.
+  WBEntity* pFurthestPatrol = NULL;
+  float FurthestDistSq = -1.0f;
 
-	WBCompRodinKnowledge* const		pKnowledge	= GET_WBCOMP( pEntity, RodinKnowledge );
-	ASSERT( pKnowledge );
+  const WBCompRodinKnowledge::TKnowledgeMap& KnowledgeMap =
+      pKnowledge->GetKnowledgeMap();
+  FOR_EACH_MAP(KnowledgeIter, KnowledgeMap, WBEntityRef,
+               WBCompRodinKnowledge::TKnowledge) {
+    WBEntity* pKnowledgeEntity = KnowledgeIter.GetKey().Get();
+    const WBCompRodinKnowledge::TKnowledge& Knowledge =
+        KnowledgeIter.GetValue();
 
-	WBCompRodinBlackboard* const	pBlackboard	= GET_WBCOMP( pEntity, RodinBlackboard );
-	ASSERT( pBlackboard );
+    if (!pKnowledgeEntity) {
+      continue;
+    }
 
-	const Vector	CurrentLocation	= pTransform->GetLocation();
+    // Filter out knowledge entities that aren't patrol markup.
+    STATIC_HASHED_STRING(KnowledgeType);
+    STATIC_HASHED_STRING(Patrol);
+    if (Knowledge.GetHash(sKnowledgeType) != sPatrol) {
+      continue;
+    }
 
-	// Select the furthest patrol point that we know about.
-	WBEntity*		pFurthestPatrol	= NULL;
-	float			FurthestDistSq	= -1.0f;
+    WBCompEldTransform* const pKnowledgeTransform =
+        pKnowledgeEntity->GetTransformComponent<WBCompEldTransform>();
+    ASSERT(pKnowledgeTransform);
 
-	const WBCompRodinKnowledge::TKnowledgeMap& KnowledgeMap = pKnowledge->GetKnowledgeMap();
-	FOR_EACH_MAP( KnowledgeIter, KnowledgeMap, WBEntityRef, WBCompRodinKnowledge::TKnowledge )
-	{
-		WBEntity*								pKnowledgeEntity	= KnowledgeIter.GetKey().Get();
-		const WBCompRodinKnowledge::TKnowledge&	Knowledge			= KnowledgeIter.GetValue();
+    const float DistSq =
+        (pKnowledgeTransform->GetLocation() - CurrentLocation).LengthSquared();
+    if (DistSq > FurthestDistSq) {
+      FurthestDistSq = DistSq;
+      pFurthestPatrol = pKnowledgeEntity;
+    }
+  }
 
-		if( !pKnowledgeEntity )
-		{
-			continue;
-		}
-
-		// Filter out knowledge entities that aren't patrol markup.
-		STATIC_HASHED_STRING( KnowledgeType );
-		STATIC_HASHED_STRING( Patrol );
-		if( Knowledge.GetHash( sKnowledgeType ) != sPatrol )
-		{
-			continue;
-		}
-
-		WBCompEldTransform* const				pKnowledgeTransform	= pKnowledgeEntity->GetTransformComponent<WBCompEldTransform>();
-		ASSERT( pKnowledgeTransform );
-
-		const float DistSq = ( pKnowledgeTransform->GetLocation() - CurrentLocation ).LengthSquared();
-		if( DistSq > FurthestDistSq )
-		{
-			FurthestDistSq = DistSq;
-			pFurthestPatrol = pKnowledgeEntity;
-		}
-	}
-
-	pBlackboard->SetEntity( m_OutputBlackboardKey, pFurthestPatrol );
+  pBlackboard->SetEntity(m_OutputBlackboardKey, pFurthestPatrol);
 }

@@ -3,15 +3,16 @@
 
 #include "wbpebinaryop.h"
 
-class WBPEDiv : public WBPEBinaryOp
-{
-public:
-	WBPEDiv();
-	virtual ~WBPEDiv();
+class WBPEDiv : public WBPEBinaryOp {
+ public:
+  WBPEDiv();
+  virtual ~WBPEDiv();
 
-	DEFINE_WBPE_FACTORY( Div );
+  DEFINE_WBPE_FACTORY(Div);
 
-	virtual void	Evaluate( const WBParamEvaluator::SPEContext& Context, WBParamEvaluator::SEvaluatedParam& EvaluatedParam ) const;
+  virtual void Evaluate(
+      const WBParamEvaluator::SPEContext& Context,
+      WBParamEvaluator::SEvaluatedParam& EvaluatedParam) const;
 };
 
-#endif // WBPEDIV_H
+#endif  // WBPEDIV_H

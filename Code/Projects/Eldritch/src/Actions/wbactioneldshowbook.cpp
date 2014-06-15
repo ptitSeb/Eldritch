@@ -8,73 +8,69 @@
 #include "Widgets/uiwidget-text.h"
 
 WBActionEldShowBook::WBActionEldShowBook()
-:	m_BookString()
-,	m_BookStringPE()
-,	m_IsDynamic( false )
-{
+    : m_BookString(), m_BookStringPE(), m_IsDynamic(false) {}
+
+WBActionEldShowBook::~WBActionEldShowBook() {}
+
+/*virtual*/ void WBActionEldShowBook::InitializeFromDefinition(
+    const SimpleString& DefinitionName) {
+  WBAction::InitializeFromDefinition(DefinitionName);
+
+  MAKEHASH(DefinitionName);
+
+  STATICHASH(BookString);
+  m_BookString = ConfigManager::GetString(sBookString, "", sDefinitionName);
+
+  STATICHASH(BookStringPE);
+  const SimpleString BookStringPEDef =
+      ConfigManager::GetString(sBookStringPE, "", sDefinitionName);
+  m_BookStringPE.InitializeFromDefinition(BookStringPEDef);
+
+  STATICHASH(IsDynamic);
+  m_IsDynamic = ConfigManager::GetBool(sIsDynamic, false, sDefinitionName);
 }
 
-WBActionEldShowBook::~WBActionEldShowBook()
-{
-}
+/*virtual*/ void WBActionEldShowBook::Execute() {
+  WBAction::Execute();
 
-/*virtual*/ void WBActionEldShowBook::InitializeFromDefinition( const SimpleString& DefinitionName )
-{
-	WBAction::InitializeFromDefinition( DefinitionName );
+  EldritchFramework* const pFramework = EldritchFramework::GetInstance();
+  ASSERT(pFramework);
 
-	MAKEHASH( DefinitionName );
+  UIManager* const pUIManager = pFramework->GetUIManager();
+  ASSERT(pUIManager);
 
-	STATICHASH( BookString );
-	m_BookString = ConfigManager::GetString( sBookString, "", sDefinitionName );
+  UIStack* const pUIStack = pUIManager->GetUIStack();
+  ASSERT(pUIStack);
 
-	STATICHASH( BookStringPE );
-	const SimpleString BookStringPEDef = ConfigManager::GetString( sBookStringPE, "", sDefinitionName );
-	m_BookStringPE.InitializeFromDefinition( BookStringPEDef );
+  STATIC_HASHED_STRING(BookScreen);
+  UIScreen* const pBookScreen = pUIManager->GetScreen(sBookScreen);
+  ASSERT(pBookScreen);
 
-	STATICHASH( IsDynamic );
-	m_IsDynamic = ConfigManager::GetBool( sIsDynamic, false, sDefinitionName );
-}
+  STATIC_HASHED_STRING(BookText);
+  UIWidgetText* const pBookText =
+      pBookScreen->GetWidget<UIWidgetText>(sBookText);
+  ASSERT(pBookText);
 
-/*virtual*/ void WBActionEldShowBook::Execute()
-{
-	WBAction::Execute();
+  WBParamEvaluator::SPEContext PEContext;
+  PEContext.m_Entity = GetEntity();
 
-	EldritchFramework* const pFramework = EldritchFramework::GetInstance();
-	ASSERT( pFramework );
+  m_BookStringPE.Evaluate(PEContext);
+  const SimpleString BookString =
+      (m_BookStringPE.GetType() == WBParamEvaluator::EPT_String)
+          ? m_BookStringPE.GetString()
+          : m_BookString;
 
-	UIManager* const pUIManager = pFramework->GetUIManager();
-	ASSERT( pUIManager );
+  MAKEHASH(BookString);
 
-	UIStack* const pUIStack = pUIManager->GetUIStack();
-	ASSERT( pUIStack );
+  if (m_IsDynamic) {
+    pBookText->m_String = "";
+    pBookText->m_DynamicString =
+        ConfigManager::GetLocalizedString(BookString, "");
+  } else {
+    pBookText->m_String = ConfigManager::GetLocalizedString(BookString, "");
+    pBookText->m_DynamicString = "";
+  }
+  pBookText->Reinitialize();
 
-	STATIC_HASHED_STRING( BookScreen );
-	UIScreen* const pBookScreen = pUIManager->GetScreen( sBookScreen );
-	ASSERT( pBookScreen );
-
-	STATIC_HASHED_STRING( BookText );
-	UIWidgetText* const pBookText = pBookScreen->GetWidget<UIWidgetText>( sBookText );
-	ASSERT( pBookText );
-
-	WBParamEvaluator::SPEContext PEContext;
-	PEContext.m_Entity = GetEntity();
-
-	m_BookStringPE.Evaluate( PEContext );
-	const SimpleString BookString = ( m_BookStringPE.GetType() == WBParamEvaluator::EPT_String ) ? m_BookStringPE.GetString() : m_BookString;
-
-	MAKEHASH( BookString );
-
-	if( m_IsDynamic )
-	{
-		pBookText->m_String			= "";
-		pBookText->m_DynamicString	= ConfigManager::GetLocalizedString( BookString, "" );
-	}
-	else
-	{
-		pBookText->m_String			= ConfigManager::GetLocalizedString( BookString, "" );
-		pBookText->m_DynamicString	= "";
-	}
-	pBookText->Reinitialize();
-
-	pUIStack->Push( pBookScreen );
+  pUIStack->Push(pBookScreen);
 }

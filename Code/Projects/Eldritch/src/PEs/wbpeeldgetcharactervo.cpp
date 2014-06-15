@@ -4,49 +4,42 @@
 #include "configmanager.h"
 #include "wbparamevaluatorfactory.h"
 
-WBPEEldGetCharacterVO::WBPEEldGetCharacterVO()
-:	m_EntityPE( NULL )
-,	m_VO()
-{
+WBPEEldGetCharacterVO::WBPEEldGetCharacterVO() : m_EntityPE(NULL), m_VO() {}
+
+WBPEEldGetCharacterVO::~WBPEEldGetCharacterVO() { SafeDelete(m_EntityPE); }
+
+/*virtual*/ void WBPEEldGetCharacterVO::InitializeFromDefinition(
+    const SimpleString& DefinitionName) {
+  MAKEHASH(DefinitionName);
+
+  STATICHASH(EntityPE);
+  m_EntityPE = WBParamEvaluatorFactory::Create(
+      ConfigManager::GetString(sEntityPE, "", sDefinitionName));
+
+  STATICHASH(VO);
+  m_VO = ConfigManager::GetString(sVO, "", sDefinitionName);
 }
 
-WBPEEldGetCharacterVO::~WBPEEldGetCharacterVO()
-{
-	SafeDelete( m_EntityPE );
-}
+/*virtual*/ void WBPEEldGetCharacterVO::Evaluate(
+    const WBParamEvaluator::SPEContext& Context,
+    WBParamEvaluator::SEvaluatedParam& EvaluatedParam) const {
+  WBParamEvaluator::SEvaluatedParam EntityValue;
+  m_EntityPE->Evaluate(Context, EntityValue);
 
-/*virtual*/ void WBPEEldGetCharacterVO::InitializeFromDefinition( const SimpleString& DefinitionName )
-{
-	MAKEHASH( DefinitionName );
+  WBEntity* const pEntity = EntityValue.GetEntity();
+  if (!pEntity) {
+    return;
+  }
 
-	STATICHASH( EntityPE );
-	m_EntityPE = WBParamEvaluatorFactory::Create( ConfigManager::GetString( sEntityPE, "", sDefinitionName ) );
+  WBCompEldCharacter* const pCharacter = GET_WBCOMP(pEntity, EldCharacter);
+  if (!pCharacter) {
+    return;
+  }
 
-	STATICHASH( VO );
-	m_VO = ConfigManager::GetString( sVO, "", sDefinitionName );
-}
+  const SimpleString VoiceSet = pCharacter->GetCurrentVoiceSet();
+  MAKEHASH(VoiceSet);
+  MAKEHASH(m_VO);
 
-/*virtual*/ void WBPEEldGetCharacterVO::Evaluate( const WBParamEvaluator::SPEContext& Context, WBParamEvaluator::SEvaluatedParam& EvaluatedParam ) const
-{
-	WBParamEvaluator::SEvaluatedParam EntityValue;
-	m_EntityPE->Evaluate( Context, EntityValue );
-
-	WBEntity* const pEntity = EntityValue.GetEntity();
-	if( !pEntity )
-	{
-		return;
-	}
-
-	WBCompEldCharacter* const pCharacter = GET_WBCOMP( pEntity, EldCharacter );
-	if( !pCharacter )
-	{
-		return;
-	}
-
-	const SimpleString VoiceSet = pCharacter->GetCurrentVoiceSet();
-	MAKEHASH( VoiceSet );
-	MAKEHASH( m_VO );
-
-	EvaluatedParam.m_Type	= WBParamEvaluator::EPT_String;
-	EvaluatedParam.m_String	= ConfigManager::GetString( sm_VO, "", sVoiceSet );
+  EvaluatedParam.m_Type = WBParamEvaluator::EPT_String;
+  EvaluatedParam.m_String = ConfigManager::GetString(sm_VO, "", sVoiceSet);
 }

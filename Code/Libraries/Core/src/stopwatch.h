@@ -3,18 +3,17 @@
 
 #include "clock.h"
 
-class Stopwatch
-{
-public:
-	Stopwatch();
+class Stopwatch {
+ public:
+  Stopwatch();
 
-	float	GetTime();
-	void	TogglePause();
-	void	Reset();
+  float GetTime();
+  void TogglePause();
+  void Reset();
 
-private:
-	Clock						m_Clock;
-	Clock::MultiplierRequest*	m_PauseRequest;
+ private:
+  Clock m_Clock;
+  Clock::MultiplierRequest* m_PauseRequest;
 };
 
-#endif // STOPWATCH_H
+#endif  // STOPWATCH_H

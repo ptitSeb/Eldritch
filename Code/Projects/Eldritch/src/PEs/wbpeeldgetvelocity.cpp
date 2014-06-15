@@ -4,48 +4,42 @@
 #include "configmanager.h"
 #include "wbparamevaluatorfactory.h"
 
-WBPEEldGetVelocity::WBPEEldGetVelocity()
-:	m_EntityPE( NULL )
-{
+WBPEEldGetVelocity::WBPEEldGetVelocity() : m_EntityPE(NULL) {}
+
+WBPEEldGetVelocity::~WBPEEldGetVelocity() { SafeDelete(m_EntityPE); }
+
+/*virtual*/ void WBPEEldGetVelocity::InitializeFromDefinition(
+    const SimpleString& DefinitionName) {
+  MAKEHASH(DefinitionName);
+
+  STATICHASH(EntityPE);
+  m_EntityPE = WBParamEvaluatorFactory::Create(
+      ConfigManager::GetString(sEntityPE, "", sDefinitionName));
 }
 
-WBPEEldGetVelocity::~WBPEEldGetVelocity()
-{
-	SafeDelete( m_EntityPE );
-}
+/*virtual*/ void WBPEEldGetVelocity::Evaluate(
+    const WBParamEvaluator::SPEContext& Context,
+    WBParamEvaluator::SEvaluatedParam& EvaluatedParam) const {
+  if (!Context.m_Entity) {
+    return;
+  }
 
-/*virtual*/ void WBPEEldGetVelocity::InitializeFromDefinition( const SimpleString& DefinitionName )
-{
-	MAKEHASH( DefinitionName );
+  WBParamEvaluator::SEvaluatedParam Value;
+  m_EntityPE->Evaluate(Context, Value);
 
-	STATICHASH( EntityPE );
-	m_EntityPE = WBParamEvaluatorFactory::Create( ConfigManager::GetString( sEntityPE, "", sDefinitionName ) );
-}
+  ASSERT(Value.m_Type == WBParamEvaluator::EPT_Entity);
 
-/*virtual*/ void WBPEEldGetVelocity::Evaluate( const WBParamEvaluator::SPEContext& Context, WBParamEvaluator::SEvaluatedParam& EvaluatedParam ) const
-{
-	if( !Context.m_Entity )
-	{
-		return;
-	}
+  WBEntity* const pEntity = Value.m_Entity.Get();
+  if (!pEntity) {
+    return;
+  }
 
-	WBParamEvaluator::SEvaluatedParam Value;
-	m_EntityPE->Evaluate( Context, Value );
+  WBCompEldTransform* const pTransform =
+      pEntity->GetTransformComponent<WBCompEldTransform>();
+  if (!pTransform) {
+    return;
+  }
 
-	ASSERT( Value.m_Type == WBParamEvaluator::EPT_Entity );
-
-	WBEntity* const pEntity = Value.m_Entity.Get();
-	if( !pEntity )
-	{
-		return;
-	}
-
-	WBCompEldTransform* const pTransform = pEntity->GetTransformComponent<WBCompEldTransform>();
-	if( !pTransform )
-	{
-		return;
-	}
-
-	EvaluatedParam.m_Type	= WBParamEvaluator::EPT_Vector;
-	EvaluatedParam.m_Vector	= pTransform->GetVelocity();
+  EvaluatedParam.m_Type = WBParamEvaluator::EPT_Vector;
+  EvaluatedParam.m_Vector = pTransform->GetVelocity();
 }

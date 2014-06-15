@@ -12,205 +12,199 @@
 #include "collisioninfo.h"
 
 WBCompEldItem::WBCompEldItem()
-:	m_Slot()
-,	m_DropSpawn( "" )
-,	m_DropSpawnImpulse( 0.0f )
-,	m_DropSpawnImpulseZ( 0.0f )
-,	m_DropSpawnOffsetZ( 0.0f )
-,	m_DropSpawnYaw( 0.0f )
-,	m_SuppressDropDupe( false )
-{
+    : m_Slot(),
+      m_DropSpawn(""),
+      m_DropSpawnImpulse(0.0f),
+      m_DropSpawnImpulseZ(0.0f),
+      m_DropSpawnOffsetZ(0.0f),
+      m_DropSpawnYaw(0.0f),
+      m_SuppressDropDupe(false) {}
+
+WBCompEldItem::~WBCompEldItem() {}
+
+/*virtual*/ void WBCompEldItem::InitializeFromDefinition(
+    const SimpleString& DefinitionName) {
+  Super::InitializeFromDefinition(DefinitionName);
+
+  MAKEHASH(DefinitionName);
+
+  STATICHASH(Slot);
+  m_Slot = ConfigManager::GetInheritedHash(sSlot, HashedString::NullString,
+                                           sDefinitionName);
+
+  STATICHASH(DropSpawn);
+  m_DropSpawn =
+      ConfigManager::GetInheritedString(sDropSpawn, "", sDefinitionName);
+
+  STATICHASH(DropSpawnImpulse);
+  m_DropSpawnImpulse = ConfigManager::GetInheritedFloat(sDropSpawnImpulse, 0.0f,
+                                                        sDefinitionName);
+
+  STATICHASH(DropSpawnImpulseZ);
+  m_DropSpawnImpulseZ = ConfigManager::GetInheritedFloat(sDropSpawnImpulseZ,
+                                                         0.0f, sDefinitionName);
+
+  STATICHASH(DropSpawnOffsetZ);
+  m_DropSpawnOffsetZ = ConfigManager::GetInheritedFloat(sDropSpawnOffsetZ, 0.0f,
+                                                        sDefinitionName);
+
+  STATICHASH(DropSpawnYaw);
+  m_DropSpawnYaw = DEGREES_TO_RADIANS(
+      ConfigManager::GetInheritedFloat(sDropSpawnYaw, 0.0f, sDefinitionName));
+
+  STATICHASH(SuppressDropDupe);
+  m_SuppressDropDupe = ConfigManager::GetInheritedBool(sSuppressDropDupe, false,
+                                                       sDefinitionName);
 }
 
-WBCompEldItem::~WBCompEldItem()
-{
+/*virtual*/ void WBCompEldItem::HandleEvent(const WBEvent& Event) {
+  XTRACE_FUNCTION;
+
+  Super::HandleEvent(Event);
+
+  STATIC_HASHED_STRING(OnUnequipped);
+
+  const HashedString EventName = Event.GetEventName();
+  if (EventName == sOnUnequipped) {
+    STATIC_HASHED_STRING(SuppressSpawn);
+    const bool SuppressSpawn = Event.GetBool(sSuppressSpawn);
+
+    STATIC_HASHED_STRING(ReplacingItem);
+    WBEntity* const pReplacingItem = Event.GetEntity(sReplacingItem);
+
+    // Crude HACK: Suppress spawn if this item is hidden, because it's already
+    // been thrown.
+    WBCompEldMesh* const pMesh = GET_WBCOMP(GetEntity(), EldMesh);
+    const bool MeshHidden = pMesh && pMesh->IsHidden();
+
+    if (SuppressSpawn || MeshHidden ||
+        (m_SuppressDropDupe && pReplacingItem &&
+         pReplacingItem->GetName() == GetEntity()->GetName())) {
+      // Do nothing!
+    } else {
+      // Spawn a pickup for the dropped item
+      SpawnDrop();
+    }
+  }
 }
 
-/*virtual*/ void WBCompEldItem::InitializeFromDefinition( const SimpleString& DefinitionName )
-{
-	Super::InitializeFromDefinition( DefinitionName );
+void WBCompEldItem::SpawnDrop() const {
+  if (m_DropSpawn == "") {
+    return;
+  }
 
-	MAKEHASH( DefinitionName );
+  Vector SpawnLocation;
+  Vector SpawnImpulse;
+  Angles SpawnOrientation;
+  if (!GetSpawnDropTransform(SpawnLocation, SpawnImpulse, SpawnOrientation)) {
+    // Nowhere to spawn
+    return;
+  }
 
-	STATICHASH( Slot );
-	m_Slot = ConfigManager::GetInheritedHash( sSlot, HashedString::NullString, sDefinitionName );
+  WBEntity* const pDropEntity =
+      WBWorld::GetInstance()->CreateEntity(m_DropSpawn);
+  WBCompEldTransform* const pDropTransform =
+      pDropEntity->GetTransformComponent<WBCompEldTransform>();
+  ASSERT(pDropTransform);
 
-	STATICHASH( DropSpawn );
-	m_DropSpawn = ConfigManager::GetInheritedString( sDropSpawn, "", sDefinitionName );
+  WBCompOwner* const pOwnerComponent = GET_WBCOMP(GetEntity(), Owner);
+  WBCompOwner* const pDropOwner = GET_WBCOMP(pDropEntity, Owner);
 
-	STATICHASH( DropSpawnImpulse );
-	m_DropSpawnImpulse = ConfigManager::GetInheritedFloat( sDropSpawnImpulse, 0.0f, sDefinitionName );
+  if (pOwnerComponent && pDropOwner) {
+    pDropOwner->SetOwner(pOwnerComponent->GetOwner());
+  }
 
-	STATICHASH( DropSpawnImpulseZ );
-	m_DropSpawnImpulseZ = ConfigManager::GetInheritedFloat( sDropSpawnImpulseZ, 0.0f, sDefinitionName );
+  WBCompEldCollision* const pDropCollision =
+      GET_WBCOMP(pDropEntity, EldCollision);
+  if (pDropCollision) {
+    CollisionInfo Info;
+    Info.m_CollideWorld = true;
+    Info.m_CollideEntities = true;
+    Info.m_CollidingEntity = GetEntity();  // Using the owner, not the spawned
+                                           // entity (which should be at origin
+                                           // at the moment)
+    Info.m_UserFlags = EECF_EntityCollision;
 
-	STATICHASH( DropSpawnOffsetZ );
-	m_DropSpawnOffsetZ = ConfigManager::GetInheritedFloat( sDropSpawnOffsetZ, 0.0f, sDefinitionName );
+    GetWorld()->FindSpot(SpawnLocation, pDropCollision->GetExtents(), Info);
+  }
 
-	STATICHASH( DropSpawnYaw );
-	m_DropSpawnYaw = DEGREES_TO_RADIANS( ConfigManager::GetInheritedFloat( sDropSpawnYaw, 0.0f, sDefinitionName ) );
+  pDropTransform->SetLocation(SpawnLocation);
+  pDropTransform->SetOrientation(SpawnOrientation);
+  pDropTransform->ApplyImpulse(SpawnImpulse);
 
-	STATICHASH( SuppressDropDupe );
-	m_SuppressDropDupe = ConfigManager::GetInheritedBool( sSuppressDropDupe, false, sDefinitionName );
+  WB_MAKE_EVENT(OnInitialOrientationSet, pDropEntity);
+  WB_DISPATCH_EVENT(WBWorld::GetInstance()->GetEventManager(),
+                    OnInitialOrientationSet, pDropEntity);
 }
 
-/*virtual*/ void WBCompEldItem::HandleEvent( const WBEvent& Event )
-{
-	XTRACE_FUNCTION;
+bool WBCompEldItem::GetSpawnDropTransform(Vector& OutLocation,
+                                          Vector& OutImpulse,
+                                          Angles& OutOrientation) const {
+  WBCompEldTransform* pSelectedTransform = NULL;
 
-	Super::HandleEvent( Event );
+  // First, try to spawn from our owner's transform.
+  WBCompOwner* const pOwnerComponent = GET_WBCOMP(GetEntity(), Owner);
+  if (pOwnerComponent) {
+    WBEntity* const pOwnerEntity = pOwnerComponent->GetOwner();
+    if (pOwnerEntity) {
+      pSelectedTransform =
+          pOwnerEntity->GetTransformComponent<WBCompEldTransform>();
+    }
+  }
 
-	STATIC_HASHED_STRING( OnUnequipped );
+  // If we don't have an owner, try to spawn from our own transform.
+  if (!pSelectedTransform) {
+    WBEntity* const pEntity = GetEntity();
+    DEVASSERT(pEntity);
 
-	const HashedString EventName = Event.GetEventName();
-	if( EventName == sOnUnequipped )
-	{
-		STATIC_HASHED_STRING( SuppressSpawn );
-		const bool SuppressSpawn = Event.GetBool( sSuppressSpawn );
+    pSelectedTransform = pEntity->GetTransformComponent<WBCompEldTransform>();
+  }
 
-		STATIC_HASHED_STRING( ReplacingItem );
-		WBEntity* const pReplacingItem = Event.GetEntity( sReplacingItem );
+  if (pSelectedTransform) {
+    OutLocation = pSelectedTransform->GetLocation();
+    OutLocation.z += m_DropSpawnOffsetZ;
 
-		// Crude HACK: Suppress spawn if this item is hidden, because it's already been thrown.
-		WBCompEldMesh* const pMesh = GET_WBCOMP( GetEntity(), EldMesh );
-		const bool MeshHidden = pMesh && pMesh->IsHidden();
+    OutOrientation = pSelectedTransform->GetOrientation();
+    OutOrientation.Pitch = 0.0f;
+    OutOrientation.Yaw += m_DropSpawnYaw;
 
-		if( SuppressSpawn ||
-			MeshHidden ||
-			( m_SuppressDropDupe && pReplacingItem && pReplacingItem->GetName() == GetEntity()->GetName() ) )
-		{
-			// Do nothing!
-		}
-		else
-		{
-			// Spawn a pickup for the dropped item
-			SpawnDrop();
-		}
-	}
+    OutImpulse = pSelectedTransform->GetOrientation().ToVector();
+    OutImpulse.z += m_DropSpawnImpulseZ;
+    OutImpulse.FastNormalize();
+    OutImpulse *= m_DropSpawnImpulse;
+
+    return true;
+  }
+
+  // Else, we don't have anywhere to spawn from.
+  return false;
 }
 
-void WBCompEldItem::SpawnDrop() const
-{
-	if( m_DropSpawn == "" )
-	{
-		return;
-	}
+#define VERSION_EMPTY 0
+#define VERSION_SLOT 1
+#define VERSION_CURRENT 1
 
-	Vector SpawnLocation;
-	Vector SpawnImpulse;
-	Angles SpawnOrientation;
-	if( !GetSpawnDropTransform( SpawnLocation, SpawnImpulse, SpawnOrientation ) )
-	{
-		// Nowhere to spawn
-		return;
-	}
+uint WBCompEldItem::GetSerializationSize() {
+  uint Size = 0;
 
-	WBEntity* const				pDropEntity		= WBWorld::GetInstance()->CreateEntity( m_DropSpawn );
-	WBCompEldTransform* const	pDropTransform	= pDropEntity->GetTransformComponent<WBCompEldTransform>();
-	ASSERT( pDropTransform );
+  Size += 4;                     // Version
+  Size += sizeof(HashedString);  // m_Slot
 
-	WBCompOwner* const			pOwnerComponent	= GET_WBCOMP( GetEntity(), Owner );
-	WBCompOwner* const			pDropOwner		= GET_WBCOMP( pDropEntity, Owner );
-
-	if( pOwnerComponent && pDropOwner )
-	{
-		pDropOwner->SetOwner( pOwnerComponent->GetOwner() );
-	}
-
-	WBCompEldCollision* const	pDropCollision	= GET_WBCOMP( pDropEntity, EldCollision );
-	if( pDropCollision )
-	{
-		CollisionInfo Info;
-		Info.m_CollideWorld		= true;
-		Info.m_CollideEntities	= true;
-		Info.m_CollidingEntity	= GetEntity();	// Using the owner, not the spawned entity (which should be at origin at the moment)
-		Info.m_UserFlags		= EECF_EntityCollision;
-
-		GetWorld()->FindSpot( SpawnLocation, pDropCollision->GetExtents(), Info );
-	}
-
-	pDropTransform->SetLocation( SpawnLocation );
-	pDropTransform->SetOrientation( SpawnOrientation );
-	pDropTransform->ApplyImpulse( SpawnImpulse );
-
-	WB_MAKE_EVENT( OnInitialOrientationSet, pDropEntity );
-	WB_DISPATCH_EVENT( WBWorld::GetInstance()->GetEventManager(), OnInitialOrientationSet, pDropEntity );
+  return Size;
 }
 
-bool WBCompEldItem::GetSpawnDropTransform( Vector& OutLocation, Vector& OutImpulse, Angles& OutOrientation ) const
-{
-	WBCompEldTransform* pSelectedTransform = NULL;
+void WBCompEldItem::Save(const IDataStream& Stream) {
+  Stream.WriteUInt32(VERSION_CURRENT);
 
-	// First, try to spawn from our owner's transform.
-	WBCompOwner* const	pOwnerComponent	= GET_WBCOMP( GetEntity(), Owner );
-	if( pOwnerComponent )
-	{
-		WBEntity* const	pOwnerEntity	= pOwnerComponent->GetOwner();
-		if( pOwnerEntity )
-		{
-			pSelectedTransform			= pOwnerEntity->GetTransformComponent<WBCompEldTransform>();
-		}
-	}
-
-	// If we don't have an owner, try to spawn from our own transform.
-	if( !pSelectedTransform )
-	{
-		WBEntity* const	pEntity	= GetEntity();
-		DEVASSERT( pEntity );
-
-		pSelectedTransform		= pEntity->GetTransformComponent<WBCompEldTransform>();
-	}
-
-	if( pSelectedTransform )
-	{
-		OutLocation				= pSelectedTransform->GetLocation();
-		OutLocation.z			+= m_DropSpawnOffsetZ;
-
-		OutOrientation			= pSelectedTransform->GetOrientation();
-		OutOrientation.Pitch	= 0.0f;
-		OutOrientation.Yaw		+= m_DropSpawnYaw;
-
-		OutImpulse				= pSelectedTransform->GetOrientation().ToVector();
-		OutImpulse.z			+= m_DropSpawnImpulseZ;
-		OutImpulse.FastNormalize();
-		OutImpulse				*= m_DropSpawnImpulse;
-
-		return true;
-	}
-
-	// Else, we don't have anywhere to spawn from.
-	return false;
+  Stream.WriteHashedString(m_Slot);
 }
 
-#define VERSION_EMPTY	0
-#define VERSION_SLOT	1
-#define VERSION_CURRENT	1
+void WBCompEldItem::Load(const IDataStream& Stream) {
+  XTRACE_FUNCTION;
 
-uint WBCompEldItem::GetSerializationSize()
-{
-	uint Size = 0;
+  const uint Version = Stream.ReadUInt32();
 
-	Size += 4;						// Version
-	Size += sizeof( HashedString );	// m_Slot
-
-	return Size;
-}
-
-void WBCompEldItem::Save( const IDataStream& Stream )
-{
-	Stream.WriteUInt32( VERSION_CURRENT );
-
-	Stream.WriteHashedString( m_Slot );
-}
-
-void WBCompEldItem::Load( const IDataStream& Stream )
-{
-	XTRACE_FUNCTION;
-
-	const uint Version = Stream.ReadUInt32();
-
-	if( Version >= VERSION_SLOT )
-	{
-		m_Slot = Stream.ReadHashedString();
-	}
+  if (Version >= VERSION_SLOT) {
+    m_Slot = Stream.ReadHashedString();
+  }
 }

@@ -4,20 +4,19 @@
 #include "wbaction.h"
 #include "hashedstring.h"
 
-class WBActionEldPlayHandAnim : public WBAction
-{
-public:
-	WBActionEldPlayHandAnim();
-	virtual ~WBActionEldPlayHandAnim();
+class WBActionEldPlayHandAnim : public WBAction {
+ public:
+  WBActionEldPlayHandAnim();
+  virtual ~WBActionEldPlayHandAnim();
 
-	DEFINE_WBACTION_FACTORY( EldPlayHandAnim );
+  DEFINE_WBACTION_FACTORY(EldPlayHandAnim);
 
-	virtual void	InitializeFromDefinition( const SimpleString& DefinitionName );
+  virtual void InitializeFromDefinition(const SimpleString& DefinitionName);
 
-	virtual void	Execute();
+  virtual void Execute();
 
-private:
-	HashedString	m_AnimationName;
+ private:
+  HashedString m_AnimationName;
 };
 
-#endif // WBACTIONELDPLAYANIM_H
+#endif  // WBACTIONELDPLAYANIM_H

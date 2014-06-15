@@ -3,4 +3,4 @@
 
 // ...
 
-#endif // ELDRITCHWBSCENEHELPERS_H
+#endif  // ELDRITCHWBSCENEHELPERS_H

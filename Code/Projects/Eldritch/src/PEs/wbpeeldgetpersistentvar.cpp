@@ -5,38 +5,35 @@
 #include "eldritchgame.h"
 #include "eldritchpersistence.h"
 
-WBPEEldGetPersistentVar::WBPEEldGetPersistentVar()
-:	m_Key()
-{
+WBPEEldGetPersistentVar::WBPEEldGetPersistentVar() : m_Key() {}
+
+WBPEEldGetPersistentVar::~WBPEEldGetPersistentVar() {}
+
+/*virtual*/ void WBPEEldGetPersistentVar::InitializeFromDefinition(
+    const SimpleString& DefinitionName) {
+  MAKEHASH(DefinitionName);
+
+  STATICHASH(Key);
+  m_Key =
+      ConfigManager::GetHash(sKey, HashedString::NullString, sDefinitionName);
 }
 
-WBPEEldGetPersistentVar::~WBPEEldGetPersistentVar()
-{
-}
+/*virtual*/ void WBPEEldGetPersistentVar::Evaluate(
+    const WBParamEvaluator::SPEContext& Context,
+    WBParamEvaluator::SEvaluatedParam& EvaluatedParam) const {
+  Unused(Context);
 
-/*virtual*/ void WBPEEldGetPersistentVar::InitializeFromDefinition( const SimpleString& DefinitionName )
-{
-	MAKEHASH( DefinitionName );
+  EldritchFramework* const pFramework = EldritchFramework::GetInstance();
+  ASSERT(pFramework);
 
-	STATICHASH( Key );
-	m_Key = ConfigManager::GetHash( sKey, HashedString::NullString, sDefinitionName );
-}
+  EldritchGame* const pGame = pFramework->GetGame();
+  ASSERT(pGame);
 
-/*virtual*/ void WBPEEldGetPersistentVar::Evaluate( const WBParamEvaluator::SPEContext& Context, WBParamEvaluator::SEvaluatedParam& EvaluatedParam ) const
-{
-	Unused( Context );
+  EldritchPersistence* const pPersistence = pGame->GetPersistence();
+  ASSERT(pPersistence);
 
-	EldritchFramework* const pFramework = EldritchFramework::GetInstance();
-	ASSERT( pFramework );
+  const WBEvent& PersistentVars = pPersistence->GetVariableMap();
+  const WBEvent::SParameter* pParam = PersistentVars.GetParameter(m_Key);
 
-	EldritchGame* const pGame = pFramework->GetGame();
-	ASSERT( pGame );
-
-	EldritchPersistence* const pPersistence = pGame->GetPersistence();
-	ASSERT( pPersistence );
-
-	const WBEvent& PersistentVars = pPersistence->GetVariableMap();
-	const WBEvent::SParameter* pParam = PersistentVars.GetParameter( m_Key );
-
-	EvaluatedParam.Set( pParam );
+  EvaluatedParam.Set(pParam);
 }

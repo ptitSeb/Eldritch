@@ -4,68 +4,46 @@
 #include "Components/wbcomprodinbehaviortree.h"
 #include "wbworld.h"
 
-RodinBTNode::RodinBTNode()
-:	m_BehaviorTree( NULL )
-,	m_IsSleeping( false )
-{
+RodinBTNode::RodinBTNode() : m_BehaviorTree(NULL), m_IsSleeping(false) {}
+
+RodinBTNode::~RodinBTNode() {}
+
+void RodinBTNode::InitializeFromDefinition(const SimpleString& DefinitionName) {
+  Unused(DefinitionName);
 }
 
-RodinBTNode::~RodinBTNode()
-{
+RodinBTNode::ETickStatus RodinBTNode::Tick(float DeltaTime) {
+  Unused(DeltaTime);
+  return ETS_None;
 }
 
-void RodinBTNode::InitializeFromDefinition( const SimpleString& DefinitionName )
-{
-	Unused( DefinitionName );
+void RodinBTNode::OnStart() {}
+
+void RodinBTNode::OnFinish() {}
+
+void RodinBTNode::OnChildCompleted(RodinBTNode* pChildNode,
+                                   ETickStatus TickStatus) {
+  Unused(pChildNode);
+  Unused(TickStatus);
 }
 
-RodinBTNode::ETickStatus RodinBTNode::Tick( float DeltaTime )
-{
-	Unused( DeltaTime );
-	return ETS_None;
+void RodinBTNode::Report(uint Depth) {
+  PRINTF(WBPROPERTY_REPORT_PREFIX WB_REPORT_SPACER);
+  for (uint i = 0; i < Depth; ++i) {
+    PRINTF(WB_REPORT_SPACER);
+  }
+  PRINTF("%s\n", GetName().CStr());
 }
 
-void RodinBTNode::OnStart()
-{
+WBEntity* RodinBTNode::GetEntity() const {
+  ASSERT(m_BehaviorTree);
+  return m_BehaviorTree->GetEntity();
 }
 
-void RodinBTNode::OnFinish()
-{
+float RodinBTNode::GetTime() const { return WBWorld::GetInstance()->GetTime(); }
+
+WBEventManager* RodinBTNode::GetEventManager() const {
+  return WBWorld::GetInstance()->GetEventManager();
 }
 
-void RodinBTNode::OnChildCompleted( RodinBTNode* pChildNode, ETickStatus TickStatus )
-{
-	Unused( pChildNode );
-	Unused( TickStatus );
-}
-
-void RodinBTNode::Report( uint Depth )
-{
-	PRINTF( WBPROPERTY_REPORT_PREFIX WB_REPORT_SPACER );
-	for( uint i = 0; i < Depth; ++i )
-	{
-		PRINTF( WB_REPORT_SPACER );
-	}
-	PRINTF( "%s\n", GetName().CStr() );
-}
-
-WBEntity* RodinBTNode::GetEntity() const
-{
-	ASSERT( m_BehaviorTree );
-	return m_BehaviorTree->GetEntity();
-}
-
-float RodinBTNode::GetTime() const
-{
-	return WBWorld::GetInstance()->GetTime();
-}
-
-WBEventManager* RodinBTNode::GetEventManager() const
-{
-	return WBWorld::GetInstance()->GetEventManager();
-}
-
-SimpleString RodinBTNode::GetName() const
-{
-	return m_DefinitionName;
-}
+SimpleString RodinBTNode::GetName() const { return m_DefinitionName; }

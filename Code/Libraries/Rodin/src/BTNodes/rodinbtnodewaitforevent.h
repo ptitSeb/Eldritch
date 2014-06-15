@@ -5,24 +5,23 @@
 #include "wbrule.h"
 #include "iwbeventobserver.h"
 
-class RodinBTNodeWaitForEvent : public RodinBTNode, public IWBEventObserver
-{
-public:
-	RodinBTNodeWaitForEvent();
-	virtual ~RodinBTNodeWaitForEvent();
+class RodinBTNodeWaitForEvent : public RodinBTNode, public IWBEventObserver {
+ public:
+  RodinBTNodeWaitForEvent();
+  virtual ~RodinBTNodeWaitForEvent();
 
-	DEFINE_RODINBTNODE_FACTORY( WaitForEvent );
+  DEFINE_RODINBTNODE_FACTORY(WaitForEvent);
 
-	virtual void		InitializeFromDefinition( const SimpleString& DefinitionName );
-	virtual ETickStatus Tick( float DeltaTime );
-	virtual void		OnStart();
-	virtual void		OnFinish();
+  virtual void InitializeFromDefinition(const SimpleString& DefinitionName);
+  virtual ETickStatus Tick(float DeltaTime);
+  virtual void OnStart();
+  virtual void OnFinish();
 
-	// IWBEventObserver
-	virtual void		HandleEvent( const WBEvent& Event );
+  // IWBEventObserver
+  virtual void HandleEvent(const WBEvent& Event);
 
-protected:
-	WBRule		m_Rule;
+ protected:
+  WBRule m_Rule;
 };
 
-#endif // RODINBTNODEWAITFOREVENT_H
+#endif  // RODINBTNODEWAITFOREVENT_H

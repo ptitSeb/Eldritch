@@ -5,22 +5,21 @@
 
 class Sprite;
 
-class SpriteManager
-{
-public:
-	static SpriteManager* GetInstance();
-	static void DeleteInstance();
+class SpriteManager {
+ public:
+  static SpriteManager* GetInstance();
+  static void DeleteInstance();
 
-	Sprite* GetSprite( const SimpleString& SpriteDef );
+  Sprite* GetSprite(const SimpleString& SpriteDef);
 
-private:
-	SpriteManager();
-	~SpriteManager();
+ private:
+  SpriteManager();
+  ~SpriteManager();
 
-	static SpriteManager*	m_Instance;
+  static SpriteManager* m_Instance;
 
-	typedef Map< HashedString, Sprite* > SpriteMap;
-	SpriteMap	m_Sprites;
+  typedef Map<HashedString, Sprite*> SpriteMap;
+  SpriteMap m_Sprites;
 };
 
-#endif // SPRITEMANAGER_H
+#endif  // SPRITEMANAGER_H

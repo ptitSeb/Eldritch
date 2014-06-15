@@ -5,43 +5,37 @@
 #include "wbparamevaluatorfactory.h"
 #include "reversehash.h"
 
-WBPEGetState::WBPEGetState()
-:	m_EntityPE( NULL )
-{
+WBPEGetState::WBPEGetState() : m_EntityPE(NULL) {}
+
+WBPEGetState::~WBPEGetState() { SafeDelete(m_EntityPE); }
+
+/*virtual*/ void WBPEGetState::InitializeFromDefinition(
+    const SimpleString& DefinitionName) {
+  MAKEHASH(DefinitionName);
+
+  STATICHASH(EntityPE);
+  m_EntityPE = WBParamEvaluatorFactory::Create(
+      ConfigManager::GetString(sEntityPE, "", sDefinitionName));
 }
 
-WBPEGetState::~WBPEGetState()
-{
-	SafeDelete( m_EntityPE );
-}
+/*virtual*/ void WBPEGetState::Evaluate(
+    const WBParamEvaluator::SPEContext& Context,
+    WBParamEvaluator::SEvaluatedParam& EvaluatedParam) const {
+  WBParamEvaluator::SEvaluatedParam EntityValue;
+  m_EntityPE->Evaluate(Context, EntityValue);
 
-/*virtual*/ void WBPEGetState::InitializeFromDefinition( const SimpleString& DefinitionName )
-{
-	MAKEHASH( DefinitionName );
+  WBEntity* const pEntity = EntityValue.GetEntity();
+  if (!pEntity) {
+    return;
+  }
 
-	STATICHASH( EntityPE );
-	m_EntityPE = WBParamEvaluatorFactory::Create( ConfigManager::GetString( sEntityPE, "", sDefinitionName ) );
-}
+  WBCompState* const pState = GET_WBCOMP(pEntity, State);
+  if (!pState) {
+    return;
+  }
 
-/*virtual*/ void WBPEGetState::Evaluate( const WBParamEvaluator::SPEContext& Context, WBParamEvaluator::SEvaluatedParam& EvaluatedParam ) const
-{
-	WBParamEvaluator::SEvaluatedParam EntityValue;
-	m_EntityPE->Evaluate( Context, EntityValue );
+  const SimpleString State = ReverseHash::ReversedHash(pState->GetState());
 
-	WBEntity* const pEntity = EntityValue.GetEntity();
-	if( !pEntity )
-	{
-		return;
-	}
-
-	WBCompState* const pState = GET_WBCOMP( pEntity, State );
-	if( !pState )
-	{
-		return;
-	}
-
-	const SimpleString State = ReverseHash::ReversedHash( pState->GetState() );
-
-	EvaluatedParam.m_Type	= WBParamEvaluator::EPT_String;
-	EvaluatedParam.m_String	= State;
+  EvaluatedParam.m_Type = WBParamEvaluator::EPT_String;
+  EvaluatedParam.m_String = State;
 }

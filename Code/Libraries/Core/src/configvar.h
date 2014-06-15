@@ -6,7 +6,8 @@
 // the statically-declared names; that's normal.
 #define PARANOID_HASH_CHECK 0
 
-// Turn this on to assert that config vars are the types they are expected to be.
+// Turn this on to assert that config vars are the types they are expected to
+// be.
 // If the client intends to overload a config var name for multiple types, this
 // should be left off because the program may do mismatched Gets intentionally.
 #define STRICT_TYPE_CHECK 0
@@ -17,32 +18,30 @@
 
 #include "hashedstring.h"
 
-class ConfigVar
-{
-public:
-	ConfigVar();
+class ConfigVar {
+ public:
+  ConfigVar();
 
-	enum EVarType
-	{
-		EVT_None,
-		EVT_Bool,
-		EVT_Int,
-		EVT_Float,
-		EVT_String,
-	};
+  enum EVarType {
+    EVT_None,
+    EVT_Bool,
+    EVT_Int,
+    EVT_Float,
+    EVT_String,
+  };
 
-	EVarType		m_Type;
-	
-	bool		m_Bool;
-	int			m_Int;
-	float		m_Float;
-	const char*	m_String;
-	
-	HashedString	m_Hash;	// Only valid if type is string
+  EVarType m_Type;
+
+  bool m_Bool;
+  int m_Int;
+  float m_Float;
+  const char* m_String;
+
+  HashedString m_Hash;  // Only valid if type is string
 
 #if PARANOID_HASH_CHECK
-	SimpleString	m_Name;
+  SimpleString m_Name;
 #endif
 };
 
-#endif // CONFIGVAR_H
+#endif  // CONFIGVAR_H

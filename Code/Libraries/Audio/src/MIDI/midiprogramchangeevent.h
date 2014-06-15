@@ -3,17 +3,16 @@
 
 #include "midimidievent.h"
 
-class MIDIProgramChangeEvent : public MIDIMIDIEvent
-{
-public:
-	MIDIProgramChangeEvent();
-	~MIDIProgramChangeEvent();
+class MIDIProgramChangeEvent : public MIDIMIDIEvent {
+ public:
+  MIDIProgramChangeEvent();
+  ~MIDIProgramChangeEvent();
 
-	virtual void Load( const IDataStream& Stream );
-	virtual void Save( const IDataStream& Stream ) const;
+  virtual void Load(const IDataStream& Stream);
+  virtual void Save(const IDataStream& Stream) const;
 
-protected:
-	uint8	m_ProgramNumber;
+ protected:
+  uint8 m_ProgramNumber;
 };
 
-#endif // MIDIPROGRAMCHANGEEVENT_H
+#endif  // MIDIPROGRAMCHANGEEVENT_H

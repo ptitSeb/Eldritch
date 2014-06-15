@@ -5,38 +5,33 @@
 
 class SimpleString;
 
-class HashedString
-{
-public:
-	HashedString();
-	HashedString( uint Hash );
-	HashedString( const char* String );
-	HashedString( const SimpleString& String );
+class HashedString {
+ public:
+  HashedString();
+  HashedString(uint Hash);
+  HashedString(const char* String);
+  HashedString(const SimpleString& String);
 
-	HashedString&	operator=( const char* String );
-	HashedString&	operator=( const SimpleString& String );
+  HashedString& operator=(const char* String);
+  HashedString& operator=(const SimpleString& String);
 
-	inline bool		operator==( const HashedString& Other ) const
-	{
-		return ( m_Hash == Other.m_Hash );
-	}
+  inline bool operator==(const HashedString& Other) const {
+    return (m_Hash == Other.m_Hash);
+  }
 
-	inline			operator uint32() const
-	{
-		return m_Hash;
-	}
+  inline operator uint32() const { return m_Hash; }
 
-	bool	Equals( const HashedString& H ) const;
-	bool	IsNull() const;
+  bool Equals(const HashedString& H) const;
+  bool IsNull() const;
 
-	uint	GetHash() const;
+  uint GetHash() const;
 
-	static uint32 Hash( const char* const String );
+  static uint32 Hash(const char* const String);
 
-	static const HashedString NullString;
+  static const HashedString NullString;
 
-private:
-	uint m_Hash;
+ private:
+  uint m_Hash;
 };
 
 #endif

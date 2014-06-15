@@ -5,41 +5,35 @@
 #include "wbevent.h"
 #include "configmanager.h"
 
-WBActionDestroy::WBActionDestroy()
-:	m_DestroyPE()
-{
+WBActionDestroy::WBActionDestroy() : m_DestroyPE() {}
+
+WBActionDestroy::~WBActionDestroy() {}
+
+/*virtual*/ void WBActionDestroy::InitializeFromDefinition(
+    const SimpleString& DefinitionName) {
+  WBAction::InitializeFromDefinition(DefinitionName);
+
+  MAKEHASH(DefinitionName);
+
+  STATICHASH(DestroyPE);
+  const SimpleString DestroyDef =
+      ConfigManager::GetString(sDestroyPE, "", sDefinitionName);
+  m_DestroyPE.InitializeFromDefinition(DestroyDef);
 }
 
-WBActionDestroy::~WBActionDestroy()
-{
-}
+/*virtual*/ void WBActionDestroy::Execute() {
+  WBAction::Execute();
 
-/*virtual*/ void WBActionDestroy::InitializeFromDefinition( const SimpleString& DefinitionName )
-{
-	WBAction::InitializeFromDefinition( DefinitionName );
+  STATIC_HASHED_STRING(EventOwner);
+  WBEntity* const pEntity = WBActionStack::Top().GetEntity(sEventOwner);
 
-	MAKEHASH( DefinitionName );
+  WBParamEvaluator::SPEContext PEContext;
+  PEContext.m_Entity = pEntity;
 
-	STATICHASH( DestroyPE );
-	const SimpleString DestroyDef = ConfigManager::GetString( sDestroyPE, "", sDefinitionName );
-	m_DestroyPE.InitializeFromDefinition( DestroyDef );
-}
+  m_DestroyPE.Evaluate(PEContext);
 
-/*virtual*/ void WBActionDestroy::Execute()
-{
-	WBAction::Execute();
-
-	STATIC_HASHED_STRING( EventOwner );
-	WBEntity* const pEntity = WBActionStack::Top().GetEntity( sEventOwner );
-
-	WBParamEvaluator::SPEContext PEContext;
-	PEContext.m_Entity = pEntity;
-
-	m_DestroyPE.Evaluate( PEContext );
-
-	WBEntity* const pDestroyEntity = m_DestroyPE.GetEntity();
-	if( pDestroyEntity )
-	{
-		pDestroyEntity->Destroy();
-	}
+  WBEntity* const pDestroyEntity = m_DestroyPE.GetEntity();
+  if (pDestroyEntity) {
+    pDestroyEntity->Destroy();
+  }
 }

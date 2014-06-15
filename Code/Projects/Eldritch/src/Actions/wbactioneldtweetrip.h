@@ -3,15 +3,14 @@
 
 #include "wbaction.h"
 
-class WBActionEldTweetRIP : public WBAction
-{
-public:
-	WBActionEldTweetRIP();
-	virtual ~WBActionEldTweetRIP();
+class WBActionEldTweetRIP : public WBAction {
+ public:
+  WBActionEldTweetRIP();
+  virtual ~WBActionEldTweetRIP();
 
-	DEFINE_WBACTION_FACTORY( EldTweetRIP );
+  DEFINE_WBACTION_FACTORY(EldTweetRIP);
 
-	virtual void	Execute();
+  virtual void Execute();
 };
 
-#endif // WBACTIONELDTWEETRIP_H
+#endif  // WBACTIONELDTWEETRIP_H

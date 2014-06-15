@@ -15,46 +15,45 @@ class Quat;
 class Matrix;
 class Vector;
 
-class Angles
-{
-public:
-	Angles();
-	Angles( float _Pitch, float _Roll, float _Yaw );
+class Angles {
+ public:
+  Angles();
+  Angles(float _Pitch, float _Roll, float _Yaw);
 
-	Angles& operator=( const Angles& a );
-	Angles operator-();
-	Angles operator+( const Angles& a ) const;
-	Angles operator-( const Angles& a ) const;
-	Angles operator*( float f ) const;
-	Angles operator/( float f ) const;
-	Angles& operator+=( const Angles& a );
-	Angles& operator-=( const Angles& a );
-	Angles& operator*=( float f );
-	Angles& operator/=( float f );
-	bool operator==( const Angles& v ) const;
-	bool operator!=( const Angles& v ) const;
+  Angles& operator=(const Angles& a);
+  Angles operator-();
+  Angles operator+(const Angles& a) const;
+  Angles operator-(const Angles& a) const;
+  Angles operator*(float f) const;
+  Angles operator/(float f) const;
+  Angles& operator+=(const Angles& a);
+  Angles& operator-=(const Angles& a);
+  Angles& operator*=(float f);
+  Angles& operator/=(float f);
+  bool operator==(const Angles& v) const;
+  bool operator!=(const Angles& v) const;
 
-	void	Zero();
-	bool	IsZero() const;
+  void Zero();
+  bool IsZero() const;
 
-	Vector	GetX() const;	// I.e., right vector
-	Vector	GetY() const;	// I.e., forward vector
-	Vector	GetZ() const;	// I.e., up vector
-	void	GetAxes( Vector& X, Vector& Y, Vector& Z ) const;
+  Vector GetX() const;  // I.e., right vector
+  Vector GetY() const;  // I.e., forward vector
+  Vector GetZ() const;  // I.e., up vector
+  void GetAxes(Vector& X, Vector& Y, Vector& Z) const;
 
-	Angles	GetShortestRotation() const;
+  Angles GetShortestRotation() const;
 
-	Vector	ToVector() const;	// Same as GetY
-	Vector	ToVector2D() const;	// Only regards Yaw
-	Matrix	ToMatrix() const;	// Gets the rotation matrix for this orientation
-	Quat	ToQuaternion() const;
+  Vector ToVector() const;    // Same as GetY
+  Vector ToVector2D() const;  // Only regards Yaw
+  Matrix ToMatrix() const;    // Gets the rotation matrix for this orientation
+  Quat ToQuaternion() const;
 
-	SimpleString	GetString() const;
+  SimpleString GetString() const;
 
-	// In radians
-	float	Pitch;
-	float	Roll;
-	float	Yaw;
+  // In radians
+  float Pitch;
+  float Roll;
+  float Yaw;
 };
 
-#endif // ANGLES_H
+#endif  // ANGLES_H

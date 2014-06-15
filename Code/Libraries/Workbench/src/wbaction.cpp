@@ -5,32 +5,25 @@
 #include "Components/wbcompowner.h"
 #include "wbevent.h"
 
-WBAction::WBAction()
-{
+WBAction::WBAction() {}
+
+WBAction::~WBAction() {}
+
+/*virtual*/ void WBAction::InitializeFromDefinition(
+    const SimpleString& DefinitionName) {
+  // Do nothing
+  Unused(DefinitionName);
 }
 
-WBAction::~WBAction()
-{
+/*virtual*/ void WBAction::Execute() {
+  // Do nothing
 }
 
-/*virtual*/ void WBAction::InitializeFromDefinition( const SimpleString& DefinitionName )
-{
-	// Do nothing
-	Unused( DefinitionName );
+WBEntity* WBAction::GetEntity() const {
+  STATIC_HASHED_STRING(EventOwner);
+  return WBActionStack::Top().GetEntity(sEventOwner);
 }
 
-/*virtual*/ void WBAction::Execute()
-{
-	// Do nothing
-}
-
-WBEntity* WBAction::GetEntity() const
-{
-	STATIC_HASHED_STRING( EventOwner );
-	return WBActionStack::Top().GetEntity( sEventOwner );
-}
-
-WBEntity* WBAction::GetOwner() const
-{
-	return WBCompOwner::GetTopmostOwner( GetEntity() );
+WBEntity* WBAction::GetOwner() const {
+  return WBCompOwner::GetTopmostOwner(GetEntity());
 }

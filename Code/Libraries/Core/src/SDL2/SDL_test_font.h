@@ -48,8 +48,7 @@ extern "C" {
  *
  *  \returns Returns 0 on success, -1 on failure.
  */
-int SDLTest_DrawString(SDL_Renderer * renderer, int x, int y, const char *s);
-
+int SDLTest_DrawString(SDL_Renderer *renderer, int x, int y, const char *s);
 
 /* Ends C function definitions when using C++ */
 #ifdef __cplusplus
