@@ -6,6 +6,8 @@
 #include "configmanager.h"
 #include "mathfunc.h"
 #include "interpolator.h"
+#include <AL/alut.h>
+#include <AL/alext.h>
 
 OpenALAudioSystem::OpenALAudioSystem() : m_ReverbCategories() {
   DEBUGPRINTF("Initializing OpenAL audio system...\n");
@@ -19,6 +21,7 @@ OpenALAudioSystem::OpenALAudioSystem() : m_ReverbCategories() {
   device = alcOpenDevice(nullptr);
   context = alcCreateContext(device, nullptr);
   alcMakeContextCurrent(context);
+  alutInit(nullptr, nullptr);
 
   STATICHASH(DefaultReverb);
   const SimpleString DefaultReverb =
@@ -46,6 +49,7 @@ OpenALAudioSystem::~OpenALAudioSystem() {
   alcMakeContextCurrent(nullptr);
   if (context) alcDestroyContext(context);
   if (device) alcCloseDevice(device);
+  alutExit();
 }
 
 void OpenALAudioSystem::Tick(float DeltaTime, bool GamePaused) {

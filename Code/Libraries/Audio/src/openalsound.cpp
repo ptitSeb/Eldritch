@@ -3,7 +3,11 @@
 #include "packstream.h"
 #include "openalsoundinstance.h"
 #include "openalaudiosystem.h"
-#include "stb_vorbis.c"
+#include <AL/alut.h>
+#include <vorbis/codec.h>
+#include <vorbis/vorbisfile.h>
+
+#include <iostream>
 
 #define EXT_OGG '\0ggo'
 #define EXT_WAV '\0vaw'
@@ -23,7 +27,7 @@ OpenALSound::OpenALSound(IAudioSystem* const pSystem,
   unsigned int Ext = *(unsigned int*)(SoundInit.m_Filename.CStr() + ExtOffset);
 
   if (SoundInit.m_IsStream && SoundInit.m_Category == "Music") {
-    CreateStream(PackStream(SoundInit.m_Filename.CStr()),
+    CreateSampleFromOGG(PackStream(SoundInit.m_Filename.CStr()),
                  SoundInit.m_IsLooping);
   } else {
     switch (Ext) {
@@ -59,82 +63,56 @@ OpenALSound::~OpenALSound() { alDeleteBuffers(1, &buffer); }
 void OpenALSound::CreateSampleFromOGG(const IDataStream& Stream, bool Looping) {
   int Length = Stream.Size();
   auto  pBuffer = new byte[Length];
+  OggVorbis_File vf;
+  ov_callbacks ov_call = {nullptr, nullptr, nullptr, nullptr};
   Stream.Read(Length, pBuffer);
-
-  stb_vorbis* ogg = stb_vorbis_open_memory(pBuffer, Length, nullptr, nullptr);
-
-  ASSERT(ogg);
-
-  if (ogg) {
-    stb_vorbis_info info = stb_vorbis_get_info(ogg);
-    ALenum format =
-        ((info.channels == 1) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16);
-
-    int const length_samples =
-        (stb_vorbis_stream_length_in_samples(ogg) * info.channels);
-    auto  ogg_buffer = new ALshort[length_samples];
-    alGenBuffers(1, &buffer);
-    stb_vorbis_get_samples_short_interleaved(ogg, info.channels, ogg_buffer,
-                                             length_samples);
-    alBufferData(buffer, format, ogg_buffer, (length_samples * sizeof(ALshort)),
-                 info.sample_rate);
-    stb_vorbis_close(ogg);
-    SafeDeleteArray(pBuffer);
-    SafeDeleteArray(ogg_buffer);
+  
+  ov_open_callbacks(nullptr, &vf, (const char *)pBuffer, Length, ov_call);
+  int bitstream = 0;
+  vorbis_info *info = ov_info(&vf, -1);
+  long size = 0;
+  ALenum format = (info->channels == 1) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16;
+  ALuint freq = info->rate;
+  long rc = 0;
+  ALubyte *retval = static_cast<ALubyte*>(malloc(4*1024*16));
+  char *buff = static_cast<char*>(malloc(4*1024*16));
+  size_t allocated = 4*1024*16;
+  while ( (rc = ov_read(&vf, buff, allocated, 0, 2, 1, &bitstream)) != 0 ) {
+    if (rc == 0) {
+      break;
+    }
+    size += rc;
+    std::cout<<allocated<< " " << size<<" "<<rc<<std::endl;
+    if (size >= allocated) {
+      allocated *=2;
+      ALubyte *tmp = static_cast<ALubyte*>(realloc(retval, allocated));
+      if (retval == NULL)
+        {
+          free(retval);
+          retval = nullptr;
+          break;
+        }
+      retval = tmp;
+    }
+    memmove(retval+size-rc, buff, rc);
   }
+  alGenBuffers(1, &buffer);
+  alBufferData(buffer, format, retval, size, freq);
+  free(retval);
+  ov_clear(&vf);
 }
 
 void OpenALSound::CreateSampleFromWAV(const IDataStream& Stream, bool Looping) {
-  ALenum format;
+  int Length = Stream.Size();
+  auto  pBuffer = new byte[Length];
+  Stream.Read(Length, pBuffer);
 
-  uint RIFFHeader = (uint)Stream.ReadUInt32();
-
-  ASSERT(RIFFHeader == 'FFIR');
-
-  Stream.ReadUInt32();  // size
-
-  uint WAVFormat = (uint)Stream.ReadUInt32();
-
-  ASSERT(WAVFormat == 'EVAW');
-
-  uint SubChunk1ID = (uint)Stream.ReadUInt32();
-
-  ASSERT(SubChunk1ID == ' tmf');
-
-  Stream.ReadUInt32();  // SubChunk 1 size
-  Stream.ReadUInt16();  // AudioFormat
-  uint16 NumChannels = Stream.ReadUInt16();
-  uint Frequency = (uint)Stream.ReadUInt32();
-  Stream.ReadUInt32();  // ByteRate
-  Stream.ReadUInt16();  // BlockAlign
-  uint16 BitsPerSample = Stream.ReadUInt16();
-
-  switch (BitsPerSample) {
-    case 8:
-      format = NumChannels == 2 ? AL_FORMAT_STEREO8 : AL_FORMAT_MONO8;
-      break;
-    case 16:
-      format = NumChannels == 2 ? AL_FORMAT_STEREO16 : AL_FORMAT_MONO16;
-      break;
-    default:
-      PRINTF("Error: Wave file has unknown format!\n");
-      return;
-      break;
+  buffer = alutCreateBufferFromFileImage(pBuffer, Length);
+  if (buffer == AL_NONE) {
+    std::cout << alutGetErrorString (alutGetError ()) << std::endl;
+    //exit(111);
   }
-
-  uint SubChunk2ID = (uint)Stream.ReadUInt32();
-
-  ASSERT(SubChunk2ID == 'atad');
-
-  uint SubChunk2Size = (uint)Stream.ReadUInt32();
-
-  auto  wav_buffer = new char[SubChunk2Size];
-  Stream.Read(SubChunk2Size, wav_buffer);
-
-  alGenBuffers(1, &buffer);
-  alBufferData(buffer, format, wav_buffer, SubChunk2Size, Frequency);
-  SafeDeleteArray(wav_buffer);
-}
+}  
 
 void OpenALSound::CreateStream(const PackStream& Stream, bool Looping) {
   // PRINTF("OpenALSound::CreateStream() STUB, doing nothing.\n");

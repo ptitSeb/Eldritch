@@ -34,3 +34,7 @@ src/soundmanager.h
 )
  
 add_library(Audio ${audio_src})
+target_link_libraries(Audio
+  ${ALUT_LIBRARIES}
+  vorbisfile
+)

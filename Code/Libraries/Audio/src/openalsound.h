@@ -23,6 +23,7 @@ class OpenALSound : public SoundCommon {
   void CreateStream(const PackStream& Stream, bool Looping);
 
   ALuint buffer;
+  ALenum GVorbisFormat;
 };
 
 #endif  // OPENALSOUND_H
