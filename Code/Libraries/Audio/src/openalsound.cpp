@@ -7,10 +7,6 @@
 #include <vorbis/codec.h>
 #include <vorbis/vorbisfile.h>
 
-#include <iostream>
-
-#define EXT_OGG '\0ggo'
-#define EXT_WAV '\0vaw'
 
 OpenALSound::OpenALSound(IAudioSystem* const pSystem,
                          const SSoundInit& SoundInit) {
@@ -74,31 +70,30 @@ void OpenALSound::CreateSampleFromOGG(const IDataStream& Stream, bool Looping) {
   ALenum format = (info->channels == 1) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16;
   ALuint freq = info->rate;
   long rc = 0;
-  ALubyte *retval = static_cast<ALubyte*>(malloc(4*1024*16));
-  char *buff = static_cast<char*>(malloc(4*1024*16));
-  size_t allocated = 4*1024*16;
+  long allocated = 4*1024*16;
+  ALubyte *retval = static_cast<ALubyte*>(malloc(allocated));
+  char *buff = static_cast<char*>(malloc(allocated));
+
   while ( (rc = ov_read(&vf, buff, allocated, 0, 2, 1, &bitstream)) != 0 ) {
-    if (rc == 0) {
+    if (rc <= 0) {
       break;
     }
     size += rc;
-    std::cout<<allocated<< " " << size<<" "<<rc<<std::endl;
-    if (size >= allocated) {
-      allocated *=2;
-      ALubyte *tmp = static_cast<ALubyte*>(realloc(retval, allocated));
-      if (retval == NULL)
-        {
-          free(retval);
-          retval = nullptr;
-          break;
-        }
-      retval = tmp;
-    }
+
+    ALubyte *tmp = static_cast<ALubyte*>(realloc(retval, size));
+    if (retval == nullptr)
+      {
+        free(retval);
+        retval = nullptr;
+        break;
+      }
+    retval = tmp;
     memmove(retval+size-rc, buff, rc);
   }
   alGenBuffers(1, &buffer);
   alBufferData(buffer, format, retval, size, freq);
   free(retval);
+  free(buff);
   ov_clear(&vf);
 }
 
@@ -106,12 +101,7 @@ void OpenALSound::CreateSampleFromWAV(const IDataStream& Stream, bool Looping) {
   int Length = Stream.Size();
   auto  pBuffer = new byte[Length];
   Stream.Read(Length, pBuffer);
-
   buffer = alutCreateBufferFromFileImage(pBuffer, Length);
-  if (buffer == AL_NONE) {
-    std::cout << alutGetErrorString (alutGetError ()) << std::endl;
-    //exit(111);
-  }
 }  
 
 void OpenALSound::CreateStream(const PackStream& Stream, bool Looping) {

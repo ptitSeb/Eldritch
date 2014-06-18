@@ -7,6 +7,8 @@
 class IDataStream;
 class PackStream;
 struct SSoundInit;
+#define EXT_OGG '\0ggo'
+#define EXT_WAV '\0vaw'
 
 class OpenALSound : public SoundCommon {
  public:
