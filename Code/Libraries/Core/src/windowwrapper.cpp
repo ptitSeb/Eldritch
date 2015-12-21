@@ -7,7 +7,11 @@
 #endif
 
 #if BUILD_SDL
+#ifdef PANDORA
+#include <SDL2/SDL.h>
+#else
 #include "SDL2/SDL.h"
+#endif
 #endif
 
 #include <memory.h>
@@ -322,8 +326,13 @@ bool Window::HasFocus() const {
 #endif
 #if BUILD_SDL
   if (m_Inited) {
+    #ifdef PANDORA
+    // On Pandora, SDL2 use FB access, so no real Windows / multitask here...
+    return true;
+    #else
     const Uint32 WindowFlags = SDL_GetWindowFlags(m_Window);
     return (WindowFlags & SDL_WINDOW_INPUT_FOCUS) != 0;
+    #endif
   } else {
     return false;
   }

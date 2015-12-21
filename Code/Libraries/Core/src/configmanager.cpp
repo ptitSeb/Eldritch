@@ -98,6 +98,7 @@ void ConfigManager::Load(const IDataStream& Stream) {
     Stream.SetPos(Pos);
     ConfigParser::Parse(Stream);
   }
+  Report();
 }
 
 /*static*/ void ConfigManager::LoadTiny(const IDataStream& Stream) {
@@ -820,32 +821,39 @@ void ConfigManager::Report() {
     FOR_EACH_MAP(VarIterator, VarMap, HashedString, ConfigVar) {
       const HashedString& Key = VarIterator.GetKey();
       const ConfigVar& Value = VarIterator.GetValue();
-
+//if ((ContextKey.GetHash()==0x079CE69E) || (ContextKey.GetHash()==0x02136B0E)) {
       DEBUGPRINTF("0x%08X:0x%08X: ", ContextKey.GetHash(), Key.GetHash());
-
+printf("0x%08X:0x%08X: ", ContextKey.GetHash(), Key.GetHash());
       switch (Value.m_Type) {
         case ConfigVar::EVT_None:
           DEBUGPRINTF("Undefined\n");
+printf("Undefined\n");
           break;
         case ConfigVar::EVT_Bool:
           if (Value.m_Bool) {
             DEBUGPRINTF("true\n");
+printf("true\n");
           } else {
             DEBUGPRINTF("false\n");
+printf("false\n");
           }
           break;
         case ConfigVar::EVT_Int:
           DEBUGPRINTF("%d\n", Value.m_Int);
+printf("%d\n", Value.m_Int);
           break;
         case ConfigVar::EVT_Float:
           DEBUGPRINTF("%f\n", Value.m_Float);
+printf("%f\n", Value.m_Float);
           break;
         case ConfigVar::EVT_String:
           DEBUGPRINTF("%s\n", Value.m_String);
+printf("%s\n", Value.m_String);
           break;
         default:
           break;
       }
+//}
     }
   }
 #endif  // BUILD_DEBUG

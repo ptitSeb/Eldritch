@@ -918,7 +918,9 @@ void EldritchWorld::BuildMesh(const uint MeshIndex) {
   IVertexBuffer::SInit InitStruct;
   InitStruct.NumVertices = Buffers.Positions.Size();
   InitStruct.Positions = Buffers.Positions.GetData();
+#if USE_HDR
   InitStruct.FloatColors1 = Buffers.Colors.GetData();
+#endif
   InitStruct.UVs = Buffers.UVs.GetData();
 
   VertexBuffer->Init(InitStruct);

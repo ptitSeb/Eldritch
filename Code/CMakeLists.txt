@@ -3,11 +3,21 @@ cmake_minimum_required(VERSION 2.8)
 project(Eldritch)
 include (FindPkgConfig)
 
+option(PANDORA "Set to ON if targeting an OpenPandora device" ${PANDORA})
+option(GLES "Set to ON if using GLES2 instead of desktop OpenGL" ${GLES})
+
 pkg_search_module(ALUT REQUIRED freealut)
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -Wall")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall")
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
+
+if(PANDORA)
+	add_definitions(-DPANDORA)
+endif()
+if(GLES)
+	add_definitions(-DHAVE_GLES)
+endif()
 
 add_subdirectory(Libraries/Core/)
 add_subdirectory(Libraries/Math/)

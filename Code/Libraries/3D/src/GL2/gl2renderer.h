@@ -7,7 +7,11 @@
 class Window;
 
 #if BUILD_SDL
+#ifdef PANDORA
+#include <SDL2/SDL.h>
+#else
 #include "SDL2/SDL.h"
+#endif
 #endif
 
 class GL2Renderer : public RendererCommon {

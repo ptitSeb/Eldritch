@@ -26,6 +26,8 @@ OpenALSoundInstance::~OpenALSoundInstance() {
   alDeleteSources(1, &source);
 }
 
+void OpenALSoundInstance::Play() { SetPaused(false); }
+
 void OpenALSoundInstance::Stop() { alSourceStop(source); }
 
 void OpenALSoundInstance::SetPriority(ESoundPriority Priority) const {

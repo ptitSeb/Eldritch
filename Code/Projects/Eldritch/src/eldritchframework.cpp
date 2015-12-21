@@ -1259,9 +1259,9 @@ void EldritchFramework::PrepareForLoad() {
 
 /*virtual*/ void EldritchFramework::ToggleFullscreen() {
   PRINTF("EldritchFramework::ToggleFullscreen\n");
-
+#ifndef PANDORA
   Framework3D::ToggleFullscreen();
-
+#endif
   ASSERT(m_Game);
   m_Game->RefreshRTDependentSystems();
 }

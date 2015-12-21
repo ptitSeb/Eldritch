@@ -17,7 +17,7 @@
 #include "configmanager.h"
 #include "packstream.h"
 #include "windowwrapper.h"
-
+#include <stdio.h>
 // I'm making this easy to compile out because GL, with its global state,
 // might be causing problems if I create new objects after setting render state.
 #define IGNORE_REDUNDANT_STATE 1
@@ -111,6 +111,7 @@ void GL2Renderer::Initialize() {
 #endif
   }
 
+#ifndef HAVE_GLES
   {
     const GLenum Error = glewInit();
     Unused(Error);
@@ -126,6 +127,7 @@ void GL2Renderer::Initialize() {
     ASSERT(WGLEW_EXT_swap_control);
 #endif
   }
+#endif  //HAVE_GLES
 
   glFrontFace(GL_CCW);
   glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &m_MaxVertexAttribs);
@@ -367,6 +369,7 @@ void GL2Renderer::Tick() {
         XTRACE_NAMED(glDrawElements);
 
         DEBUGASSERT(IndexBuffer->GetNumIndices() > 0);
+//printf("glDrawElements(%04X, %d, %04X, 0)\n", IndexBuffer->GetPrimitiveType(), IndexBuffer->GetNumIndices(), GLINDEXFORMAT);
         glDrawElements(IndexBuffer->GetPrimitiveType(),
                        IndexBuffer->GetNumIndices(), GLINDEXFORMAT, nullptr);
       }
@@ -501,13 +504,16 @@ void GL2Renderer::SetRenderTarget(IRenderTarget* RenderTarget) {
 
   const GLuint FrameBufferObject =
       *static_cast<GLuint*>(m_CurrentRenderTarget->GetHandle());
-
+#ifdef HAVE_GLES
+  glBindFramebuffer(GL_FRAMEBUFFER, FrameBufferObject); // no different DRAW / READ on GLES2
+#else
   ASSERT(GLEW_ARB_framebuffer_object || GLEW_EXT_framebuffer_object);
   if (GLEW_ARB_framebuffer_object) {
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, FrameBufferObject);
   } else if (GLEW_EXT_framebuffer_object) {
     glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, FrameBufferObject);
   }
+#endif
 
   // GL also requires manually setting the viewport for RTs.
   {
@@ -835,7 +841,17 @@ static GLenum GLMagFilters[] = {
   // (GL doesn't accept multiples of float4s unless the GLSL variable was an
   // array.)
   // Also, transpose matrices while we're at it.
+  #ifdef HAVE_GLES
+  // GLES doesn't support transposed matrix!
+  static float transposed[4*4*48];
+  for (int aa = 0; aa < NumMatrices; aa++)
+   for (int i = 0; i<4; i++)
+    for (int j = 0; j<4; j++)
+      transposed[aa*16+i*4+j] = pFloats[aa*16+i+j*4];
+    glUniformMatrix4fv(Register, NumMatrices, GL_FALSE, transposed);
+  #else
   const GLboolean Transpose = GL_TRUE;
   glUniformMatrix4fv(Register, NumMatrices, Transpose, pFloats);
+  #endif
   GLERRORCHECK;
 }

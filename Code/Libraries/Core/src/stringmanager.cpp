@@ -153,6 +153,8 @@ void StringManager::ParseConfigToken(Array<char>& ParsedString,
     AppendString = ConfigManager::GetLocalizedString(
         ConfigManager::GetString(Name, "", Context), "");
     AppendString = ParseConfigString(ESL_Transient, AppendString);
+  } else if (TypeChar == 'n') { // added 'n' SEB
+    AppendString = ConfigManager::GetString(Name, "", Context);
   }
 
   ASSERT(AppendString);

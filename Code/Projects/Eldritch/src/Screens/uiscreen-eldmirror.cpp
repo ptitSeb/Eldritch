@@ -324,7 +324,9 @@ void UIScreenEldMirror::CreateBackdropMesh() {
   IVertexBuffer::SInit InitStruct;
   InitStruct.NumVertices = kNumVertices;
   InitStruct.Positions = Positions.GetData();
+#if USE_HDR
   InitStruct.FloatColors1 = Colors.GetData();
+#endif
   InitStruct.UVs = UVs.GetData();
   pVertexBuffer->Init(InitStruct);
   pIndexBuffer->Init(kNumIndices, Indices.GetData());

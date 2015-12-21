@@ -10,6 +10,7 @@ GLenum GetGLFormat(const ERenderTargetFormat Format) {
       return GL_RGBA8;  // Meh?
     case ERTF_A8R8G8B8:
       return GL_RGBA8;
+#ifndef HAVE_GLES
     case ERTF_A16B16G16R16:
       return GL_RGBA16;
     case ERTF_A16B16G16R16F:
@@ -21,6 +22,7 @@ GLenum GetGLFormat(const ERenderTargetFormat Format) {
     case ERTF_R32F:
       ASSERT(GLEW_ARB_texture_float);
       return GL_INTENSITY32F_ARB;
+#endif
     case ERTF_D24S8:
       return GL_DEPTH24_STENCIL8;
     case ERTF_UseDefault:
@@ -37,6 +39,15 @@ GLenum GetGLFormat(const ERenderTargetFormat Format) {
   }
 }
 
+#ifdef HAVE_GLES
+int NPOT(int a)
+{
+  int x = 1;
+  while (x<a) x*=2;
+  return x;
+}
+#endif
+
 GL2RenderTarget::GL2RenderTarget()
     : m_FrameBufferObject(0),
       m_ColorTextureObject(0),
@@ -50,19 +61,27 @@ GL2RenderTarget::~GL2RenderTarget() {
   SafeDelete(m_ColorTexture);
 
   if (m_DepthStencilRenderBufferObject != 0) {
+#ifdef HAVE_GLES
+    glDeleteRenderbuffers(1, &m_DepthStencilRenderBufferObject);
+#else
     if (GLEW_ARB_framebuffer_object) {
       glDeleteRenderbuffers(1, &m_DepthStencilRenderBufferObject);
     } else if (GLEW_EXT_framebuffer_object) {
       glDeleteRenderbuffersEXT(1, &m_DepthStencilRenderBufferObject);
     }
+#endif
   }
 
   if (m_FrameBufferObject != 0) {
+#ifdef HAVE_GLES
+    glDeleteFramebuffers(1, &m_FrameBufferObject);
+#else
     if (GLEW_ARB_framebuffer_object) {
       glDeleteFramebuffers(1, &m_FrameBufferObject);
     } else if (GLEW_EXT_framebuffer_object) {
       glDeleteFramebuffersEXT(1, &m_FrameBufferObject);
     }
+#endif
   }
 }
 
@@ -72,7 +91,54 @@ GL2RenderTarget::~GL2RenderTarget() {
 
   m_Width = Params.Width;
   m_Height = Params.Height;
+  #ifdef PANDORA
+  if ((m_Height == 480) && (m_Width = 800))
+  {
+    m_Width = 512;
+    m_Height = 256;
+  }
+  #endif
 
+#ifdef HAVE_GLES
+  m_Width = NPOT(m_Width);
+  m_Height = NPOT(m_Height);
+
+  glGenFramebuffers(1, &m_FrameBufferObject);
+  ASSERT(m_FrameBufferObject != 0);
+  glBindFramebuffer(GL_FRAMEBUFFER, m_FrameBufferObject);
+  if (Params.ColorFormat != ERTF_None) {
+    glGenTextures(1, &m_ColorTextureObject);
+    ASSERT(m_ColorTextureObject != 0);
+    glBindTexture(GL_TEXTURE_2D, m_ColorTextureObject);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_Width, m_Height, 0,
+                 GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    m_ColorTexture = new GL2Texture(m_ColorTextureObject);
+    glBindTexture(GL_TEXTURE_2D, 0);  // Unbind ?
+  }
+  if (Params.DepthStencilFormat != ERTF_None) {
+      glGenRenderbuffers(1, &m_DepthStencilRenderBufferObject);
+      ASSERT(m_DepthStencilRenderBufferObject != 0);
+      glBindRenderbuffer(GL_RENDERBUFFER, m_DepthStencilRenderBufferObject);
+      glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, m_Width,
+                            m_Height);
+  }
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+                         m_ColorTextureObject, 0);
+  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+                            GL_RENDERBUFFER,
+                            m_DepthStencilRenderBufferObject);
+  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
+                            GL_RENDERBUFFER,
+                            m_DepthStencilRenderBufferObject);
+
+  const GLenum FrameBufferStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+  ASSERT(FrameBufferStatus == GL_FRAMEBUFFER_COMPLETE);
+  Unused(FrameBufferStatus);
+#else
   // FBOs were supported in GL 2.1 only by extension, but some newer drivers
   // don't still support that extension. Use whichever is available.
   ASSERT(GLEW_EXT_framebuffer_object || GLEW_ARB_framebuffer_object);
@@ -143,6 +209,7 @@ GL2RenderTarget::~GL2RenderTarget() {
     ASSERT(FrameBufferStatus == GL_FRAMEBUFFER_COMPLETE_EXT);
     Unused(FrameBufferStatus);
   }
+#endif  //HAVE_GLES
 }
 
 void GL2RenderTarget::Release() {}

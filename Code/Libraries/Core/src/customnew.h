@@ -5,7 +5,7 @@
 #include <new>       // Required for BUILD_LINUX, at least.
 
 #define USE_ALLOCATOR \
-  (1 && !BUILD_MAC && !BUILD_64BIT_LINUX)  // Early allocations through Cocoa
+  (0 && !BUILD_MAC && !BUILD_64BIT_LINUX)  // Early allocations through Cocoa
                                            // framework makes allocator fail on
                                            // Mac, or something.
 
@@ -27,9 +27,9 @@ void operator delete[](void* const pObj, Allocator& Alloc,
 
 #if USE_ALLOCATOR
 
-#if BUILD_WINDOWS
+#if BUILD_WINDOWS | 1
 #define NEW_THROW
-#define DELETE_THROW
+#define DELETE_THROW noexcept
 #else
 #define NEW_THROW throw(std::bad_alloc)
 #define DELETE_THROW throw()

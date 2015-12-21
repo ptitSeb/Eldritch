@@ -2,6 +2,9 @@
 #include "hashedstring.h"
 #include "simplestring.h"
 #include "reversehash.h"
+#ifdef PANDORA
+#pragma GCC optimize "no-fast-math"
+#endif
 
 #pragma warning(disable : 4706)  // assignment within conditional expression
 
@@ -39,10 +42,10 @@ uint32 HashedString::Hash(const char* const String) {
     return 0;
   }
 
-  const char* CharIter = String;
+  const unsigned char* CharIter = String;
   uint32 HashValue = 0;
   uint32 x;
-  char c;
+  unsigned char c;
   while (c = *CharIter++) {
     HashValue = (HashValue << 4) + c;
     if ((x = HashValue & 0xF0000000) != 0) {

@@ -16,7 +16,7 @@
 #include "iuiinputmap.h"
 #include "mathcore.h"
 #include "irenderer.h"
-
+#include <stdio.h>
 UIManager* UIWidget::m_UIManager = nullptr;
 
 UIWidget::UIWidget()
@@ -92,9 +92,14 @@ void UIWidget::InitializeFromDefinition(const SimpleString& DefinitionName) {
   STATICHASH(HighlightA);
   STATICHASH(Origin);
   MAKEHASH(DefinitionName);
-
   m_Name = DefinitionName;
   m_Archetype = ConfigManager::GetString(sArchetype, "", sDefinitionName);
+  if (m_Archetype=="") {
+//    m_Archetype = DefinitionName + SimpleString("Archetype");
+      HashedString magic_hash = HashedString(0x0cfac4f3);
+      m_Archetype = ConfigManager::GetString(magic_hash, "", sDefinitionName);
+//printf("Null Archetype (0x%08X) => \"%s\"...\n", sArchetype.GetHash(), m_Archetype.CStr());
+  }
 
   MAKEHASH(m_Archetype);
 
@@ -106,6 +111,7 @@ void UIWidget::InitializeFromDefinition(const SimpleString& DefinitionName) {
       sRenderInWorld, sm_Archetype, false, sDefinitionName);
   m_FocusOrder = ConfigManager::GetArchetypeInt(sFocusOrder, sm_Archetype, 0,
                                                 sDefinitionName);
+//printf("InitializeFromDefinition(\"%s\"), Archetype=\"%s\"(0x%08X) Hash=0x%08X Focus=%d, FocusOrder=%d\n", DefinitionName.CStr(), m_Archetype.CStr(), sm_Archetype.GetHash(),sDefinitionName.GetHash(), m_CanBeFocused, m_FocusOrder);
   m_EventName = ConfigManager::GetArchetypeString(sEvent, sm_Archetype, "",
                                                   sDefinitionName);
   m_Command = ConfigManager::GetArchetypeString(sCommand, sm_Archetype, "",

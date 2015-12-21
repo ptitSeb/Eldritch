@@ -31,7 +31,11 @@
 #endif
 
 #if BUILD_SDL
+#ifdef PANDORA
+#include <SDL2/SDL.h>
+#else
 #include "SDL2/SDL.h"
+#endif
 #endif
 
 // I always want *the option* to get logs in final, but not dev.
@@ -147,6 +151,14 @@ void Framework3D::Main() {
   }
 
   SDL_DisableScreenSaver();
+  #ifdef HAVE_GLES
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+
+//  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+//  SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+  #endif
 #endif
 
   STATICHASH(Framework);
@@ -179,11 +191,16 @@ void Framework3D::Main() {
   STATICHASH(UseFixedFrameTime);
   m_UseFixedFrameTime =
       ConfigManager::GetBool(sUseFixedFrameTime, true, sFramework);
+#ifdef HAVE_GLES0
+  m_UseFixedFrameTime = false;    // GLES hardware are less powerfull than Desktop
+#endif
 
   STATICHASH(FixedFrameTime);
   m_FixedFrameTime =
       ConfigManager::GetFloat(sFixedFrameTime, 1.0f / 60.0f, sFramework);
-
+  #ifdef PANDORA
+      m_FixedFrameTime = 1.0f / 14.0f;  // 60fps cannot be sustained on the Pandora
+  #endif
   STATICHASH(FramesLimit);
   const int FramesLimit = ConfigManager::GetInt(sFramesLimit, 5, sFramework);
   m_FrameTimeLimit = m_FixedFrameTime * static_cast<float>(FramesLimit);
@@ -194,6 +211,9 @@ void Framework3D::Main() {
   STATICHASH(VideoCaptureFixedFrameTime);
   m_VideoCaptureFixedFrameTime = ConfigManager::GetFloat(
       sVideoCaptureFixedFrameTime, 1.0f / 30.0f, sFramework);
+  #ifdef PANDORA
+      sVideoCaptureFixedFrameTime = 1.0f / 8.0f;  // 30fps cannot be sustained on the Pandora (even 10fps I'm not sure)
+  #endif
 
   uint DisplayWidth = 0;
   uint DisplayHeight = 0;
@@ -244,10 +264,12 @@ void Framework3D::Main() {
   STATICHASH(IconImage);
   const char* const pIconImage =
       ConfigManager::GetString(sIconImage, nullptr, sFramework);
-  ASSERT(pIconImage);
-  const Surface IconSurface =
-      Surface(PackStream(pIconImage), Surface::ESFT_BMP);
-  SDL_SetWindowIcon(m_Window->GetSDLWindow(), IconSurface.GetSDLSurface());
+  if(pIconImage) {
+    ASSERT(pIconImage);
+    const Surface IconSurface =
+        Surface(PackStream(pIconImage), Surface::ESFT_BMP);
+    SDL_SetWindowIcon(m_Window->GetSDLWindow(), IconSurface.GetSDLSurface());
+  }
 #endif
 
   m_Window->SetFullscreen(m_Display->m_Fullscreen);
@@ -377,11 +399,13 @@ void Framework3D::CreateSplashWindow(const uint WindowIcon,
   STATICHASH(IconImage);
   const char* const pIconImage =
       ConfigManager::GetString(sIconImage, nullptr, sFramework);
-  ASSERT(pIconImage);
-  const Surface IconSurface =
-      Surface(PackStream(pIconImage), Surface::ESFT_BMP);
-  SDL_SetWindowIcon(m_SplashWindow->GetSDLWindow(),
-                    IconSurface.GetSDLSurface());
+  if(pIconImage) {
+    ASSERT(pIconImage);
+    const Surface IconSurface =
+        Surface(PackStream(pIconImage), Surface::ESFT_BMP);
+    SDL_SetWindowIcon(m_SplashWindow->GetSDLWindow(),
+                      IconSurface.GetSDLSurface());
+  }
 #endif
 
   SplashSurface.BlitToWindow(m_SplashWindow);
@@ -538,7 +562,7 @@ void Framework3D::CreateSplashWindow(const uint WindowIcon,
     ToggleFullscreen();
   }
 
-#if !BUILD_MAC
+#if 0 //!BUILD_MAC
   // This causes problems on Mac, but is essential on Linux and maybe Windows.
   if (m_Mouse->IsActive() && m_Window->HasFocus()) {
     // Fix invisible cursor from affecting other windows

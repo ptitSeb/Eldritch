@@ -79,6 +79,9 @@ void RendererCommon::Initialize() {
 
   STATICHASH(DoMaterialSort);
   m_DoMaterialSort = ConfigManager::GetBool(sDoMaterialSort, false, sRenderer);
+  #ifdef HAVE_GLES
+  m_DoMaterialSort = true;
+  #endif
 }
 
 void RendererCommon::SetWorldMatrix(const Matrix& WorldMatrix) {

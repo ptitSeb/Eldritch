@@ -7,7 +7,11 @@
 #endif
 
 #if BUILD_SDL
+#ifdef PANDORA
+#include <SDL2/SDL.h>
+#else
 #include "SDL2/SDL.h"
+#endif
 #endif
 
 Display::Display()
@@ -26,7 +30,11 @@ Display::Display()
   m_Width = ConfigManager::GetInt(sDisplayWidth);
   m_Height = ConfigManager::GetInt(sDisplayHeight);
   m_AspectRatio = (float)m_Width / (float)m_Height;
+#ifdef PANDORA
+  m_Fullscreen = true;
+#else
   m_Fullscreen = ConfigManager::GetBool(sFullscreen);
+#endif
 
 // Get the stored resolution
 #if BUILD_WINDOWS_NO_SDL
@@ -79,7 +87,11 @@ void Display::UpdateDisplay() {
   STATICHASH(DisplayRate);
   if (m_Fullscreen) {
     SetDisplay(false, m_Fullscreen, m_Width, m_Height,
+      #ifdef HAVE_GLES
+               ConfigManager::GetInt(sDisplayDepth, 16),
+      #else
                ConfigManager::GetInt(sDisplayDepth, 32),
+      #endif
                ConfigManager::GetInt(sDisplayRate, 60));
   } else {
     SetDisplay(true);
@@ -185,8 +197,12 @@ bool Display::NeedsUpdate() {
     for (int ModeIndex = 0; ModeIndex < NumModes; ++ModeIndex) {
       SDL_DisplayMode DisplayMode;
       SDL_GetDisplayMode(DisplayIndex, ModeIndex, &DisplayMode);
-
-      if (SDL_BYTESPERPIXEL(DisplayMode.format) == 4) {
+#ifdef PANDORA
+      if (SDL_BYTESPERPIXEL(DisplayMode.format) >= 2)
+#else
+      if (SDL_BYTESPERPIXEL(DisplayMode.format) == 4)
+#endif
+      {
         SDisplayMode Mode;
         Mode.Width = DisplayMode.w;
         Mode.Height = DisplayMode.h;

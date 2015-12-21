@@ -3,6 +3,9 @@
 #include "idatastream.h"
 #include "configmanager.h"
 #include "mathcore.h"
+#ifdef HAVE_GLES
+#include "decompress.h"
+#endif
 
 GL2Texture::GL2Texture() : m_Texture(0) {}
 
@@ -15,6 +18,25 @@ GL2Texture::~GL2Texture() {
 }
 
 /*virtual*/ void* GL2Texture::GetHandle() { return &m_Texture; }
+
+#ifdef HAVE_GLES
+// I don't trust the BGRA extensions on GLES
+byte* GLES_ConvertBGRA2RGBA(int Width, int Height, byte* texture)
+{
+  byte* ret = (byte*) malloc(Width * Height * 4);
+  GLuint tmp;
+  byte* dest = ret;
+  for (int i = 0; i < Height; i++) {
+      for (int j = 0; j < Width; j++) {
+        tmp = *(const GLuint*)texture;
+        *(GLuint*)dest = (tmp&0xff00ff00) | ((tmp&0x00ff0000)>>16) | ((tmp&0x000000ff)<<16);
+        texture += 4;
+        dest += 4;
+      }
+  }
+  return ret;
+}
+#endif
 
 /*virtual*/ void GL2Texture::CreateTexture(byte* const ARGBImage) {
   XTRACE_FUNCTION;
@@ -37,8 +59,15 @@ GL2Texture::~GL2Texture() {
   byte* ThisLevel = ARGBImage;
   byte* NextLevel = nullptr;
   for (int MipLevel = 0; MipLevel < MipLevels; ++MipLevel) {
+    #ifdef HAVE_GLES
+    byte* tmp = GLES_ConvertBGRA2RGBA(Width, Height, ThisLevel);
+    glTexImage2D(GL_TEXTURE_2D, MipLevel, GL_RGBA, Width, Height, 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, tmp);
+    free(tmp);
+    #else
     glTexImage2D(GL_TEXTURE_2D, MipLevel, GL_RGBA8, Width, Height, 0, GL_BGRA,
                  GL_UNSIGNED_BYTE, ThisLevel);
+    #endif
 
     if (DebugMips) {
       NextLevel =
@@ -101,10 +130,53 @@ struct SDDSurfaceFormat {
 #define DXT3_TAG 0x33545844  // 'DXT3'
 #define DXT5_TAG 0x35545844  // 'DXT5'
 
+#ifdef HAVE_GLES
+void *uncompressDXTc(GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, const void *data) {
+  // uncompress a DXTc image
+  // get pixel size of uncompressed image => fixed RGBA
+  int pixelsize = 4;
+  // alloc memory
+  void *pixels = malloc(((width+3)&~3)*((height+3)&~3)*pixelsize);
+  // uncompress loop
+  int blocksize;
+  switch (format) {
+    case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
+    case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
+      blocksize = 8;
+      break;
+    case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
+    case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
+      blocksize = 16;
+      break;
+  }
+  uintptr_t src = (uintptr_t) data;
+  for (int y=0; y<height; y+=4) {
+    for (int x=0; x<width; x+=4) {
+      switch(format) {
+        case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
+        case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
+          DecompressBlockDXT1(x, y, width, (uint8_t*)src, (uint32_t*)pixels);
+          break;
+        case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
+          DecompressBlockDXT3(x, y, width, (uint8_t*)src, (uint32_t*)pixels);
+          break;
+        case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
+          DecompressBlockDXT5(x, y, width, (uint8_t*)src, (uint32_t*)pixels);
+          break;
+      }
+      src+=blocksize;
+    }
+  }
+  return pixels;
+}
+#endif //HAVE_GLES
+
 /*virtual*/ void GL2Texture::CreateTextureFromDDS(const IDataStream& Stream) {
   XTRACE_FUNCTION;
 
+#ifndef HAVE_GLES
   ASSERT(GLEW_EXT_texture_compression_s3tc);
+#endif
 
   const uint DDSTag = Stream.ReadUInt32();
   DEVASSERT(DDSTag == DDS_TAG);
@@ -150,8 +222,15 @@ struct SDDSurfaceFormat {
     ReadArray.Resize(ReadBytes);
     Stream.Read(ReadBytes, ReadArray.GetData());
 
+#ifdef HAVE_GLES
+    void* tmp = uncompressDXTc(Width, Height, GLFormat, ReadBytes, ReadArray.GetData());
+    glTexImage2D(GL_TEXTURE_2D, MipLevel, GL_RGBA, Width, Height, 0,
+                           GL_RGBA, GL_UNSIGNED_BYTE, tmp);
+    free(tmp);
+#else
     glCompressedTexImage2D(GL_TEXTURE_2D, MipLevel, GLFormat, Width, Height, 0,
                            ReadBytes, ReadArray.GetData());
+#endif
 
     Width = Max(1, Width >> 1);
     Height = Max(1, Height >> 1);

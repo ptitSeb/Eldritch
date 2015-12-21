@@ -7,7 +7,11 @@
 #include <Windows.h>
 
 #if BUILD_SDL
+#ifdef PANDORA
+#include <SDL2/SDL.h>
+#else
 #include "SDL2/SDL.h"
+#endif
 #endif
 
 // I always want to get crash logs in final. Not necessarily for dev.

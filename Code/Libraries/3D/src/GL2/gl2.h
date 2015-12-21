@@ -1,4 +1,19 @@
+#ifdef HAVE_GLES
+#include "GLES2/gl2.h"
+#include "GLES2/gl2ext.h"
+#define glClearDepth 		glClearDepthf
+#define GL_RGBA8			GL_RGBA
+#define GL_DEPTH24_STENCIL8 GL_DEPTH24_STENCIL8_OES
+#ifndef GL_BGRA_EXT
+#define GL_BGRA_EXT         0x80E1
+#endif
+#define GL_COMPRESSED_RGB_S3TC_DXT1_EXT      0x83F0
+#define GL_COMPRESSED_RGBA_S3TC_DXT1_EXT     0x83F1
+#define GL_COMPRESSED_RGBA_S3TC_DXT3_EXT     0x83F2
+#define GL_COMPRESSED_RGBA_S3TC_DXT5_EXT     0x83F3
+#else
 #include "GL/glew.h"
+#endif
 #ifdef WIN32
 #include "GL/wglew.h"
 #endif

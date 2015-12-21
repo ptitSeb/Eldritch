@@ -6,7 +6,11 @@
 #include <memory.h>
 
 #if BUILD_SDL
+#ifdef PANDORA
+#include <SDL2/SDL.h>
+#else
 #include "SDL2/SDL.h"
+#endif
 #endif
 
 #if BUILD_WINDOWS_NO_SDL
@@ -45,6 +49,7 @@ Mouse::Mouse(Window* const pWindow)
       m_NotifiedMouseMoved(false),
       m_ReceivedInputThisTick(false),
       m_AllowCursor(true),
+      m_OldDelta(1.0f/60.f),
       m_CursorShown(true) {
   memset(&m_CurrentState, 0, sizeof(SMouseState));
   memset(&m_LastState, 0, sizeof(SMouseState));
@@ -90,7 +95,8 @@ void Mouse::SetRelativeMode(const bool Relative) {
 #endif
 
 void Mouse::Tick(float DeltaTime) {
-  Unused(DeltaTime);
+  //Unused(DeltaTime);
+  m_OldDelta = DeltaTime;
 
   m_LastState = m_CurrentState;
 
@@ -225,7 +231,7 @@ float Mouse::GetVelocity(uint Axis) {
   DEVASSERT(Axis > EA_None);
   DEVASSERT(Axis < EA_Max);
   // TODO: Normalize this somehow?
-  return (float)m_CurrentState.m_Axes[Axis] - (float)m_LastState.m_Axes[Axis];
+  return ((float)m_CurrentState.m_Axes[Axis] - (float)m_LastState.m_Axes[Axis])/(60.f*m_OldDelta);
 }
 
 void Mouse::SetPosition(int X, int Y, Window* const pWindow) {

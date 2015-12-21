@@ -100,6 +100,7 @@ class Mouse : public IController {
   bool m_AllowCursor;
   bool m_CursorShown;  // In in exclusive mode, reflects whether the cursor
                        // *would* be shown.
+  float m_OldDelta;
 };
 
 #endif  // MOUSE_H

@@ -4,8 +4,13 @@
 // Used to completely compile HDR functionality out of the engine (including
 // all tools); in the future, HDR stuff could be optionally disabled by the
 // end user even when this is defined and HDR content was baked.
+#ifdef HAVE_GLES
 #define USE_HDR 1
 #define USE_LONG_INDICES 0
+#else
+#define USE_HDR 1
+#define USE_LONG_INDICES 0
+#endif
 
 #define MAX_TEXTURE_STAGES \
   8  // 2013-09-30: Reduced from 16 to 8 because when do I ever need that many

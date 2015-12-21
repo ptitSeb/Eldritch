@@ -12,7 +12,7 @@ class OpenALSoundInstance : public SoundInstanceCommon {
   OpenALSoundInstance(ISound* const pSound);
   virtual ~OpenALSoundInstance();
 
-  virtual void Play() { SetPaused(false); }
+  virtual void Play();
   virtual void Stop();
   virtual void SetPaused(bool Paused);
   virtual void SetVolume(float Volume);

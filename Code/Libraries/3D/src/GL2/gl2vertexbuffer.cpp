@@ -4,6 +4,18 @@
 #include "vector2.h"
 #include "vector4.h"
 
+#ifdef HAVE_GLES
+extern "C" {
+//  void* eglGetProcAddress(const char*); // cannot include EGL/egl.h, as it conflict with other headers...
+  void* SDL_GL_GetProcAddress(const char* proc);
+}
+#define eglGetProcAddress(aa) SDL_GL_GetProcAddress(aa)
+static int MapBufferInited = 0;
+static PFNGLMAPBUFFEROESPROC glMapBuffer = NULL;
+static PFNGLUNMAPBUFFEROESPROC glUnmapBuffer = NULL;
+#define GL_WRITE_ONLY GL_WRITE_ONLY_OES
+#endif
+
 GL2VertexBuffer::GL2VertexBuffer()
     : m_RefCount(0),
       m_NumVertices(0),
@@ -22,6 +34,11 @@ GL2VertexBuffer::GL2VertexBuffer()
       m_TangentsVBO(0),
       m_BoneIndicesVBO(0),
       m_BoneWeightsVBO(0) {
+if (!MapBufferInited) {
+    glMapBuffer = (PFNGLMAPBUFFEROESPROC)eglGetProcAddress("glMapBufferOES");
+    glUnmapBuffer = (PFNGLUNMAPBUFFEROESPROC)eglGetProcAddress("glUnmapBufferOES");
+    MapBufferInited = 1;
+  }
 }
 
 GL2VertexBuffer::~GL2VertexBuffer() { DeviceRelease(); }
@@ -48,9 +65,11 @@ void GL2VertexBuffer::DeviceRelease() {
   }
   SAFEDELETEBUFFER(Positions);
   SAFEDELETEBUFFER(Colors);
+#if USE_HDR
   SAFEDELETEBUFFER(FloatColors1);
   SAFEDELETEBUFFER(FloatColors2);
   SAFEDELETEBUFFER(FloatColors3);
+#endif
   SAFEDELETEBUFFER(UVs);
   SAFEDELETEBUFFER(Normals);
   SAFEDELETEBUFFER(Tangents);

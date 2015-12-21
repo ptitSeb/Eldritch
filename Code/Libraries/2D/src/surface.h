@@ -12,7 +12,11 @@ class Window;
 #endif
 
 #if BUILD_SDL
+#ifdef PANDORA
+#include <SDL2/SDL.h>
+#else
 #include "SDL2/SDL.h"
+#endif
 #endif
 
 class IDataStream;

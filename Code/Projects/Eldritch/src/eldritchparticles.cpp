@@ -595,7 +595,9 @@ void EldritchParticles::InitVertexBuffers(IVertexBuffer* pVertexBuffer) {
   IVertexBuffer::SInit InitStruct;
   InitStruct.NumVertices = m_Params.m_MaxParticles * 4;
   InitStruct.Positions = m_VB_Positions.GetData();
+#if USE_HDR
   InitStruct.FloatColors1 = m_VB_FloatColors.GetData();
+#endif
   InitStruct.UVs = m_VB_UVs.GetData();
   InitStruct.Normals = m_VB_Normals.GetData();
   InitStruct.Dynamic = true;
@@ -678,9 +680,11 @@ void EldritchParticles::UpdateMesh() {
   Vector* const pPositions =
       static_cast<Vector*>(pVertexBuffer->Lock(IVertexBuffer::EVE_Positions));
   DEVASSERT(pPositions);
+#if USE_HDR
   Vector4* const pFloatColors = static_cast<Vector4*>(
       pVertexBuffer->Lock(IVertexBuffer::EVE_FloatColors1));
   DEVASSERT(pFloatColors);
+#endif
   Vector* const pNormals =
       static_cast<Vector*>(pVertexBuffer->Lock(IVertexBuffer::EVE_Normals));
   DEVASSERT(pNormals);
@@ -690,15 +694,25 @@ void EldritchParticles::UpdateMesh() {
   DEVASSERT(m_VB_Normals.GetData());
 
   // Eh, why not leave this conditional here. It can't hurt.
-  if (pPositions && pFloatColors && pNormals) {
+#if USE_HDR
+  if (pPositions && pFloatColors && pNormals) 
+#else
+  if (pPositions && pNormals) 
+#endif
+  {
+
     memcpy(pPositions, m_VB_Positions.GetData(), NumVertices * sizeof(Vector));
+#if USE_HDR
     memcpy(pFloatColors, m_VB_FloatColors.GetData(),
            NumVertices * sizeof(Vector4));
+#endif
     memcpy(pNormals, m_VB_Normals.GetData(), NumVertices * sizeof(Vector));
   }
 
   pVertexBuffer->Unlock(IVertexBuffer::EVE_Positions);
+#if USE_HDR
   pVertexBuffer->Unlock(IVertexBuffer::EVE_FloatColors1);
+#endif
   pVertexBuffer->Unlock(IVertexBuffer::EVE_Normals);
 
   pVertexBuffer->SetNumVertices(NumVertices);

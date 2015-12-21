@@ -85,8 +85,12 @@ void AudioSystemCommon::Tick(float DeltaTime, bool GamePaused) {
   MAKEHASH(DefinitionName);
 
   STATICHASH(Archetype);
-  const SimpleString ArchetypeName =
+  /*const*/ SimpleString ArchetypeName =
       ConfigManager::GetString(sArchetype, "", sDefinitionName);
+  if (ArchetypeName=="") {
+      HashedString magic_hash = HashedString(0x0cfac4f3);
+      ArchetypeName = ConfigManager::GetString(magic_hash, "", sDefinitionName);
+  }
 
   MAKEHASH(ArchetypeName);
 

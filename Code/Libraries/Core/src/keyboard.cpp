@@ -7,7 +7,11 @@
 #include <Windows.h>
 #endif
 #if BUILD_SDL
+#ifdef PANDORA
+#include <SDL2/SDL.h>
+#else
 #include "SDL2/SDL.h"
+#endif
 #endif
 
 #if BUILD_WINDOWS_NO_SDL
