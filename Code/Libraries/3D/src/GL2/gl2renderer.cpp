@@ -199,7 +199,7 @@ bool GL2Renderer::Reset() { return true; }
 }
 
 /*virtual*/ void GL2Renderer::Refresh() {
-#if BUILD_SDL
+#if BUILD_SDL && !defined(PANDORA)
   // On Linux, at least, SDL needs to be set as the current context *after* the
   // GL window is shown, so this allows be to do it there.
   if (m_Window && m_Window->GetSDLWindow() && m_RenderContext) {
@@ -322,6 +322,15 @@ void GL2Renderer::Tick() {
         const uint VertexSignature = pVertexDeclaration->GetSignature();
         uint Index = 0;
 
+#ifdef NO_VBO
+#define SETSTREAM(STREAM, SIGNATURE, NUMCOMPONENTS, COMPONENTTYPE, NORMALIZE) \
+  if (SIGNATURE == (VertexSignature & SIGNATURE)) {                           \
+    glEnableVertexAttribArray(Index);                                         \
+    glVertexAttribPointer(Index, NUMCOMPONENTS, COMPONENTTYPE, NORMALIZE, 0,  \
+                          VertexBuffer->Get##STREAM());                       \
+    ++Index;                                                                  \
+  }
+#else
 #define SETSTREAM(STREAM, SIGNATURE, NUMCOMPONENTS, COMPONENTTYPE, NORMALIZE) \
   if (SIGNATURE == (VertexSignature & SIGNATURE)) {                           \
     const GLuint VBO = *static_cast<GLuint*>(VertexBuffer->Get##STREAM());    \
@@ -332,7 +341,7 @@ void GL2Renderer::Tick() {
                           NULL);                                              \
     ++Index;                                                                  \
   }
-
+#endif
         SETSTREAM(Positions, VD_POSITIONS, 3, GL_FLOAT, GL_FALSE);
         SETSTREAM(Colors, VD_COLORS, 4, GL_UNSIGNED_BYTE, GL_TRUE);
 #if USE_HDR
@@ -358,9 +367,10 @@ void GL2Renderer::Tick() {
              DisableAttribIndex < m_MaxVertexAttribs; ++DisableAttribIndex) {
           glDisableVertexAttribArray(DisableAttribIndex);
         }
-
+#ifndef NO_VBO
         const GLuint IBO = *static_cast<GLuint*>(IndexBuffer->GetIndices());
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+#endif
       }
 
       ApplyMaterial(pMesh->m_Material, pMesh, m_View);
@@ -370,8 +380,13 @@ void GL2Renderer::Tick() {
 
         DEBUGASSERT(IndexBuffer->GetNumIndices() > 0);
 //printf("glDrawElements(%04X, %d, %04X, 0)\n", IndexBuffer->GetPrimitiveType(), IndexBuffer->GetNumIndices(), GLINDEXFORMAT);
+#ifdef NO_VBO
+        glDrawElements(IndexBuffer->GetPrimitiveType(),
+                       IndexBuffer->GetNumIndices(), GLINDEXFORMAT, IndexBuffer->GetIndices());
+#else
         glDrawElements(IndexBuffer->GetPrimitiveType(),
                        IndexBuffer->GetNumIndices(), GLINDEXFORMAT, nullptr);
+#endif
       }
 
 #if BUILD_DEBUG

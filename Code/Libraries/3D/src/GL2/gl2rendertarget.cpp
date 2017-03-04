@@ -53,13 +53,19 @@ GL2RenderTarget::GL2RenderTarget()
       m_ColorTextureObject(0),
       m_ColorTexture(nullptr),
       m_DepthStencilRenderBufferObject(0),
+#ifdef PANDORA
+      m_StencilRenderBufferObject(0),
+#endif
       m_Width(0),
       m_Height(0) {}
 
 GL2RenderTarget::~GL2RenderTarget() {
   // Don't clean up m_ColorTextureObject; deleting the texture does that.
   SafeDelete(m_ColorTexture);
-
+#ifdef PANDORA
+  if (m_StencilRenderBufferObject != 0)
+    glDeleteRenderbuffers(1, &m_StencilRenderBufferObject);
+#endif
   if (m_DepthStencilRenderBufferObject != 0) {
 #ifdef HAVE_GLES
     glDeleteRenderbuffers(1, &m_DepthStencilRenderBufferObject);
@@ -123,18 +129,33 @@ GL2RenderTarget::~GL2RenderTarget() {
       glGenRenderbuffers(1, &m_DepthStencilRenderBufferObject);
       ASSERT(m_DepthStencilRenderBufferObject != 0);
       glBindRenderbuffer(GL_RENDERBUFFER, m_DepthStencilRenderBufferObject);
+#ifdef PANDORA
+      glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, m_Width,
+                            m_Height);
+      glGenRenderbuffers(1, &m_StencilRenderBufferObject);
+      glBindRenderbuffer(GL_RENDERBUFFER, m_StencilRenderBufferObject);
+      glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX8, m_Width,
+                            m_Height);
+#else
       glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, m_Width,
                             m_Height);
+#endif
+      glBindRenderbuffer(GL_RENDERBUFFER, 0);
   }
   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
                          m_ColorTextureObject, 0);
   glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
                             GL_RENDERBUFFER,
                             m_DepthStencilRenderBufferObject);
+#ifdef PANDORA
+  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
+                            GL_RENDERBUFFER,
+                            m_StencilRenderBufferObject);
+#else
   glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
                             GL_RENDERBUFFER,
                             m_DepthStencilRenderBufferObject);
-
+#endif
   const GLenum FrameBufferStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
   ASSERT(FrameBufferStatus == GL_FRAMEBUFFER_COMPLETE);
   Unused(FrameBufferStatus);

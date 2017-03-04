@@ -34,8 +34,11 @@ class GL2IndexBuffer : public IIndexBuffer {
   int m_RefCount;
   uint m_NumIndices;
   GLenum m_PrimitiveType;
-
+#ifdef NO_VBO
+  void* m_IndicesVBO;
+#else
   GLuint m_IndicesVBO;
+#endif
 };
 
 #endif  // GL2INDEXBUFFER_H

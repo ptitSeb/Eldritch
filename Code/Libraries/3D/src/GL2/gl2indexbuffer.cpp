@@ -1,5 +1,9 @@
 #include "core.h"
 #include "gl2indexbuffer.h"
+#ifdef NO_VBO
+#include <stdlib.h>
+#include <string.h>
+#endif
 
 // Maps my EPrimitiveType to GL's primitive enumerations
 GLenum PrimitiveTypeTable[] = {
@@ -15,7 +19,11 @@ GL2IndexBuffer::GL2IndexBuffer()
 
 GL2IndexBuffer::~GL2IndexBuffer() {
   if (m_IndicesVBO) {
+#ifdef NO_VBO
+    free(m_IndicesVBO);
+#else
     glDeleteBuffers(1, &m_IndicesVBO);
+#endif
     m_IndicesVBO = 0;
   }
 }
@@ -39,7 +47,10 @@ void GL2IndexBuffer::Init(uint NumIndices, index_t* Indices) {
   XTRACE_FUNCTION;
 
   m_NumIndices = NumIndices;
-
+#ifdef NO_VBO
+  m_IndicesVBO = malloc(NumIndices * sizeof(index_t));
+  memcpy(m_IndicesVBO, Indices, NumIndices * sizeof(index_t));
+#else
   if (Indices) {
     glGenBuffers(1, &m_IndicesVBO);
     ASSERT(m_IndicesVBO != 0);
@@ -47,9 +58,14 @@ void GL2IndexBuffer::Init(uint NumIndices, index_t* Indices) {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, NumIndices * sizeof(index_t), Indices,
                  GL_STATIC_DRAW);
   }
+#endif
 }
 
+#ifdef NO_VBO
+void* GL2IndexBuffer::GetIndices() { return m_IndicesVBO; }
+#else
 void* GL2IndexBuffer::GetIndices() { return &m_IndicesVBO; }
+#endif
 
 uint GL2IndexBuffer::GetNumIndices() { return m_NumIndices; }
 
