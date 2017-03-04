@@ -122,7 +122,9 @@ class Framework3D : public IWBEventObserver {
       m_EventManager;  // Event manager for framework only, not for game.
   Display* m_Display;
   Window* m_Window;
+#ifndef PANDORA
   Window* m_SplashWindow;
+#endif
   Keyboard* m_Keyboard;
   Mouse* m_Mouse;
   Clock* m_Clock;

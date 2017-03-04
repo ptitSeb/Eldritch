@@ -58,7 +58,9 @@ Framework3D::Framework3D()
     : m_EventManager(nullptr),
       m_Display(nullptr),
       m_Window(nullptr),
+#ifndef PANDORA
       m_SplashWindow(nullptr),
+#endif
       m_Keyboard(nullptr),
       m_Mouse(nullptr),
       m_Clock(nullptr),
@@ -324,7 +326,9 @@ void Framework3D::Main() {
   XTRACE_END;
 
   if (ShowWindowASAP()) {
+#ifndef PANDORA
     SafeDelete(m_SplashWindow);
+#endif
 #if BUILD_WINDOWS_NO_SDL
     m_Window->Show(m_CmdShow);
 #elif BUILD_SDL
@@ -359,6 +363,7 @@ void Framework3D::CreateSplashWindow(const uint WindowIcon,
 
   STATICHASH(Framework);
   STATICHASH(SplashImage);
+#ifndef PANDORA
   const char* const pSplashImage =
       ConfigManager::GetString(sSplashImage, nullptr, sFramework);
   if (!pSplashImage) {
@@ -389,7 +394,7 @@ void Framework3D::CreateSplashWindow(const uint WindowIcon,
   // The window needs to be shown before we can blit to it.
   m_SplashWindow->Show(m_CmdShow);
 #endif
-#if BUILD_SDL
+#if BUILD_SDL && !defined(PANDORA)
   // TODO SDL: Unify interface?
   const uint Flags = SDL_WINDOW_SHOWN | SDL_WINDOW_BORDERLESS;
   m_SplashWindow->Init(Title, Flags, SplashWindowWidth, SplashWindowHeight);
@@ -407,8 +412,10 @@ void Framework3D::CreateSplashWindow(const uint WindowIcon,
                       IconSurface.GetSDLSurface());
   }
 #endif
-
+#ifndef PANDORA
   SplashSurface.BlitToWindow(m_SplashWindow);
+#endif
+#endif
 }
 
 /*virtual*/ void Framework3D::ShutDown() {
@@ -431,7 +438,9 @@ void Framework3D::CreateSplashWindow(const uint WindowIcon,
 #endif
 
   SafeDelete(m_Display);
+#ifndef PANDORA
   SafeDelete(m_SplashWindow);
+#endif
   SafeDelete(m_Clock);
   SafeDelete(m_Keyboard);
   SafeDelete(m_Mouse);

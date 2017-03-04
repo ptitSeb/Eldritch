@@ -494,7 +494,10 @@ void EldritchFramework::InitializeDLC() {
   m_World->Tick(0.0f);
 
   // All done, show the window finally.
+#ifndef PANDORA
+  // disabled Splash window on Pandora
   SafeDelete(m_SplashWindow);
+#endif
 #if BUILD_WINDOWS_NO_SDL
   m_Window->Show(m_CmdShow);
 #elif BUILD_SDL
