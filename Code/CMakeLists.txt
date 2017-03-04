@@ -5,6 +5,7 @@ include (FindPkgConfig)
 
 option(PANDORA "Set to ON if targeting an OpenPandora device" ${PANDORA})
 option(GLES "Set to ON if using GLES2 instead of desktop OpenGL" ${GLES})
+option(TREMOR_ENABLED "Use Tremor instead of libvorbis for OpenAL" OFF)
 
 pkg_search_module(ALUT REQUIRED freealut)
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -Wall")
@@ -18,7 +19,9 @@ endif()
 if(GLES)
 	add_definitions(-DHAVE_GLES)
 endif()
-
+if(TREMOR_ENABLED)
+	add_definitions(-DUSE_TREMOR)
+endif()
 add_subdirectory(Libraries/Core/)
 add_subdirectory(Libraries/Math/)
 add_subdirectory(Libraries/2D/)

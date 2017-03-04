@@ -34,7 +34,14 @@ src/soundmanager.h
 )
  
 add_library(Audio ${audio_src})
-target_link_libraries(Audio
-  ${ALUT_LIBRARIES}
-  vorbisfile
-)
+if(TREMOR_ENABLED)
+  target_link_libraries(Audio
+    ${ALUT_LIBRARIES}
+    vorbisidec
+  )
+else()
+  target_link_libraries(Audio
+    ${ALUT_LIBRARIES}
+    vorbisfile
+  )
+endif()

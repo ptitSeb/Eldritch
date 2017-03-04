@@ -4,8 +4,12 @@
 #include "openalsoundinstance.h"
 #include "openalaudiosystem.h"
 #include <AL/alut.h>
+#ifdef USE_TREMOR
+#include <tremor/ivorbisfile.h>
+#else
 #include <vorbis/codec.h>
 #include <vorbis/vorbisfile.h>
+#endif
 
 
 OpenALSound::OpenALSound(IAudioSystem* const pSystem,
@@ -74,7 +78,12 @@ void OpenALSound::CreateSampleFromOGG(const IDataStream& Stream, bool Looping) {
   ALubyte *retval = static_cast<ALubyte*>(malloc(allocated));
   char *buff = static_cast<char*>(malloc(allocated));
 
-  while ( (rc = ov_read(&vf, buff, allocated, 0, 2, 1, &bitstream)) != 0 ) {
+#ifdef USE_TREMOR
+  while ( (rc = ov_read(&vf, buff, allocated, &bitstream)) != 0 ) 
+#else
+  while ( (rc = ov_read(&vf, buff, allocated, 0, 2, 1, &bitstream)) != 0 ) 
+#endif
+  {
     if (rc <= 0) {
       break;
     }
