@@ -15,9 +15,11 @@ class EldritchTargetManager {
   IRenderTarget* GetOriginalRenderTarget() const {
     return m_OriginalRenderTarget;
   }
+#ifndef NO_POST
   IRenderTarget* GetPrimaryRenderTarget() const {
     return m_PrimaryRenderTarget;
   }
+#endif
   IRenderTarget* GetMirrorRenderTarget() const { return m_MirrorRenderTarget; }
   IRenderTarget* GetMinimapRenderTarget() const {
     return m_MinimapRenderTarget;
@@ -26,7 +28,9 @@ class EldritchTargetManager {
  private:
   IRenderer* m_Renderer;
   IRenderTarget* m_OriginalRenderTarget;  // What is presented to the screen
+#ifndef NO_POST
   IRenderTarget* m_PrimaryRenderTarget;   // What is rendered onto
+#endif
   IRenderTarget* m_MirrorRenderTarget;    // The character creation mirror image
   IRenderTarget* m_MinimapRenderTarget;   // Target for minimap UI texture
 };

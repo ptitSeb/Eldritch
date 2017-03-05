@@ -148,6 +148,10 @@ typedef char s8;
 #define DEBUGBREAKPOINT DoNothing
 #endif
 
+#ifdef PANDORA
+#define NO_POST
+#endif
+
 // Other includes should go at the end of this file,
 // so they can reference anything defined in here
 #include "customassert.h"

@@ -10,7 +10,9 @@
 EldritchTargetManager::EldritchTargetManager(IRenderer* const pRenderer)
     : m_Renderer(pRenderer),
       m_OriginalRenderTarget(nullptr),
+#ifndef NO_POST
       m_PrimaryRenderTarget(nullptr),
+#endif
       m_MirrorRenderTarget(nullptr),
       m_MinimapRenderTarget(nullptr) {}
 
@@ -21,9 +23,10 @@ void EldritchTargetManager::CreateTargets(const uint DisplayWidth,
   ReleaseTargets();
 
   m_OriginalRenderTarget = m_Renderer->GetDefaultRenderTarget();
+#ifndef NO_POST
   m_PrimaryRenderTarget = m_Renderer->CreateRenderTarget(SRenderTargetParams(
       DisplayWidth, DisplayHeight, ERTF_A16B16G16R16F, ERTF_UseDefault));
-
+#endif
   // HACK: Grabbing mirror UI screen to get desired RT dimensions.
   UIScreenEldMirror* const pMirrorScreen = EldritchGame::GetMirrorScreen();
   const uint MirrorRTWidth = pMirrorScreen->GetMirrorRTWidth();
@@ -47,7 +50,9 @@ void EldritchTargetManager::ReleaseTargets() {
   m_Renderer->FreeRenderTargets();
 
   // Don't free the original render target! The renderer owns that.
+#ifndef NO_POST
   SafeDelete(m_PrimaryRenderTarget);
+#endif
   SafeDelete(m_MirrorRenderTarget);
   SafeDelete(m_MinimapRenderTarget);
 }

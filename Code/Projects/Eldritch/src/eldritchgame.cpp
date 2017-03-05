@@ -451,8 +451,14 @@ void EldritchGame::CreatePostQuad() {
   m_PostQuad = pRenderer->GetMeshFactory()->CreatePlane(
       DisplayWidth, DisplayHeight, 1, 1, XZ_PLANE, false);
   m_PostQuad->m_Location = Vector(OffsetWidth, 0.0f, OffsetHeight);
+#ifdef NO_POST
+  // just a dummy, it will not be used
+  m_PostQuad->SetTexture(0, pRenderer->GetTextureManager()->GetTexture(
+                                m_ColorGradingTexture.CStr()));
+#else
   m_PostQuad->SetTexture(
       0, pTargetManager->GetPrimaryRenderTarget()->GetColorTextureHandle());
+#endif
   m_PostQuad->SetTexture(1, pRenderer->GetTextureManager()->GetTexture(
                                 m_ColorGradingTexture.CStr()));
   m_PostQuad->SetMaterialFlags(MAT_POSTFX);

@@ -111,7 +111,6 @@ GL2RenderTarget::~GL2RenderTarget() {
 
   glGenFramebuffers(1, &m_FrameBufferObject);
   ASSERT(m_FrameBufferObject != 0);
-  glBindFramebuffer(GL_FRAMEBUFFER, m_FrameBufferObject);
   if (Params.ColorFormat != ERTF_None) {
     glGenTextures(1, &m_ColorTextureObject);
     ASSERT(m_ColorTextureObject != 0);
@@ -142,6 +141,7 @@ GL2RenderTarget::~GL2RenderTarget() {
 #endif
       glBindRenderbuffer(GL_RENDERBUFFER, 0);
   }
+  glBindFramebuffer(GL_FRAMEBUFFER, m_FrameBufferObject);
   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
                          m_ColorTextureObject, 0);
   glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
@@ -159,6 +159,8 @@ GL2RenderTarget::~GL2RenderTarget() {
   const GLenum FrameBufferStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
   ASSERT(FrameBufferStatus == GL_FRAMEBUFFER_COMPLETE);
   Unused(FrameBufferStatus);
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  glBindFramebuffer(GL_FRAMEBUFFER, m_FrameBufferObject);
 #else
   // FBOs were supported in GL 2.1 only by extension, but some newer drivers
   // don't still support that extension. Use whichever is available.

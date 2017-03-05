@@ -1221,9 +1221,9 @@ void EldritchFramework::Pause() {
     WBWorld::GetInstance()->DebugRender();
 #endif
   }
-
+#ifndef NO_POST
   m_Renderer->AddMesh(m_Game->GetPostQuad());
-
+#endif
   Framework3D::TickRender();
 }
 
@@ -1290,8 +1290,9 @@ void EldritchFramework::PrepareForLoad() {
 
 void EldritchFramework::CreateBuckets() {
   PRINTF("EldritchFramework::CreateBuckets\n");
-
+#ifndef NO_POST
   IRenderTarget* const pMainRT = m_TargetManager->GetPrimaryRenderTarget();
+#endif
   IRenderTarget* const pScrnRT = m_TargetManager->GetOriginalRenderTarget();
   IRenderTarget* const pMirrRT = m_TargetManager->GetMirrorRenderTarget();
   IRenderTarget* const pMMapRT = m_TargetManager->GetMinimapRenderTarget();
@@ -1303,6 +1304,25 @@ void EldritchFramework::CreateBuckets() {
 
 // View			// RT		// Flags					// Filter
 // // Excl	// Clear
+#ifdef NO_POST
+  ADDBUCKET("Main", BUCKET(m_MainView, pScrnRT, MAT_WORLD,
+                           MAT_ALPHA | MAT_DYNAMIC, true, CLEAR_DEPTH | CLEAR_COLOR));
+  ADDBUCKET("MainDynamic",
+            BUCKET(nullptr, nullptr, MAT_WORLD | MAT_DYNAMIC, MAT_ALPHA, true));
+  ADDBUCKET("MainAlpha",
+            BUCKET(nullptr, nullptr, MAT_WORLD | MAT_ALPHA, MAT_NONE, true));
+  ADDBUCKET("MainFG", BUCKET(m_FGView, nullptr, MAT_FOREGROUND, MAT_ALPHA, true,
+                             CLEAR_DEPTH));
+  ADDBUCKET("MainFGAlpha", BUCKET(nullptr, nullptr, MAT_FOREGROUND | MAT_ALPHA,
+                                  MAT_NONE, true, CLEAR_DEPTH));
+  ADDBUCKET("Mirror", BUCKET(m_MirrorView, pMirrRT, MAT_OFFSCREEN_0, MAT_NONE,
+                             true, CLEAR_DEPTH));
+  ADDBUCKET("Minimap", BUCKET(m_MinimapView, pMMapRT, MAT_OFFSCREEN_1, MAT_NONE,
+                              true, CLEAR_DEPTH | CLEAR_COLOR));
+  ADDBUCKET("Post", BUCKET(m_HUDView, pScrnRT, MAT_POSTFX, MAT_NONE, true,
+                           CLEAR_DEPTH));
+  ADDBUCKET("HUD", BUCKET(nullptr, nullptr, MAT_HUD, MAT_NONE, true, CLEAR_DEPTH));
+#else
 #if COOL_SIDE_VIEW_THING
   ADDBUCKET("Main",
             BUCKET(m_MainView, pMainRT, MAT_WORLD, MAT_ALPHA | MAT_DYNAMIC,
@@ -1334,7 +1354,7 @@ void EldritchFramework::CreateBuckets() {
 #if BUILD_DEV
   ADDBUCKET("HUDDebug", BUCKET(nullptr, nullptr, MAT_DEBUG_HUD, MAT_NONE, true));
 #endif
-
+#endif
 #undef ADDBUCKET
 #undef BUCKET
 
