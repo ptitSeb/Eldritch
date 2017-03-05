@@ -159,12 +159,12 @@ Mesh* MeshFactory::CreatePlane(float Length, float Width, int LengthSegments,
   NewMesh->m_Name = "Plane";
 #endif
 
-  delete Positions;
-  delete Colors;
-  delete UVs;
-  delete Normals;
-  delete Tangents;
-  delete Indices;
+  delete[] Positions;
+  delete[] Colors;
+  delete[] UVs;
+  delete[] Normals;
+  delete[] Tangents;
+  delete[] Indices;
 
   return NewMesh;
 }

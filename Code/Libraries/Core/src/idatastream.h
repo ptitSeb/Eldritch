@@ -99,7 +99,7 @@ class IDataStream {
     char* Buffer = new char[Length];
     Read(Length, Buffer);
     SimpleString RetVal = Buffer;
-    delete Buffer;
+    delete[] Buffer;
     return RetVal;
   }
   inline SimpleString ReadCString() const {
@@ -115,7 +115,7 @@ class IDataStream {
 
     SimpleString RetVal = Buffer;
 
-    delete Buffer;
+    delete[] Buffer;
     return RetVal;
   }
 };

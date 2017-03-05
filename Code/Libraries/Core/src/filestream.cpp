@@ -61,7 +61,7 @@ int FileStream::PrintF(const char* Str, ...) const {
   va_end(Args);
   RetVal = Write(Length - 1, Buffer);
 
-  SafeDelete(Buffer);
+  SafeDeleteArray(Buffer);
   return RetVal;
 }
 
