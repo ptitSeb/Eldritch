@@ -20,6 +20,7 @@ class GL2ShaderProgram : public IShaderProgram {
                                        uint& Register) const;
   virtual bool GetPixelShaderRegister(const HashedString& Parameter,
                                       uint& Register) const;
+  virtual bool IsCached(uint Register, int Size, const void* Value);
 
  protected:
   void BindAttributes(IVertexDeclaration* const pVertexDeclaration) const;
@@ -33,6 +34,9 @@ class GL2ShaderProgram : public IShaderProgram {
   GLuint m_ShaderProgram;
 
   Map<HashedString, uint> m_UniformTable;
+  GLint  m_MaxCache;
+  void** m_UniformCache;
+  int*   m_UniformSize;
 };
 
 #endif  // GL2SHADERPROGRAM_H

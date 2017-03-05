@@ -4,12 +4,18 @@
 #include "ipixelshader.h"
 #include "ivertexdeclaration.h"
 #include "simplestring.h"
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
 
 GL2ShaderProgram::GL2ShaderProgram()
     : m_VertexShader(nullptr),
       m_PixelShader(nullptr),
       m_ShaderProgram(0),
-      m_UniformTable() {}
+      m_UniformTable(),
+      m_MaxCache(0),
+      m_UniformCache(nullptr),
+      m_UniformSize(nullptr) {}
 
 GL2ShaderProgram::~GL2ShaderProgram() {
   if (m_ShaderProgram != 0) {
@@ -25,6 +31,13 @@ GL2ShaderProgram::~GL2ShaderProgram() {
     glDetachShader(m_ShaderProgram, PixelShader);
 
     glDeleteProgram(m_ShaderProgram);
+  }
+  if(m_UniformCache) {
+    for (int i=0; i<m_MaxCache; i++) {
+      free(m_UniformCache[i]);
+    }
+    free(m_UniformCache);
+    free(m_UniformSize);
   }
 }
 
@@ -109,6 +122,7 @@ void GL2ShaderProgram::BuildUniformTable() {
   GLint NumUniforms;
   glGetProgramiv(m_ShaderProgram, GL_ACTIVE_UNIFORMS, &NumUniforms);
 
+  m_MaxCache = 0;
   for (int UniformIndex = 0; UniformIndex < NumUniforms; ++UniformIndex) {
     const GLsizei BufferSize = 256;
     GLsizei Length;
@@ -118,7 +132,7 @@ void GL2ShaderProgram::BuildUniformTable() {
     glGetActiveUniform(m_ShaderProgram, UniformIndex, BufferSize, &Length,
                        &Size, &Type, UniformName);
     const GLint Location = glGetUniformLocation(m_ShaderProgram, UniformName);
-
+    if(m_MaxCache<Location) m_MaxCache = Location;
     // HACKHACK: Remove "[0]" from array names.
     for (GLchar* c = UniformName; *c != '\0'; ++c) {
       if (*c == '[') {
@@ -129,6 +143,11 @@ void GL2ShaderProgram::BuildUniformTable() {
 
     m_UniformTable.Insert(UniformName, Location);
   }
+  m_MaxCache++;
+  m_UniformCache = (void**)malloc(m_MaxCache*sizeof(void*));
+  memset(m_UniformCache, 0, m_MaxCache*sizeof(void*));
+  m_UniformSize = (int*)malloc(m_MaxCache*sizeof(int));
+  memset(m_UniformSize, 0, m_MaxCache*sizeof(int));
 }
 
 // Because GLSL doesn't let me specify registers for samplers
@@ -167,4 +186,23 @@ bool GL2ShaderProgram::GetRegister(const HashedString& Parameter,
   } else {
     return false;
   }
+}
+
+bool GL2ShaderProgram::IsCached(uint Register, int Size, const void* Value) {
+  if(m_UniformSize[Register]<Size) {
+    // bigger size, purge the cache...
+    free(m_UniformCache[Register]);
+    m_UniformCache[Register] = nullptr;
+  }
+  if(m_UniformCache[Register] && memcmp(m_UniformCache[Register], Value, Size)==0)
+    return true; // same value in cache
+  
+  if(m_UniformCache[Register]==nullptr) {
+    m_UniformCache[Register] = malloc(Size);
+    m_UniformSize[Register] = Size;
+  } 
+  
+  memcpy(m_UniformCache[Register], Value, Size);
+  
+  return false;
 }

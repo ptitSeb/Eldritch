@@ -19,6 +19,7 @@ class IShaderProgram {
                                        uint& Register) const = 0;
   virtual bool GetPixelShaderRegister(const HashedString& Parameter,
                                       uint& Register) const = 0;
+  virtual bool IsCached(uint Register, int Size, const void* Value) = 0;
 };
 
 #endif  // ISHADERPROGRAM_H

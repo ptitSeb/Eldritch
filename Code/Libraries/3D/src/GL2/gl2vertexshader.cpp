@@ -108,11 +108,6 @@ byte* ConvertShader(byte* pBuffer)
 //printf("Switched !!!\n");
     strcpy(Tmp, SimplePixelShader);
   }
-/*  // try to limit to 20 bones...
-  char* ttmp;
-  if ((ttmp=strstr(Tmp,"uniform mat4 BoneMatrices[32]"))) {
-    memcpy(ttmp, "uniform mat4 BoneMatrices[20]", sizeof("uniform mat4 BoneMatrices[32]")-1);
-  }*/
 #endif
   return Tmp;
 }

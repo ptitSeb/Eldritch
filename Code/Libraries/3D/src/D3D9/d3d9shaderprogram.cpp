@@ -27,3 +27,7 @@ D3D9ShaderProgram::~D3D9ShaderProgram() {}
   DEBUGASSERT(m_PixelShader);
   return m_PixelShader->GetRegister(Parameter, Register);
 }
+
+/*virtual*/ bool IsCached(uint Register, int Size, const void* Value) {
+  return false;
+}

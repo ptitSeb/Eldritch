@@ -837,6 +837,9 @@ static GLenum GLMagFilters[] = {
     return;
   }
 
+  if(m_ShaderProgram->IsCached(Register, NumFloat4s*4*sizeof(float), pFloats))
+    return;
+
   glUniform4fv(Register, NumFloat4s, pFloats);
   GLERRORCHECK;
 }
@@ -850,6 +853,8 @@ static GLenum GLMagFilters[] = {
   if (!m_ShaderProgram->GetPixelShaderRegister(Parameter, Register)) {
     return;
   }
+  if(m_ShaderProgram->IsCached(Register, NumMatrices*16*sizeof(float), pFloats))
+    return;
 
   // HACKHACK: If we're passing in a multiple of 4 float4s, assume it's a
   // matrix.

@@ -18,7 +18,7 @@ class D3D9ShaderProgram : public IShaderProgram {
                                        uint& Register) const;
   virtual bool GetPixelShaderRegister(const HashedString& Parameter,
                                       uint& Register) const;
-
+  virtual bool IsCached(uint Register, int Size, const void* Value);
  protected:
   IVertexShader* m_VertexShader;
   IPixelShader* m_PixelShader;
