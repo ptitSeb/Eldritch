@@ -293,8 +293,8 @@ unsigned char* TextureCommon::MakeMip(int Width, int Height, int& MipWidth,
   byte* SrcBoxTopRight;
   byte* SrcBoxBottomLeft;
   byte* SrcBoxBottomRight;
-  int SRowO = 4 * Width;
-  int SColO = 4;
+  int SRowO = (MipHeight==1)?0:(4 * Width);
+  int SColO = (MipWidth==1)?0:4;
 
   for (int y = 0; y < MipHeight; ++y) {
     for (int x = 0; x < MipWidth; ++x) {
