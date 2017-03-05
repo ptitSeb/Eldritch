@@ -118,13 +118,13 @@ void WBScene::RemoveEntity(const uint EntitySceneHandle) {
   CHECK_ITERATING_ENTITIES;
 
   DEBUGASSERT(m_Entities.Search(EntitySceneHandle).IsValid());
-
+/*
   SEntityRef& EntityRef = m_Entities[EntitySceneHandle];
 
   WBEntity* const pEntity = EntityRef.m_Entity;
   pEntity->SetSceneHandle(EntitySceneHandle);
   pEntity->SetScene(this);
-
+*/
   m_Entities.Remove(EntitySceneHandle);
 }
 
