@@ -50,6 +50,9 @@ void TextureCommon::InitializeFromFile(const char* const Filename,
   // Get the file extension
   size_t ExtOffset = strlen(Filename) - 3;
   unsigned int Ext = *(unsigned int*)(Filename + ExtOffset);
+  #ifdef __amigaos4__
+  littleBigEndian(&Ext);
+  #endif
 
   OutARGBImage = nullptr;
   int Width = 0;
