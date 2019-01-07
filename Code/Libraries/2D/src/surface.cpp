@@ -108,6 +108,25 @@ int Surface::LoadBMP(const IDataStream& Stream) {
 
   Stream.Read(sizeof(SBitmapFileHeader), &BMPFileHeader);
   Stream.Read(sizeof(SBitmapInfoHeader), &BMPInfoHeader);
+  #ifdef __amigaos4__
+  littleBigEndian(&BMPFileHeader.m_Type);
+  littleBigEndian(&BMPFileHeader.m_Size);
+  littleBigEndian(&BMPFileHeader.m_Reserved1);
+  littleBigEndian(&BMPFileHeader.m_Reserved2);
+  littleBigEndian(&BMPFileHeader.m_OffsetBits);
+
+  littleBigEndian(&BMPInfoHeader.m_Size);
+  littleBigEndian(&BMPInfoHeader.m_Width);
+  littleBigEndian(&BMPInfoHeader.m_Height);
+  littleBigEndian(&BMPInfoHeader.m_Planes);
+  littleBigEndian(&BMPInfoHeader.m_BitCount);
+  littleBigEndian(&BMPInfoHeader.m_Compression);
+  littleBigEndian(&BMPInfoHeader.m_SizeImage);
+  littleBigEndian(&BMPInfoHeader.m_PixelsPerMeterX);
+  littleBigEndian(&BMPInfoHeader.m_PixelsPerMeterY);
+  littleBigEndian(&BMPInfoHeader.m_ColorUsed);
+  littleBigEndian(&BMPInfoHeader.m_ColorImportant);
+  #endif
 
   int Width = BMPInfoHeader.m_Width;
   int Height = BMPInfoHeader.m_Height;
