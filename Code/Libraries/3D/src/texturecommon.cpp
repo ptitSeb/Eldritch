@@ -83,6 +83,25 @@ void TextureCommon::LoadBMP(const IDataStream& Stream, int& Width, int& Height,
 
   Stream.Read(sizeof(SBitmapFileHeader), &BMPFileHeader);
   Stream.Read(sizeof(SBitmapInfoHeader), &BMPInfoHeader);
+  #ifdef __amigaos4__
+  littleBigEndian(&BMPFileHeader.m_Type);
+  littleBigEndian(&BMPFileHeader.m_Size);
+  littleBigEndian(&BMPFileHeader.m_Reserved1);
+  littleBigEndian(&BMPFileHeader.m_Reserved2);
+  littleBigEndian(&BMPFileHeader.m_OffsetBits);
+
+  littleBigEndian(&BMPInfoHeader.m_Size);
+  littleBigEndian(&BMPInfoHeader.m_Width);
+  littleBigEndian(&BMPInfoHeader.m_Height);
+  littleBigEndian(&BMPInfoHeader.m_Planes);
+  littleBigEndian(&BMPInfoHeader.m_BitCount);
+  littleBigEndian(&BMPInfoHeader.m_Compression);
+  littleBigEndian(&BMPInfoHeader.m_SizeImage);
+  littleBigEndian(&BMPInfoHeader.m_PixelsPerMeterX);
+  littleBigEndian(&BMPInfoHeader.m_PixelsPerMeterY);
+  littleBigEndian(&BMPInfoHeader.m_ColorUsed);
+  littleBigEndian(&BMPInfoHeader.m_ColorImportant);
+  #endif
 
   Width = BMPInfoHeader.m_Width;
   Height = BMPInfoHeader.m_Height;
@@ -109,6 +128,12 @@ void TextureCommon::LoadTGA(const IDataStream& Stream, int& Width, int& Height,
   TGAHeader Header;
 
   Stream.Read(sizeof(TGAHeader), &Header);
+  #ifdef __amigaos__
+  littleBigEndian(&Header.m_OriginX);
+  littleBigEndian(&Header.m_OriginY);
+  littleBigEndian(&Header.m_Width);
+  littleBigEndian(&Header.m_Height);
+  #endif
   Stream.SetPos(Stream.GetPos() + Header.m_SizeOfIDField);
 
   if (Header.m_ColorMapType) {
