@@ -47,7 +47,7 @@ class IDataStream {
   inline void WriteInt8(int8 i) const { Write(1, &i); }
   inline void WriteInt16(int16 i) const { littleBigEndian(&i); Write(2, &i); }
   inline void WriteInt32(int32 i) const { littleBigEndian(&i); Write(4, &i); }
-  inline void WriteFloat(float f) const { littleBigEndian(&i); Write(4, &f); }
+  inline void WriteFloat(float f) const { littleBigEndian(&f); Write(4, &f); }
   #else
   inline void WriteUInt8(uint8 i) const { Write(1, &i); }
   inline void WriteUInt16(uint16 i) const { Write(2, &i); }
@@ -123,7 +123,7 @@ class IDataStream {
     float f;
     Read(4, &f);
     #ifdef __amigaos4__
-    littleBigEndian(&i);
+    littleBigEndian(&f);
     #endif
     return f;
   }
