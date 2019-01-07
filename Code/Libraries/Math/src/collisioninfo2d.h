@@ -26,4 +26,4 @@ class CollisionInfo2D {
   float m_HitT;
 };
 
-#endif COLLISIONINFO2D_H
+#endif //COLLISIONINFO2D_H

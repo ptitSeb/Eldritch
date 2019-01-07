@@ -31,4 +31,4 @@ class Segment2D {
   Vector2 m_End;
 };
 
-#endif SEGMENT2D_H
+#endif //SEGMENT2D_H

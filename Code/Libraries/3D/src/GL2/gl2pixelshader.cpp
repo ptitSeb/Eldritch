@@ -30,7 +30,7 @@ void GL2PixelShader::Initialize(const IDataStream& Stream) {
   auto Tmp = ConvertShader(pBuffer);
   SafeDeleteArray(pBuffer);
   pBuffer = Tmp;
-  Length = strlen(pBuffer);
+  Length = strlen((const char*)pBuffer);
   #endif
 
   // Copy the GLSL source

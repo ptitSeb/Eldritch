@@ -31,15 +31,15 @@ byte* ConvertShader(byte* pBuffer)
 //printf("Shader source:\n%s\n", pBuffer);
   // first change the version header, and add default precision
   byte* newptr;
-  newptr=strstr(pBuffer, "#version");
+  newptr=(byte*)strstr((char*)pBuffer, "#version");
   if (!newptr) 
     newptr = pBuffer;
   else {
     while(*newptr!=0x0a) newptr++;
   }
   const char* GLESHeader = "#version 100\nprecision mediump float;\n";
-  auto Tmp = new byte[strlen(newptr)+strlen(GLESHeader)+100];
-  strcat(strcpy(Tmp, GLESHeader), newptr);
+  auto Tmp = new byte[strlen((char*)newptr)+strlen(GLESHeader)+100];
+  strcat(strcpy((char*)Tmp, GLESHeader), (char*)newptr);
   // now check to remove trailling "f" after float, as it's not supported too
   newptr = Tmp;
   int state = 0;
@@ -64,7 +64,7 @@ byte* ConvertShader(byte* pBuffer)
           state = 0; // separator
         else  if ((*newptr == 'f' )) {
           // remove that f
-          memmove(newptr, newptr+1, strlen(newptr+1)+1);
+          memmove(newptr, newptr+1, strlen((char*)newptr+1)+1);
           newptr--;
         } else
           state = 3;
@@ -76,7 +76,7 @@ byte* ConvertShader(byte* pBuffer)
           state = 0; // separator
         else  if ((*newptr == 'f' )) {
           // remove that f
-          memmove(newptr, newptr+1, strlen(newptr+1)+1);
+          memmove(newptr, newptr+1, strlen((char*)newptr+1)+1);
           newptr--;
         } else
           state = 3;
@@ -132,7 +132,7 @@ void GL2VertexShader::Initialize(const IDataStream& Stream) {
   auto Tmp = ConvertShader(pBuffer);
   SafeDeleteArray(pBuffer);
   pBuffer = Tmp;
-  Length = strlen(pBuffer);
+  Length = strlen((char*)pBuffer);
   #endif
 
   m_VertexShader = glCreateShader(GL_VERTEX_SHADER);

@@ -42,7 +42,7 @@ uint32 HashedString::Hash(const char* const String) {
     return 0;
   }
 
-  const unsigned char* CharIter = String;
+  const unsigned char* CharIter = (const unsigned char*)String;
   uint32 HashValue = 0;
   uint32 x;
   unsigned char c;

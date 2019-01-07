@@ -42,4 +42,4 @@ class Box2D {
   Vector2 m_Max;
 };
 
-#endif BOX2D_H
+#endif //BOX2D_H
