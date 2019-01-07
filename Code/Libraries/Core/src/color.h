@@ -9,11 +9,18 @@ struct Color {
   union {
     uint m_Value;
     struct {
+#ifdef __amigaos4__
+      byte A;
+      byte R;
+      byte G;
+      byte B;
+#else
       // Assuming little-endian architecture
       byte B;
       byte G;
       byte R;
       byte A;
+#endif
     };
   };
 };
