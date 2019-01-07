@@ -4,6 +4,24 @@
 #include "simplestring.h"
 #include "hashedstring.h"
 
+#ifdef __amigaos4__
+// generic little->big conversion
+inline void littleBigEndian (void *x, int sz) {
+	unsigned char *toConvert = reinterpret_cast<unsigned char *>(x);
+	unsigned char tmp;
+	for (size_t i = 0; i < sz/2; ++i) {
+		tmp = toConvert[i];
+		toConvert[i] = toConvert[sz - i - 1];
+		toConvert[sz - i - 1] = tmp;
+	}
+}
+template <class T> inline void littleBigEndian (T *x) {
+	const int sz = sizeof(T);
+	littleBigEndian(x, sz);
+}
+#endif
+
+
 // Abstract stream class
 class IDataStream {
  public:
@@ -22,6 +40,15 @@ class IDataStream {
 
   // template< typename T > inline void WriteAuto( T t ) { Write( sizeof( T ),
   // &t ); }
+  #ifdef __amigaos4__
+  inline void WriteUInt8(uint8 i) const { Write(1, &i); }
+  inline void WriteUInt16(uint16 i) const { littleBigEndian(&i); Write(2, &i); }
+  inline void WriteUInt32(uint32 i) const { littleBigEndian(&i); Write(4, &i); }
+  inline void WriteInt8(int8 i) const { Write(1, &i); }
+  inline void WriteInt16(int16 i) const { littleBigEndian(&i); Write(2, &i); }
+  inline void WriteInt32(int32 i) const { littleBigEndian(&i); Write(4, &i); }
+  inline void WriteFloat(float f) const { littleBigEndian(&i); Write(4, &f); }
+  #else
   inline void WriteUInt8(uint8 i) const { Write(1, &i); }
   inline void WriteUInt16(uint16 i) const { Write(2, &i); }
   inline void WriteUInt32(uint32 i) const { Write(4, &i); }
@@ -29,6 +56,7 @@ class IDataStream {
   inline void WriteInt16(int16 i) const { Write(2, &i); }
   inline void WriteInt32(int32 i) const { Write(4, &i); }
   inline void WriteFloat(float f) const { Write(4, &f); }
+  #endif
   inline void WriteBool(bool b) const { Write(1, &b); }
   inline void WriteHashedString(const HashedString& h) const {
     Write(sizeof(HashedString), &h);
@@ -57,11 +85,17 @@ class IDataStream {
   inline uint16 ReadUInt16() const {
     uint16 i;
     Read(2, &i);
+    #ifdef __amigaos4__
+    littleBigEndian(&i);
+    #endif
     return i;
   }
   inline uint32 ReadUInt32() const {
     uint32 i;
     Read(4, &i);
+    #ifdef __amigaos4__
+    littleBigEndian(&i);
+    #endif
     return i;
   }
   inline int8 ReadInt8() const {
@@ -72,16 +106,25 @@ class IDataStream {
   inline int16 ReadInt16() const {
     int16 i;
     Read(2, &i);
+    #ifdef __amigaos4__
+    littleBigEndian(&i);
+    #endif
     return i;
   }
   inline int32 ReadInt32() const {
     int32 i;
     Read(4, &i);
+    #ifdef __amigaos4__
+    littleBigEndian(&i);
+    #endif
     return i;
   }
   inline float ReadFloat() const {
     float f;
     Read(4, &f);
+    #ifdef __amigaos4__
+    littleBigEndian(&i);
+    #endif
     return f;
   }
   inline bool ReadBool() const {

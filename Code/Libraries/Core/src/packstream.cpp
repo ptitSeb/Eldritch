@@ -112,6 +112,12 @@ PackStream::~PackStream() {
 
     NewPackageFile.m_Stream->Read(sizeof(SPackageFileHeader),
                                   &NewPackageFile.m_Header);
+#ifdef __amigaos4__
+    littleBigEndian(&NewPackageFile.m_Header.m_MagicID);
+    littleBigEndian(&NewPackageFile.m_Header.m_NumFiles);
+    littleBigEndian(&NewPackageFile.m_Header.m_OffsetToFiles);
+    littleBigEndian(&NewPackageFile.m_Header.m_FilesSize);    
+#endif
     ASSERT(NewPackageFile.m_Header.m_MagicID == 'KPCD');
 
     // If not a valid package file, early out (this makes it a bit
