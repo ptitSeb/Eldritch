@@ -48,6 +48,12 @@ class IDataStream {
   inline void WriteInt16(int16 i) const { littleBigEndian(&i); Write(2, &i); }
   inline void WriteInt32(int32 i) const { littleBigEndian(&i); Write(4, &i); }
   inline void WriteFloat(float f) const { littleBigEndian(&f); Write(4, &f); }
+  inline void WriteBool(bool b) const { Write(1, &b); }
+  inline void WriteHashedString(const HashedString& h) const {
+    uint32 f = HashedString.GetHash();
+    littleBigEndian(&f);
+    WriteUInt32(f);
+  }
   #else
   inline void WriteUInt8(uint8 i) const { Write(1, &i); }
   inline void WriteUInt16(uint16 i) const { Write(2, &i); }
@@ -56,11 +62,11 @@ class IDataStream {
   inline void WriteInt16(int16 i) const { Write(2, &i); }
   inline void WriteInt32(int32 i) const { Write(4, &i); }
   inline void WriteFloat(float f) const { Write(4, &f); }
-  #endif
   inline void WriteBool(bool b) const { Write(1, &b); }
   inline void WriteHashedString(const HashedString& h) const {
     Write(sizeof(HashedString), &h);
   }
+  #endif
   inline void WriteString(const SimpleString& String) const {
     WriteUInt32(String.Length() + 1);
     Write(String.Length() + 1, String.CStr());
