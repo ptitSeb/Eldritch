@@ -50,7 +50,7 @@ class IDataStream {
   inline void WriteFloat(float f) const { littleBigEndian(&f); Write(4, &f); }
   inline void WriteBool(bool b) const { Write(1, &b); }
   inline void WriteHashedString(const HashedString& h) const {
-    uint32 f = HashedString.GetHash();
+    uint32 f = h.GetHash();
     littleBigEndian(&f);
     WriteUInt32(f);
   }
