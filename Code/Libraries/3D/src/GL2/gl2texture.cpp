@@ -195,12 +195,22 @@ void *uncompressDXTc(GLsizei width, GLsizei height, GLenum format, GLsizei image
   littleBigEndian(&DDSFormat.m_AlphaBitDepth);
   littleBigEndian(&DDSFormat.m_Reserved);
   littleBigEndian(&DDSFormat.m_Surface);
-  littleBigEndian(&DDSFormat.m_DestOverlayColorKey);
-  littleBigEndian(&DDSFormat.m_DestBlitColorKey);
-  littleBigEndian(&DDSFormat.m_SrcOverlayColorKey);
-  littleBigEndian(&DDSFormat.m_SrcBlitColorKey);
-  littleBigEndian(&DDSFormat.m_PixelFormat);
-  littleBigEndian(&DDSFormat.m_Caps);
+  littleBigEndian(&DDSFormat.m_DestOverlayColorKey.m_ColorSpaceLow);
+  littleBigEndian(&DDSFormat.m_DestOverlayColorKey.m_ColorSpaceHigh);
+  littleBigEndian(&DDSFormat.m_DestBlitColorKey.m_ColorSpaceLow);
+  littleBigEndian(&DDSFormat.m_DestBlitColorKey.m_ColorSpaceHigh);
+  littleBigEndian(&DDSFormat.m_SrcOverlayColorKey.m_ColorSpaceLow);
+  littleBigEndian(&DDSFormat.m_SrcOverlayColorKey.m_ColorSpaceHigh);
+  littleBigEndian(&DDSFormat.m_SrcBlitColorKey.m_ColorSpaceLow);
+  littleBigEndian(&DDSFormat.m_SrcBlitColorKey.m_ColorSpaceHigh);
+  littleBigEndian(&DDSFormat.m_PixelFormat.m_Size);
+  littleBigEndian(&DDSFormat.m_PixelFormat.m_Flags);
+  littleBigEndian(&DDSFormat.m_PixelFormat.m_ID);
+  littleBigEndian(&DDSFormat.m_PixelFormat.m_BitCount);
+  for (int ii=0; ii<4; ++ii)
+    littleBigEndian(&DDSFormat.m_PixelFormat.m_BitMasks[ii]);
+  for (int ii=0; ii<4; ++ii)
+    littleBigEndian(&DDSFormat.m_Caps.m_Caps[ii]);
   littleBigEndian(&DDSFormat.m_TextureStage);
   #endif
   DEVASSERT(DDSFormat.m_Size == sizeof(SDDSurfaceFormat));
