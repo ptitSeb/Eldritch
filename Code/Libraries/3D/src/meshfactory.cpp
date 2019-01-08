@@ -1467,11 +1467,12 @@ Mesh* MeshFactory::Read(const IDataStream& Stream, const char* Filename,
     Stream.Read(sizeof(Vector4) * Header.m_NumVertices, FloatColors2);
     Stream.Read(sizeof(Vector4) * Header.m_NumVertices, FloatColors3);
   #ifdef __amigaos4__
-  for(int jj=0; jj<4; ++jj) {
-    littleBigEndian(&FloatColors1.v[jj]);
-    littleBigEndian(&FloatColors2.v[jj]);
-    littleBigEndian(&FloatColors3.v[jj]);
-  }
+  for(int ii=0; ii<Header.m_NumVertices; ++ii) 
+    for(int jj=0; jj<4; ++jj) {
+      littleBigEndian(&FloatColors1[ii].v[jj]);
+      littleBigEndian(&FloatColors2[ii].v[jj]);
+      littleBigEndian(&FloatColors3[ii].v[jj]);
+    }
   #endif
     if (UseFloatColors) {
       VertexSignature |= VD_BASISCOLORS;
