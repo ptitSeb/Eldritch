@@ -1549,12 +1549,12 @@ Mesh* MeshFactory::Read(const IDataStream& Stream, const char* Filename,
     Stream.Read(sizeof(SBone) * Header.m_NumFrames * Header.m_NumBones, Bones);
     #ifdef __amigaos4__
     for(int ii=0; ii<Header.m_NumFrames * Header.m_NumBones; ++ii) {
-      littleBigEndian(&Animations[ii].m_Quat.w);
-      littleBigEndian(&Animations[ii].m_Quat.x);
-      littleBigEndian(&Animations[ii].m_Quat.y);
-      littleBigEndian(&Animations[ii].m_Quat.z);
+      littleBigEndian(&Bones[ii].m_Quat.w);
+      littleBigEndian(&Bones[ii].m_Quat.x);
+      littleBigEndian(&Bones[ii].m_Quat.y);
+      littleBigEndian(&Bones[ii].m_Quat.z);
       for(int jj=0; jj<3; ++jj)
-        littleBigEndian(&Animations[ii].m_Vector.v[jj]);
+        littleBigEndian(&Bones[ii].m_Vector.v[jj]);
     }
     #endif
   }
@@ -1574,7 +1574,7 @@ Mesh* MeshFactory::Read(const IDataStream& Stream, const char* Filename,
     Stream.Read(sizeof(CollisionTriangle) * Header.m_NumCollisionTris,
                 CollisionTris);
     #ifdef __amigaos4__
-    for(int ii=0; ii<Header.m_NumCollisionTris; ++ii) {
+    for(unsigned int ii=0; ii<Header.m_NumCollisionTris; ++ii) {
       for(int jj=0; jj<3; ++jj) {
         littleBigEndian(&CollisionTris[ii].m_Triangle.m_Vec1.v[jj]);
         littleBigEndian(&CollisionTris[ii].m_Triangle.m_Vec2.v[jj]);
@@ -1590,8 +1590,8 @@ Mesh* MeshFactory::Read(const IDataStream& Stream, const char* Filename,
   Stream.Read(sizeof(AABB), &BoundAABB);
   #ifdef __amigaos4__
   for(int jj=0; jj<3; ++jj) {
-    littleBigEndian(&BoundAABB.m_AABB.m_Min.v[jj]);
-    littleBigEndian(&BoundAABB.m_AABB.m_Max.v[jj]);
+    littleBigEndian(&BoundAABB.m_Min.v[jj]);
+    littleBigEndian(&BoundAABB.m_Max.v[jj]);
   }
   #endif
   //------------ End reading ------------
