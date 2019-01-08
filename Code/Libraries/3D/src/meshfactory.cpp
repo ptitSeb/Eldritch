@@ -1394,6 +1394,16 @@ Mesh* MeshFactory::Read(const IDataStream& Stream, const char* Filename,
   SCompiledMeshHeader Header;
 
   Stream.Read(sizeof(Header), &Header);
+  #ifdef __amigaos4__
+  littleBigEndian(&Header.m_MagicID);
+  littleBigEndian(&Header.m_NumVertices);
+  littleBigEndian(&Header.m_NumIndices);
+  littleBigEndian(&Header.m_NumFrames);
+  littleBigEndian(&Header.m_NumCollisionTris);
+  littleBigEndian(&Header.m_NumBones);
+  littleBigEndian(&Header.m_NumAnims);
+  littleBigEndian(&Header.m_NumMaterials);
+  #endif
 
   ASSERT((sizeof(index_t) == 4 && Header.m_LongIndices) ||
          (sizeof(index_t) == 2 && !Header.m_LongIndices));
@@ -1443,6 +1453,11 @@ Mesh* MeshFactory::Read(const IDataStream& Stream, const char* Filename,
   // Read positions
   VertexSignature |= VD_POSITIONS;
   Stream.Read(sizeof(Vector) * Header.m_NumVertices, Positions);
+  #ifdef __amigaos4__
+  for(int ii=0; ii<Header.m_NumVertices; ++ii) 
+    for(int jj=0; jj<3; ++jj)
+      littleBigEndian(&Positions[ii].v[jj]);
+  #endif
 
   // Set colors
   if (Header.m_HasColors) {
@@ -1451,6 +1466,13 @@ Mesh* MeshFactory::Read(const IDataStream& Stream, const char* Filename,
     Stream.Read(sizeof(Vector4) * Header.m_NumVertices, FloatColors1);
     Stream.Read(sizeof(Vector4) * Header.m_NumVertices, FloatColors2);
     Stream.Read(sizeof(Vector4) * Header.m_NumVertices, FloatColors3);
+  #ifdef __amigaos4__
+  for(int jj=0; jj<4; ++jj) {
+    littleBigEndian(&FloatColors1.v[jj]);
+    littleBigEndian(&FloatColors2.v[jj]);
+    littleBigEndian(&FloatColors3.v[jj]);
+  }
+  #endif
     if (UseFloatColors) {
       VertexSignature |= VD_BASISCOLORS;
     } else {
@@ -1465,18 +1487,33 @@ Mesh* MeshFactory::Read(const IDataStream& Stream, const char* Filename,
   if (UVs) {
     VertexSignature |= VD_UVS;
     Stream.Read(sizeof(Vector2) * Header.m_NumVertices, UVs);
+    #ifdef __amigaos4__
+    for(int ii=0; ii<Header.m_NumVertices; ++ii) 
+      for(int jj=0; jj<2; ++jj)
+        littleBigEndian(&UVs[ii].v[jj]);
+    #endif
   }
 
   // Read normals
   if (Normals) {
     VertexSignature |= VD_NORMALS;
     Stream.Read(sizeof(Vector) * Header.m_NumVertices, Normals);
+    #ifdef __amigaos4__
+    for(int ii=0; ii<Header.m_NumVertices; ++ii) 
+      for(int jj=0; jj<3; ++jj)
+        littleBigEndian(&Normals[ii].v[jj]);
+    #endif
   }
 
   // Read tangents
   if (Tangents) {
     VertexSignature |= VD_TANGENTS;
     Stream.Read(sizeof(Vector4) * Header.m_NumVertices, Tangents);
+    #ifdef __amigaos4__
+    for(int ii=0; ii<Header.m_NumVertices; ++ii) 
+      for(int jj=0; jj<4; ++jj)
+        littleBigEndian(&Tangents[ii].v[jj]);
+    #endif
   }
 
   // Read bone indices
@@ -1493,15 +1530,33 @@ Mesh* MeshFactory::Read(const IDataStream& Stream, const char* Filename,
 
   // Read indices
   Stream.Read(sizeof(index_t) * Header.m_NumIndices, Indices);
+  #ifdef __amigaos4__
+  for(int ii=0; ii<Header.m_NumIndices; ++ii) 
+    littleBigEndian(&Indices[ii]);
+  #endif
 
   // Read bone names
   if (BoneNames) {
     Stream.Read(sizeof(HashedString) * Header.m_NumBones, BoneNames);
+    #ifdef __amigaos4__
+    for(int ii=0; ii<Header.m_NumBones; ++ii) 
+      littleBigEndian(&BoneNames[ii]);
+    #endif
   }
 
   // Read bones per frame
   if (Bones) {
     Stream.Read(sizeof(SBone) * Header.m_NumFrames * Header.m_NumBones, Bones);
+    #ifdef __amigaos4__
+    for(int ii=0; ii<Header.m_NumFrames * Header.m_NumBones; ++ii) {
+      littleBigEndian(&Animations[ii].m_Quat.w);
+      littleBigEndian(&Animations[ii].m_Quat.x);
+      littleBigEndian(&Animations[ii].m_Quat.y);
+      littleBigEndian(&Animations[ii].m_Quat.z);
+      for(int jj=0; jj<3; ++jj)
+        littleBigEndian(&Animations[ii].m_Vector.v[jj]);
+    }
+    #endif
   }
 
   // Read animations
@@ -1518,10 +1573,27 @@ Mesh* MeshFactory::Read(const IDataStream& Stream, const char* Filename,
   if (Header.m_NumCollisionTris) {
     Stream.Read(sizeof(CollisionTriangle) * Header.m_NumCollisionTris,
                 CollisionTris);
+    #ifdef __amigaos4__
+    for(int ii=0; ii<Header.m_NumCollisionTris; ++ii) {
+      for(int jj=0; jj<3; ++jj) {
+        littleBigEndian(&CollisionTris[ii].m_Triangle.m_Vec1.v[jj]);
+        littleBigEndian(&CollisionTris[ii].m_Triangle.m_Vec2.v[jj]);
+        littleBigEndian(&CollisionTris[ii].m_Triangle.m_Vec3.v[jj]);
+        littleBigEndian(&CollisionTris[ii].m_AABB.m_Min.v[jj]);
+        littleBigEndian(&CollisionTris[ii].m_AABB.m_Max.v[jj]);
+      }
+    }
+    #endif
     CollisionMeshFlags = Stream.ReadUInt32();
   }
 
   Stream.Read(sizeof(AABB), &BoundAABB);
+  #ifdef __amigaos4__
+  for(int jj=0; jj<3; ++jj) {
+    littleBigEndian(&BoundAABB.m_AABB.m_Min.v[jj]);
+    littleBigEndian(&BoundAABB.m_AABB.m_Max.v[jj]);
+  }
+  #endif
   //------------ End reading ------------
 
   if (Callback.m_Callback) {
