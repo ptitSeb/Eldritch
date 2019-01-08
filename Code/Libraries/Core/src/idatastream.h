@@ -135,6 +135,9 @@ class IDataStream {
   inline HashedString ReadHashedString() const {
     HashedString h;
     Read(sizeof(HashedString), &h);
+    #ifdef __amigaos4__
+    littleBigEndian(&h);
+    #endif
     return h;
   }
   inline SimpleString ReadString() const {
