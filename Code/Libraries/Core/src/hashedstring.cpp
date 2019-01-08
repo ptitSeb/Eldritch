@@ -53,15 +53,6 @@ uint32 HashedString::Hash(const char* const String) {
     }
     HashValue &= ~x;
   }
-  #ifdef __amigaos4__
-	unsigned char *toConvert = reinterpret_cast<unsigned char *>(&HashValue);
-	unsigned char tmp;
-	for (int i = 0; i < 2; ++i) {
-		tmp = toConvert[i];
-		toConvert[i] = toConvert[4 - i - 1];
-		toConvert[4 - i - 1] = tmp;
-	}
-  #endif
 
   if (ReverseHash::IsEnabled()) {
     ReverseHash::RegisterHash(HashedString(HashValue), SimpleString(String));
