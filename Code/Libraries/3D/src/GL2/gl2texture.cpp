@@ -184,6 +184,25 @@ void *uncompressDXTc(GLsizei width, GLsizei height, GLenum format, GLsizei image
 
   SDDSurfaceFormat DDSFormat;
   Stream.Read(sizeof(SDDSurfaceFormat), &DDSFormat);
+  #ifdef __amigaos4__
+  littleBigEndian(&DDSFormat.m_Size);
+  littleBigEndian(&DDSFormat.m_Flags);
+  littleBigEndian(&DDSFormat.m_Height);
+  littleBigEndian(&DDSFormat.m_Width);
+  littleBigEndian(&DDSFormat.m_Pitch);
+  littleBigEndian(&DDSFormat.m_NumBackBuffers);
+  littleBigEndian(&DDSFormat.m_NumMipMaps);
+  littleBigEndian(&DDSFormat.m_AlphaBitDepth);
+  littleBigEndian(&DDSFormat.m_Reserved);
+  littleBigEndian(&DDSFormat.m_Surface);
+  littleBigEndian(&DDSFormat.m_DestOverlayColorKey);
+  littleBigEndian(&DDSFormat.m_DestBlitColorKey);
+  littleBigEndian(&DDSFormat.m_SrcOverlayColorKey);
+  littleBigEndian(&DDSFormat.m_SrcBlitColorKey);
+  littleBigEndian(&DDSFormat.m_PixelFormat);
+  littleBigEndian(&DDSFormat.m_Caps);
+  littleBigEndian(&DDSFormat.m_TextureStage);
+  #endif
   DEVASSERT(DDSFormat.m_Size == sizeof(SDDSurfaceFormat));
 
   // GL doesn't support DXT2 or DXT4 (premultiplied alpha) formats.
