@@ -28,7 +28,7 @@ class GL2RenderTarget : public IRenderTarget {
   GLuint m_ColorTextureObject;
   ITexture* m_ColorTexture;
   GLuint m_DepthStencilRenderBufferObject;
-#ifdef PANDORA
+#if defined(PANDORA) || defined(__amigaos4__)
   GLuint m_StencilRenderBufferObject;
 #endif
 

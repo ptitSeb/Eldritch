@@ -53,7 +53,7 @@ GL2RenderTarget::GL2RenderTarget()
       m_ColorTextureObject(0),
       m_ColorTexture(nullptr),
       m_DepthStencilRenderBufferObject(0),
-#ifdef PANDORA
+#if defined(PANDORA) || defined(__amigaos4__)
       m_StencilRenderBufferObject(0),
 #endif
       m_Width(0),
@@ -62,7 +62,7 @@ GL2RenderTarget::GL2RenderTarget()
 GL2RenderTarget::~GL2RenderTarget() {
   // Don't clean up m_ColorTextureObject; deleting the texture does that.
   SafeDelete(m_ColorTexture);
-#ifdef PANDORA
+#if defined(PANDORA) || defined(__amigaos4__)
   if (m_StencilRenderBufferObject != 0)
     glDeleteRenderbuffers(1, &m_StencilRenderBufferObject);
 #endif
@@ -128,7 +128,7 @@ GL2RenderTarget::~GL2RenderTarget() {
       glGenRenderbuffers(1, &m_DepthStencilRenderBufferObject);
       ASSERT(m_DepthStencilRenderBufferObject != 0);
       glBindRenderbuffer(GL_RENDERBUFFER, m_DepthStencilRenderBufferObject);
-#ifdef PANDORA
+#if defined(PANDORA) || defined(__amigaos4__)
       glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, m_Width,
                             m_Height);
       glGenRenderbuffers(1, &m_StencilRenderBufferObject);
@@ -147,7 +147,7 @@ GL2RenderTarget::~GL2RenderTarget() {
   glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
                             GL_RENDERBUFFER,
                             m_DepthStencilRenderBufferObject);
-#ifdef PANDORA
+#if defined(PANDORA) || defined(__amigaos4__)
   glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
                             GL_RENDERBUFFER,
                             m_StencilRenderBufferObject);
