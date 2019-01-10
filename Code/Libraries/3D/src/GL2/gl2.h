@@ -12,9 +12,10 @@
 #define GL_COMPRESSED_RGBA_S3TC_DXT3_EXT     0x83F2
 #define GL_COMPRESSED_RGBA_S3TC_DXT5_EXT     0x83F3
 
-#ifdef PANDORA
+#if defined(PANDORA) || defined(__amigaos4__)
 #define NO_VBO
-  // disabling use of VBO, as it's faster without...
+  // disabling use of VBO, as it's faster without on PANDORA...
+  // for AMIGAOS4, it doesn't seems to be available for now
 #endif
 
 
