@@ -76,7 +76,11 @@ typedef unsigned short uint16;
 typedef unsigned char uint8;
 typedef long int32;
 typedef short int16;
+#ifdef __amigaos4__
+typedef signed char int8;
+#else
 typedef char int8;
+#endif
 typedef unsigned char byte;
 
 typedef unsigned long u32;
