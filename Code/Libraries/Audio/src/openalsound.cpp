@@ -81,7 +81,11 @@ void OpenALSound::CreateSampleFromOGG(const IDataStream& Stream, bool Looping) {
 #ifdef USE_TREMOR
   while ( (rc = ov_read(&vf, buff, allocated, &bitstream)) != 0 ) 
 #else
+  #ifdef __amigaos4__
+  while ( (rc = ov_read(&vf, buff, allocated, 1, 2, 1, &bitstream)) != 0 ) 
+  #else
   while ( (rc = ov_read(&vf, buff, allocated, 0, 2, 1, &bitstream)) != 0 ) 
+  #endif
 #endif
   {
     if (rc <= 0) {

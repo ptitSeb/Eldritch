@@ -7,8 +7,13 @@
 class IDataStream;
 class PackStream;
 struct SSoundInit;
+#ifdef __amigaos4__
+#define EXT_OGG 'ogg\0'
+#define EXT_WAV 'wav\0'
+#else
 #define EXT_OGG '\0ggo'
 #define EXT_WAV '\0vaw'
+#endif
 
 class OpenALSound : public SoundCommon {
  public:
