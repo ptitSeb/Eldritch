@@ -74,7 +74,11 @@ void OpenALSound::CreateSampleFromOGG(const IDataStream& Stream, bool Looping) {
   ALenum format = (info->channels == 1) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16;
   ALuint freq = info->rate;
   long rc = 0;
+  #ifdef __amigaos4__
+  long allocated = 1024*1024*16;
+  #else
   long allocated = 4*1024*16;
+  #endif
   ALubyte *retval = static_cast<ALubyte*>(malloc(allocated));
   char *buff = static_cast<char*>(malloc(allocated));
 
