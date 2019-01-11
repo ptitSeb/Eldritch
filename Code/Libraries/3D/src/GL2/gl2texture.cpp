@@ -29,7 +29,11 @@ byte* GLES_ConvertBGRA2RGBA(int Width, int Height, byte* texture)
   for (int i = 0; i < Height; i++) {
       for (int j = 0; j < Width; j++) {
         tmp = *(const GLuint*)texture;
+        #ifdef __amigaos4__
+        *(GLuint*)dest = (tmp&0x00ff00ff) | ((tmp&0x0000ff00)<<16) | ((tmp&0xff000000)>>16);
+        #else
         *(GLuint*)dest = (tmp&0xff00ff00) | ((tmp&0x00ff0000)>>16) | ((tmp&0x000000ff)<<16);
+        #endif
         texture += 4;
         dest += 4;
       }
