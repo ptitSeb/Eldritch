@@ -98,7 +98,7 @@ void OpenALSound::CreateSampleFromOGG(const IDataStream& Stream, bool Looping) {
     size += rc;
 
     ALubyte *tmp = static_cast<ALubyte*>(realloc(retval, size));
-    if (retval == nullptr)
+    if (tmp == nullptr)
       {
         free(retval);
         retval = nullptr;
