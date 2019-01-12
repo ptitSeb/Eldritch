@@ -20,9 +20,8 @@ GL2Texture::~GL2Texture() {
 /*virtual*/ void* GL2Texture::GetHandle() { return &m_Texture; }
 
 #ifdef __amigaos4__
-byte* BigEndian_ConvertRGBA(int Width, int Height, byte* texture)
+void BigEndian_ConvertRGBA(int Width, int Height, byte* texture)
 {
-  GLuint tmp;
   GLuint* dest = (GLuint*)texture;
   for (int i = 0; i < Height; i++) {
       for (int j = 0; j < Width; j++) {
@@ -30,7 +29,6 @@ byte* BigEndian_ConvertRGBA(int Width, int Height, byte* texture)
         ++dest;
       }
   }
-  return texture;
 }
 #endif
 #ifdef HAVE_GLES
@@ -76,7 +74,7 @@ byte* GLES_ConvertBGRA2RGBA(int Width, int Height, byte* texture)
     #ifdef HAVE_GLES
     byte* tmp = GLES_ConvertBGRA2RGBA(Width, Height, ThisLevel);
     #ifdef __amigaos4__
-    tmp = BigEndian_ConvertRGBA(Width, Height, ThisLevel);
+    BigEndian_ConvertRGBA(Width, Height, tmp);
     #endif
     glTexImage2D(GL_TEXTURE_2D, MipLevel, GL_RGBA, Width, Height, 0, GL_RGBA,
                  GL_UNSIGNED_BYTE, tmp);
@@ -271,7 +269,7 @@ void *uncompressDXTc(GLsizei width, GLsizei height, GLenum format, GLsizei image
 #ifdef HAVE_GLES
     void* tmp = uncompressDXTc(Width, Height, GLFormat, ReadBytes, ReadArray.GetData());
     #ifdef __amigaos4__
-    tmp = (void*)BigEndian_ConvertRGBA(Width, Height, (byte*)tmp);
+    BigEndian_ConvertRGBA(Width, Height, (byte*)tmp);
     #endif
     glTexImage2D(GL_TEXTURE_2D, MipLevel, GL_RGBA, Width, Height, 0,
                            GL_RGBA, GL_UNSIGNED_BYTE, tmp);
