@@ -65,6 +65,10 @@ static inline void littleBigEndian (void *x, int sz) {
 		toConvert[sz - i - 1] = tmp;
 	}
 }
+template <class T> inline void littleBigEndian (T *x) {
+	const int sz = sizeof(T);
+	littleBigEndian(x, sz);
+}
 #endif
 
 static uint32_t PackRGBA (uint8_t r, uint8_t g, uint8_t b, uint8_t a)
