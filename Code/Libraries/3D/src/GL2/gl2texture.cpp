@@ -26,8 +26,8 @@ byte* BigEndian_ConvertRGBA(int Width, int Height, byte* texture)
   GLuint* dest = (GLuint*)texture;
   for (int i = 0; i < Height; i++) {
       for (int j = 0; j < Width; j++) {
-        littleBigEndian(texture);
-        ++texture;
+        littleBigEndian(dest);
+        ++dest;
       }
   }
   return texture;
