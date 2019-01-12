@@ -268,9 +268,6 @@ void *uncompressDXTc(GLsizei width, GLsizei height, GLenum format, GLsizei image
 
 #ifdef HAVE_GLES
     void* tmp = uncompressDXTc(Width, Height, GLFormat, ReadBytes, ReadArray.GetData());
-    #ifdef __amigaos4__
-    BigEndian_ConvertRGBA(Width, Height, (byte*)tmp);
-    #endif
     glTexImage2D(GL_TEXTURE_2D, MipLevel, GL_RGBA, Width, Height, 0,
                            GL_RGBA, GL_UNSIGNED_BYTE, tmp);
     free(tmp);

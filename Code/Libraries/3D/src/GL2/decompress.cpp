@@ -11,7 +11,7 @@ PackRGBA order.
 
 ---
 
-Copyright (c) 2012, Matthäus G. "Anteru" Chajdas (http://anteru.net)
+Copyright (c) 2012, Matthï¿½us G. "Anteru" Chajdas (http://anteru.net)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in 
@@ -55,9 +55,25 @@ SOFTWARE.
 
 ---
 */
+#ifdef __amigaos4__
+static inline void littleBigEndian (void *x, int sz) {
+	unsigned char *toConvert = reinterpret_cast<unsigned char *>(x);
+	unsigned char tmp;
+	for (size_t i = 0; i < sz/2; ++i) {
+		tmp = toConvert[i];
+		toConvert[i] = toConvert[sz - i - 1];
+		toConvert[sz - i - 1] = tmp;
+	}
+}
+#endif
+
 static uint32_t PackRGBA (uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 {
+	#ifdef __amigaos4__
+	return a | (b << 8) | (g << 16) | (r << 24);
+	#else
 	return r | (g << 8) | (b << 16) | (a << 24);
+	#endif
 }
 
 static void DecompressBlockDXT1Internal (const uint8_t* block,
@@ -74,6 +90,10 @@ static void DecompressBlockDXT1Internal (const uint8_t* block,
 
 	color0 = *(const uint16_t*)(block);
 	color1 = *(const uint16_t*)(block + 2);
+	#ifdef __amigaos4__
+	littleBigEndian(&color0);
+	littleBigEndian(&color1);
+	#endif
 
 	temp = (color0 >> 11) * 255 + 16;
 	r0 = (uint8_t)((temp/32 + temp)/32);
@@ -90,6 +110,9 @@ static void DecompressBlockDXT1Internal (const uint8_t* block,
 	b1 = (uint8_t)((temp/32 + temp)/32);
 
 	code = *(const uint32_t*)(block + 4);
+	#ifdef __amigaos4__
+	littleBigEndian(&code);
+	#endif
 
 	if (color0 > color1) {
 		for (j = 0; j < 4; ++j) {
@@ -208,7 +231,12 @@ void DecompressBlockDXT5(uint32_t x, uint32_t y, uint32_t width,
 	alphaCode2 = bits[0] | (bits[1] << 8);
 
 	color0 = *(const uint16_t*)(blockStorage + 8);
-	color1 = *(const uint16_t*)(blockStorage + 10);	
+	color1 = *(const uint16_t*)(blockStorage + 10);
+
+	#ifdef __amigaos4__
+	littleBigEndian(&color0);
+	littleBigEndian(&color1);
+	#endif
 
 	temp = (color0 >> 11) * 255 + 16;
 	r0 = (uint8_t)((temp/32 + temp)/32);
@@ -225,6 +253,10 @@ void DecompressBlockDXT5(uint32_t x, uint32_t y, uint32_t width,
 	b1 = (uint8_t)((temp/32 + temp)/32);
 
 	code = *(const uint32_t*)(blockStorage + 12);
+
+	#ifdef __amigaos4__
+	littleBigEndian(&code);
+	#endif
 
 	for (j = 0; j < 4; j++) {
 		for (i = 0; i < 4; i++) {
@@ -302,6 +334,9 @@ void DecompressBlockDXT3(uint32_t x, uint32_t y, uint32_t width,
 
 	for (i = 0; i < 4; ++i) {
 		const uint16_t* alphaData = (const uint16_t*) (blockStorage);
+		#ifdef __amigaos4__
+		littleBigEndian(&alphaData);
+		#endif
 
 		alphaValues [i*4 + 0] = (((*alphaData) >> 0) & 0xF ) * 17;
 		alphaValues [i*4 + 1] = (((*alphaData) >> 4) & 0xF ) * 17;
