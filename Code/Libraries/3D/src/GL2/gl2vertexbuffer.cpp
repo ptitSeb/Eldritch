@@ -38,7 +38,7 @@ GL2VertexBuffer::GL2VertexBuffer()
       m_TangentsVBO(0),
       m_BoneIndicesVBO(0),
       m_BoneWeightsVBO(0) {
-#ifndef NO_VBO
+#if !defined(NO_VBO) && defined(HAVE_GLES)
 if (!MapBufferInited) {
     glMapBuffer = (PFNGLMAPBUFFEROESPROC)eglGetProcAddress("glMapBufferOES");
     glUnmapBuffer = (PFNGLUNMAPBUFFEROESPROC)eglGetProcAddress("glUnmapBufferOES");
