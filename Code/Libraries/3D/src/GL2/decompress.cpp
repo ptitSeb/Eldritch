@@ -238,6 +238,8 @@ void DecompressBlockDXT5(uint32_t x, uint32_t y, uint32_t width,
 	color1 = *(const uint16_t*)(blockStorage + 10);
 
 	#ifdef __amigaos4__
+	littleBigEndian(&alphaCode1);
+	littleBigEndian(&alphaCode2);
 	littleBigEndian(&color0);
 	littleBigEndian(&color1);
 	#endif
