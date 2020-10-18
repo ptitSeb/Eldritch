@@ -229,7 +229,7 @@ void* GL2VertexBuffer::Lock(IVertexBuffer::EVertexElements VertexType) {
 void GL2VertexBuffer::Unlock(EVertexElements VertexType) {
 #ifdef __amigaos4__
   if(VertexType==EVE_Colors) {
-    GLuint* p = (Gluint*)m_ColorPtr;
+    GLuint* p = (GLuint*)m_ColorPtr;
     for(int i=0; i<m_NumVertices; ++i, ++p)
       littleBigEndian(p);
   }
