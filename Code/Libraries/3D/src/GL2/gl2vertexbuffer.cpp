@@ -32,6 +32,10 @@ GL2VertexBuffer::GL2VertexBuffer()
       m_FloatColors2VBO(0),
       m_FloatColors3VBO(0)
 #endif
+#ifdef __amigaos4__
+      ,
+      m_ColorsPtr(NULL)
+#endif
       ,
       m_UVsVBO(0),
       m_NormalsVBO(0),
@@ -179,6 +183,9 @@ void* GL2VertexBuffer::Lock(IVertexBuffer::EVertexElements VertexType) {
     case EVE_Positions:
       return m_PositionsVBO;
     case EVE_Colors:
+#ifdef __amigaos4__
+      m_ColorsPtr = m_ColorsVBO;
+#endif
       return m_ColorsVBO;
 #if USE_HDR
     case EVE_FloatColors1:
@@ -209,6 +216,10 @@ void* GL2VertexBuffer::Lock(IVertexBuffer::EVertexElements VertexType) {
   glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
   void* const pData = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+#ifdef __amigaos4__
+  if(VertexType==EVE_Colors)
+    m_ColorsPtr = (void*)pData;
+#endif
   ASSERT(pData);
 
   return pData;
@@ -216,6 +227,13 @@ void* GL2VertexBuffer::Lock(IVertexBuffer::EVertexElements VertexType) {
 }
 
 void GL2VertexBuffer::Unlock(EVertexElements VertexType) {
+#ifdef __amigaos4__
+  if(VertexType==EVE_Colors) {
+    GLuint* p = (Gluint*)m_ColorPtr;
+    for(int i=0; i<m_NumVertices; ++i, ++p)
+      littleBigEndian(p);
+  }
+#endif
 #ifndef NO_VBO
   ASSERT(m_Dynamic);
 

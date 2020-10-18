@@ -78,6 +78,9 @@ class GL2VertexBuffer : public IVertexBuffer {
   GLuint m_BoneIndicesVBO;
   GLuint m_BoneWeightsVBO;
 #endif
+#ifdef __amigaos4__
+  void* m_ColorsPtr;
+#endif
 };
 
 #endif  // GL2VERTEXBUFFER_H
