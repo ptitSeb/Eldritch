@@ -25,6 +25,20 @@ struct Color {
   };
 };
 
+#ifdef __amigaos4__
+#define G_FROM_COLOR(c) ((unsigned char)(((c) >> 16) & 0xff))
+#define R_FROM_COLOR(c) ((unsigned char)(((c) >> 8) & 0xff))
+#define A_FROM_COLOR(c) ((unsigned char)((c)&0xff))
+#define B_FROM_COLOR(c) ((unsigned char)(((c) >> 24) & 0xff))
+#define G_TO_COLOR(r) ((uint)(((r)&0xff) << 16))
+#define R_TO_COLOR(g) ((uint)(((g)&0xff) << 8))
+#define A_TO_COLOR(b) ((uint)((b)&0xff))
+#define B_TO_COLOR(a) ((uint)(((a)&0xff) << 24))
+#define SET_COLOR_G(c, r) (((c)&0xff00ffff) | R_TO_COLOR(r))
+#define SET_COLOR_R(c, g) (((c)&0xffff00ff) | G_TO_COLOR(g))
+#define SET_COLOR_A(c, b) (((c)&0xffffff00) | B_TO_COLOR(b))
+#define SET_COLOR_B(c, a) (((c)&0x00ffffff) | A_TO_COLOR(a))
+#else
 #define R_FROM_COLOR(c) ((unsigned char)(((c) >> 16) & 0xff))
 #define G_FROM_COLOR(c) ((unsigned char)(((c) >> 8) & 0xff))
 #define B_FROM_COLOR(c) ((unsigned char)((c)&0xff))
@@ -37,6 +51,7 @@ struct Color {
 #define SET_COLOR_G(c, g) (((c)&0xffff00ff) | G_TO_COLOR(g))
 #define SET_COLOR_B(c, b) (((c)&0xffffff00) | B_TO_COLOR(b))
 #define SET_COLOR_A(c, a) (((c)&0x00ffffff) | A_TO_COLOR(a))
+#endif
 #define RGB_TO_COLOR(r, g, b) \
   ((uint)(R_TO_COLOR(r) | G_TO_COLOR(g) | B_TO_COLOR(b)))
 #define RGB_TO_BGRCOLOR(r, g, b)          \
