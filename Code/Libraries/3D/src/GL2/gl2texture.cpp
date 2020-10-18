@@ -37,13 +37,17 @@ byte* GLES_ConvertBGRA2RGBA(int Width, int Height, byte* texture)
 {
   byte* ret = (byte*) malloc(Width * Height * 4);
   GLuint tmp;
-  byte* dest = ret;
+  GLuint* dest = (GLuint*)ret;
   for (int i = 0; i < Height; i++) {
       for (int j = 0; j < Width; j++) {
         tmp = *(const GLuint*)texture;
-        *(GLuint*)dest = (tmp&0xff00ff00) | ((tmp&0x00ff0000)>>16) | ((tmp&0x000000ff)<<16);
+        #ifdef __amigaos4__
+        *dest = ((tmp&0x00ffffff)<<8) | ((tmp&0xff000000)>>24);
+        #else
+        *dest = (tmp&0xff00ff00) | ((tmp&0x00ff0000)>>16) | ((tmp&0x000000ff)<<16);
+        #endif
         texture += 4;
-        dest += 4;
+        dest++;
       }
   }
   return ret;
@@ -73,9 +77,6 @@ byte* GLES_ConvertBGRA2RGBA(int Width, int Height, byte* texture)
   for (int MipLevel = 0; MipLevel < MipLevels; ++MipLevel) {
     #ifdef HAVE_GLES
     byte* tmp = GLES_ConvertBGRA2RGBA(Width, Height, ThisLevel);
-    #ifdef __amigaos4__
-    BigEndian_ConvertRGBA(Width, Height, tmp);
-    #endif
     glTexImage2D(GL_TEXTURE_2D, MipLevel, GL_RGBA, Width, Height, 0, GL_RGBA,
                  GL_UNSIGNED_BYTE, tmp);
     free(tmp);
