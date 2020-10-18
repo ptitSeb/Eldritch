@@ -8,6 +8,22 @@
 #include <string.h>
 #endif
 
+#ifdef __amigaos4__
+static inline void littleBigEndian (void *x, int sz) {
+	unsigned char *toConvert = reinterpret_cast<unsigned char *>(x);
+	unsigned char tmp;
+	for (size_t i = 0; i < sz/2; ++i) {
+		tmp = toConvert[i];
+		toConvert[i] = toConvert[sz - i - 1];
+		toConvert[sz - i - 1] = tmp;
+	}
+}
+template <class T> inline void littleBigEndian (T *x) {
+	const int sz = sizeof(T);
+	littleBigEndian(x, sz);
+}
+#endif
+
 #ifdef HAVE_GLES
 extern "C" {
 //  void* eglGetProcAddress(const char*); // cannot include EGL/egl.h, as it conflict with other headers...
@@ -229,7 +245,7 @@ void* GL2VertexBuffer::Lock(IVertexBuffer::EVertexElements VertexType) {
 void GL2VertexBuffer::Unlock(EVertexElements VertexType) {
 #ifdef __amigaos4__
   if(VertexType==EVE_Colors) {
-    GLuint* p = (GLuint*)m_ColorPtr;
+    GLuint* p = (GLuint*)m_ColorsPtr;
     for(int i=0; i<m_NumVertices; ++i, ++p)
       littleBigEndian(p);
   }
