@@ -51,6 +51,16 @@ void Font::Initialize(const IDataStream& Stream, IRenderer* const pRenderer) {
       SFontCharProp& CharProp = Locale.m_CharProps.Insert(CodePoint);
 
       Stream.Read(sizeof(SFontCharProp), &CharProp);
+#ifdef __amigaos4__
+      littleBigEndian(&CharProp.m_U1);
+      littleBigEndian(&CharProp.m_U2);
+      littleBigEndian(&CharProp.m_V1);
+      littleBigEndian(&CharProp.m_V2);
+      littleBigEndian(&CharProp.m_A);
+      littleBigEndian(&CharProp.m_B);
+      littleBigEndian(&CharProp.m_C);
+      littleBigEndian(&CharProp.m_Width);
+#endif
     }
   }
 }
