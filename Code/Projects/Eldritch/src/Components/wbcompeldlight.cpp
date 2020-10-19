@@ -107,7 +107,15 @@ uint WBCompEldLight::GetSerializationSize() {
 void WBCompEldLight::Save(const IDataStream& Stream) {
   Stream.WriteUInt32(VERSION_CURRENT);
   Stream.WriteBool(m_HasAddedLight);
+  #ifdef __amigaos4__
+  Vector tmp(m_LightLocation);
+  littleBigEndian(&tmp.x);
+  littleBigEndian(&tmp.y);
+  littleBigEndian(&tmp.z);
+  Stream.Write(sizeof(Vector), &tmp);
+  #else
   Stream.Write(sizeof(Vector), &m_LightLocation);
+  #endif
 }
 
 void WBCompEldLight::Load(const IDataStream& Stream) {
@@ -118,5 +126,10 @@ void WBCompEldLight::Load(const IDataStream& Stream) {
   if (Version >= VERSION_LIGHT) {
     m_HasAddedLight = Stream.ReadBool();
     Stream.Read(sizeof(Vector), &m_LightLocation);
+    #ifdef __amigaos4__
+    littleBigEndian(&m_LightLocation.x);
+    littleBigEndian(&m_LightLocation.y);
+    littleBigEndian(&m_LightLocation.z);
+    #endif
   }
 }
