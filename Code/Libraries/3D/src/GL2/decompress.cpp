@@ -83,6 +83,7 @@ static uint32_t PackRGBA (uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 static void DecompressBlockDXT1Internal (const uint8_t* block,
 	uint32_t* output,
 	uint32_t outputStride,
+	int t0,
 	const uint8_t* alphaValues)
 {
 	uint32_t temp, code;
@@ -143,6 +144,12 @@ static void DecompressBlockDXT1Internal (const uint8_t* block,
 					finalColor = PackRGBA((r0+2*r1)/3, (g0+2*g1)/3, (b0+2*b1)/3, alpha);
 					break;
 				}
+				#ifdef __amigaos4__
+				if(t0 && (finalColor == 0x000000ff))
+				#else
+				if(t0 && (finalColor == 0xff000000))
+				#endif
+					finalColor = 0;
 
 				output [j*outputStride + i] = finalColor;
 			}
@@ -172,6 +179,12 @@ static void DecompressBlockDXT1Internal (const uint8_t* block,
 					finalColor = PackRGBA(0, 0, 0, alpha);
 					break;
 				}
+				#ifdef __amigaos4__
+				if(t0 && (finalColor == 0x000000ff))
+				#else
+				if(t0 && (finalColor == 0xff000000))
+				#endif
+					finalColor = 0;
 
 				output [j*outputStride + i] = finalColor;
 			}
@@ -188,7 +201,7 @@ uint32_t width: 				width of the texture being decompressed.
 const uint8_t *blockStorage:	pointer to the block to decompress.
 uint32_t *image:				pointer to image where the decompressed pixel data should be stored.
 */ 
-void DecompressBlockDXT1(uint32_t x, uint32_t y, uint32_t width,
+void DecompressBlockDXT1(uint32_t x, uint32_t y, uint32_t width, int t0,
 	const uint8_t* blockStorage,
 	uint32_t* image)
 {
@@ -200,7 +213,7 @@ void DecompressBlockDXT1(uint32_t x, uint32_t y, uint32_t width,
 	};
 
 	DecompressBlockDXT1Internal (blockStorage,
-		image + x + (y * width), width, const_alpha);
+		image + x + (y * width), width, t0, const_alpha);
 }
 
 /*
@@ -351,5 +364,5 @@ void DecompressBlockDXT3(uint32_t x, uint32_t y, uint32_t width,
 	}
 
 	DecompressBlockDXT1Internal (blockStorage,
-		image + x + (y * width), width, alphaValues);
+		image + x + (y * width), width, 0, alphaValues);
 }

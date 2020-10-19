@@ -171,7 +171,7 @@ void *uncompressDXTc(GLsizei width, GLsizei height, GLenum format, GLsizei image
       switch(format) {
         case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
         case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
-          DecompressBlockDXT1(x, y, width, (uint8_t*)src, (uint32_t*)pixels);
+          DecompressBlockDXT1(x, y, width, (format==GL_COMPRESSED_RGBA_S3TC_DXT1_EXT)?1:0, (uint8_t*)src, (uint32_t*)pixels);
           break;
         case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
           DecompressBlockDXT3(x, y, width, (uint8_t*)src, (uint32_t*)pixels);

@@ -5,9 +5,15 @@
 
 #include <string.h>
 
+#ifdef __amigaos4__
+#define EXT_BMP 'bmp\0'
+#define EXT_TGA 'tga\0'
+#define EXT_DDS 'dds\0'
+#else
 #define EXT_BMP '\0pmb'
 #define EXT_TGA '\0agt'
 #define EXT_DDS '\0sdd'
+#endif
 
 struct TGAHeader {
   byte m_SizeOfIDField;
@@ -50,9 +56,6 @@ void TextureCommon::InitializeFromFile(const char* const Filename,
   // Get the file extension
   size_t ExtOffset = strlen(Filename) - 3;
   unsigned int Ext = *(unsigned int*)(Filename + ExtOffset);
-  #ifdef __amigaos4__
-  littleBigEndian(&Ext);
-  #endif
 
   OutARGBImage = nullptr;
   int Width = 0;
@@ -219,7 +222,12 @@ void TextureCommon::LoadTGA(const IDataStream& Stream, int& Width, int& Height,
 
           if (PacketHeader & 0x80)  // RLE packet
           {
+            #ifdef __amigaos4__
+            uint RLEValue = 0;
+            Stream.Read(4, &RLEValue);  // don't use ReadUInt32 here as we don't want to reverse the read
+            #else
             uint RLEValue = Stream.ReadUInt32();
+            #endif
             const byte* const EndDestPixels = DestPixels + PacketSize * 4;
             for (; DestPixels < EndDestPixels; DestPixels += 4) {
               uint* const DestPixels32 = reinterpret_cast<uint*>(DestPixels);
