@@ -145,6 +145,11 @@ struct SDDSurfaceFormat {
 #define DXT1_TAG 0x31545844  // 'DXT1'
 #define DXT3_TAG 0x33545844  // 'DXT3'
 #define DXT5_TAG 0x35545844  // 'DXT5'
+//  DDS_header.sPixelFormat.dwFlags
+#define DDPF_ALPHAPIXELS            0x00000001 
+#define DDPF_FOURCC                 0x00000004 
+#define DDPF_INDEXED                0x00000020 
+#define DDPF_RGB                    0x00000040 
 
 #ifdef HAVE_GLES
 void *uncompressDXTc(GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, const void *data) {
@@ -241,7 +246,7 @@ void *uncompressDXTc(GLsizei width, GLsizei height, GLenum format, GLsizei image
 
   GLenum GLFormat = 0;
   if (DDSFormat.m_PixelFormat.m_ID == DXT1_TAG) {
-    GLFormat = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
+    GLFormat = (DDSFormat.m_Flags&DDPF_ALPHAPIXELS)?GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
   } else if (DDSFormat.m_PixelFormat.m_ID == DXT3_TAG) {
     GLFormat = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
   } else if (DDSFormat.m_PixelFormat.m_ID == DXT5_TAG) {
