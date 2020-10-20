@@ -369,11 +369,11 @@ void WBCompEldTransform::Load(const IDataStream& Stream) {
   }
 
   if (Version >= VERSION_ORIENTATION) {
-    Stream.Read(sizeof(Vector), &m_Orientation);
+    Stream.Read(sizeof(Angles), &m_Orientation);
     #ifdef __amigaos4__
-    littleBigEndian(&m_Orientation.x);
-    littleBigEndian(&m_Orientation.y);
-    littleBigEndian(&m_Orientation.z);
+    littleBigEndian(&m_Orientation.Pitch);
+    littleBigEndian(&m_Orientation.Roll);
+    littleBigEndian(&m_Orientation.Yaw);
     #endif
   }
 
