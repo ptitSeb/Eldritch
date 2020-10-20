@@ -48,7 +48,7 @@ void WBCompTransform::Save(const IDataStream& Stream) {
   littleBigEndian(&tmp.y);
   littleBigEndian(&tmp.z);
   Stream.Write(sizeof(Vector), &tmp);
-  Vector tmp = m_Velocity;
+  tmp = m_Velocity;
   littleBigEndian(&tmp.x);
   littleBigEndian(&tmp.y);
   littleBigEndian(&tmp.z);
