@@ -1762,7 +1762,7 @@ void WBCompEldPlayer::Save(const IDataStream& Stream) {
   Stream.Write(sizeof(Vector), &vtmp);
   #else
   Stream.Write(sizeof(Vector), &m_PowerSlideY);
-  #enfig
+  #endif
 
   Stream.WriteBool(m_IsDisablingPause);
 }
