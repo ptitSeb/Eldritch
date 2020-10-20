@@ -1464,8 +1464,7 @@ Mesh* MeshFactory::Read(const IDataStream& Stream, const char* Filename,
     Stream.Read(sizeof(uint) * Header.m_NumVertices, Colors);
     #ifdef __amigaos4__
     for(int ii=0; ii<Header.m_NumVertices; ++ii) 
-      for(int jj=0; jj<4; ++jj)
-        littleBigEndian(&Colors[ii].v[jj]);
+      littleBigEndian(&Colors[ii]);
     #endif
 #if USE_HDR
     Stream.Read(sizeof(Vector4) * Header.m_NumVertices, FloatColors1);
@@ -1588,23 +1587,25 @@ Mesh* MeshFactory::Read(const IDataStream& Stream, const char* Filename,
   if (Header.m_NumMaterials) {
     Stream.Read(sizeof(SMaterial) * Header.m_NumMaterials, Materials);
     #ifdef __amigaos4__
-    //IShaderProgram* m_ShaderProgram;
-    //ShaderDataProvider* m_SDP;
-    littleBigEndian(&Materials.m_Flags);
-    littleBigEndian(&Materials.m_RenderState.m_CullMode);
-    littleBigEndian(&Materials.m_RenderState.m_ZEnable);
-    littleBigEndian(&Materials.m_RenderState.m_ZWriteEnable);
-    littleBigEndian(&Materials.m_RenderState.m_AlphaBlendEnable);
-    littleBigEndian(&Materials.m_RenderState.m_SrcBlend);
-    littleBigEndian(&Materials.m_RenderState.m_DestBlend);
+    for(int jj=0; jj<Header.m_NumMaterials; ++jj) {
+      //IShaderProgram* m_ShaderProgram;
+      //ShaderDataProvider* m_SDP;
+      littleBigEndian(&Materials[jj].m_Flags);
+      littleBigEndian(&Materials[jj].m_RenderState.m_CullMode);
+      littleBigEndian(&Materials[jj].m_RenderState.m_ZEnable);
+      littleBigEndian(&Materials[jj].m_RenderState.m_ZWriteEnable);
+      littleBigEndian(&Materials[jj].m_RenderState.m_AlphaBlendEnable);
+      littleBigEndian(&Materials[jj].m_RenderState.m_SrcBlend);
+      littleBigEndian(&Materials[jj].m_RenderState.m_DestBlend);
     
-    for(int ii=0; ii<MAX_TEXTURE_STAGES; ++ii) {
-      //m_Texture
-      littleBigEndian(&Materials.m_RenderState.m_SamplerStates[ii].m_AddressU);
-      littleBigEndian(&Materials.m_RenderState.m_SamplerStates[ii].m_AddressV);
-      littleBigEndian(&Materials.m_RenderState.m_SamplerStates[ii].m_MinFilter);
-      littleBigEndian(&Materials.m_RenderState.m_SamplerStates[ii].m_MagFilter);
-      littleBigEndian(&Materials.m_RenderState.m_SamplerStates[ii].m_MipFilter);
+      for(int ii=0; ii<MAX_TEXTURE_STAGES; ++ii) {
+        //m_Texture
+        littleBigEndian(&Materials[jj].m_RenderState.m_SamplerStates[ii].m_AddressU);
+        littleBigEndian(&Materials[jj].m_RenderState.m_SamplerStates[ii].m_AddressV);
+        littleBigEndian(&Materials[jj].m_RenderState.m_SamplerStates[ii].m_MinFilter);
+        littleBigEndian(&Materials[jj].m_RenderState.m_SamplerStates[ii].m_MagFilter);
+        littleBigEndian(&Materials[jj].m_RenderState.m_SamplerStates[ii].m_MipFilter);
+      }
     }
     littleBigEndian(&Materials.m_NumSamplers);
     #endif
