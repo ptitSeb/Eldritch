@@ -397,5 +397,13 @@ void WBCompEldFrobbable::Load(const IDataStream& Stream) {
   if (Version >= VERSION_BOUNDS) {
     Stream.Read(sizeof(Vector), &m_BoundOffset);
     Stream.Read(sizeof(Vector), &m_BoundExtents);
+    #ifdef __amigaos4__
+    littleBigEndian(&m_BoundOffset.x);
+    littleBigEndian(&m_BoundOffset.y);
+    littleBigEndian(&m_BoundOffset.z);
+    littleBigEndian(&m_BoundExtents.x);
+    littleBigEndian(&m_BoundExtents.y);
+    littleBigEndian(&m_BoundExtents.z);
+    #endif
   }
 }

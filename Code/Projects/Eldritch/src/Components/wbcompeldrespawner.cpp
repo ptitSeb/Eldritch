@@ -160,5 +160,13 @@ void WBCompEldRespawner::Load(const IDataStream& Stream) {
     m_OriginSet = Stream.ReadBool();
     Stream.Read(sizeof(Vector), &m_OriginLocation);
     Stream.Read(sizeof(Angles), &m_OriginOrientation);
+    #ifdef __amigaos4__
+    littleBigEndian(&m_OriginLocation.x);
+    littleBigEndian(&m_OriginLocation.y);
+    littleBigEndian(&m_OriginLocation.z);
+    littleBigEndian(&m_OriginOrientation.Pitch);
+    littleBigEndian(&m_OriginOrientation.Roll);
+    littleBigEndian(&m_OriginOrientation.Yaw);
+    #endif
   }
 }

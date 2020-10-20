@@ -107,6 +107,10 @@ void WBCompEldPowerTeleport::TryTeleport() const {
   const uint Version = Stream.ReadUInt32();
 
   if (Version >= VERSION_BEACON) {
+    #ifdef __amigaos4__
+    m_Beacon = Stream.ReadUInt32();
+    #else
     Stream.Read(sizeof(WBEntityRef), &m_Beacon);
+    #endif
   }
 }

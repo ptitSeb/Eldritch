@@ -1768,6 +1768,14 @@ void WBCompEldPlayer::Load(const IDataStream& Stream) {
     m_HasSetSpawnPoint = Stream.ReadBool();
     Stream.Read(sizeof(Vector), &m_SpawnLocation);
     Stream.Read(sizeof(Angles), &m_SpawnOrientation);
+    #ifdef __amigaos4__
+    littleBigEndian(&m_SpawnLocation.x);
+    littleBigEndian(&m_SpawnLocation.y);
+    littleBigEndian(&m_SpawnLocation.z);
+    littleBigEndian(&m_SpawnOrientation.Pitch);
+    littleBigEndian(&m_SpawnOrientation.Roll);
+    littleBigEndian(&m_SpawnOrientation.Yaw);
+    #endif
   }
 
   if (Version >= VERSION_POWERSLIDE) {
@@ -1777,6 +1785,11 @@ void WBCompEldPlayer::Load(const IDataStream& Stream) {
 
   if (Version >= VERSION_POWERSLIDEY) {
     Stream.Read(sizeof(Vector), &m_PowerSlideY);
+    #ifdef __amigaos4__
+    littleBigEndian(&m_PowerSlideY.x);
+    littleBigEndian(&m_PowerSlideY.y);
+    littleBigEndian(&m_PowerSlideY.z);
+    #endif
   }
 
   if (Version >= VERSION_ISDISABLINGPAUSE) {

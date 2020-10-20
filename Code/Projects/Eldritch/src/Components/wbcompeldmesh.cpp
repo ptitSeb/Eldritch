@@ -636,6 +636,11 @@ void WBCompEldMesh::Load(const IDataStream& Stream) {
 
   if (Version >= VERSION_MESHSCALE) {
     Stream.Read(sizeof(Vector), &m_Mesh->m_Scale);
+    #ifdef __amigaos4__
+    littleBigEndian(&m_Mesh->m_Scale.x);
+    littleBigEndian(&m_Mesh->m_Scale.y);
+    littleBigEndian(&m_Mesh->m_Scale.z);
+    #endif
   }
 
   if (Version >= VERSION_HIDDEN) {

@@ -373,8 +373,13 @@ void WBCompEldInventory::PullPersistence() {
     const uint NumItems = Stream.ReadUInt32();
     for (uint ItemIndex = 0; ItemIndex < NumItems; ++ItemIndex) {
       const HashedString Slot = Stream.ReadHashedString();
+      #ifdef __amigaos4__
+      WBEntityRef Item;
+      Item = Stream.ReadUInt32();
+      #else
       WBEntityRef Item;
       Stream.Read(sizeof(WBEntityRef), &Item);
+      #endif
       m_InventoryMap[Slot] = Item;
     }
   }

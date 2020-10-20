@@ -2083,6 +2083,14 @@ void EldritchWorld::Load(const IDataStream& Stream) {
       const vidx_t Key = Stream.ReadUInt32();
       SVoxelLight Light;
       Stream.Read(sizeof(SVoxelLight), &Light);
+      #ifdef __amigaos4__
+      littleBigEndian(&Light.m_Color.x);
+      littleBigEndian(&Light.m_Color.y);
+      littleBigEndian(&Light.m_Color.z);
+      littleBigEndian(&Light.m_Color.w);
+      littleBigEndian(&Light.m_Radius);
+      #endif
+
       m_LightMap[Key] = Light;
     }
   }
@@ -2090,6 +2098,18 @@ void EldritchWorld::Load(const IDataStream& Stream) {
   if (Version >= VERSION_GLOBALLIGHT) {
     Stream.Read(sizeof(SVoxelIrradiance), &m_GlobalLight);
     Stream.Read(sizeof(Vector4), &m_AOColor);
+    #ifdef __amigaos4__
+    for(int ii=0; ii<6; ++ii) {
+      littleBigEndian(&m_GlobalLight.m_Light[ii].x);
+      littleBigEndian(&m_GlobalLight.m_Light[ii].y);
+      littleBigEndian(&m_GlobalLight.m_Light[ii].z);
+      littleBigEndian(&m_GlobalLight.m_Light[ii].w);
+    }
+    littleBigEndian(&m_AOColor.x);
+    littleBigEndian(&m_AOColor.y);
+    littleBigEndian(&m_AOColor.z);
+    littleBigEndian(&m_AOColor.w);
+    #endif
   }
 
   if (Version >= VERSION_WORLDDEF) {

@@ -244,6 +244,19 @@ void WBEvent::Unpack(const WBPackedEvent& PackedEvent) {
     SParameter& Parameter = m_Parameters[ParameterName];
 
     Stream.Read(sizeof(SParameter), &Parameter);
+    #ifdef __amigaos4__
+    littleBigEndian(&Paramter.m_Type);
+    littleBigEndian(&Paramter.m_Bool);
+    littleBigEndian(&Paramter.m_Int);
+    littleBigEndian(&Paramter.m_Float);
+    //SimpleString m_String; ? char*
+    uint tmp = (unsigned long)Paramter.m_Entity;
+    littleBigEndian(&tmp);
+    Paramter.m_Entity=tmp;
+    littleBigEndian(&Paramter.m_Vector.x);
+    littleBigEndian(&Paramter.m_Vector.y);
+    littleBigEndian(&Paramter.m_Vector.z);
+    #endif
   }
 }
 

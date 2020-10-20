@@ -82,6 +82,11 @@ void WBCompOwner::Load(const IDataStream& Stream) {
 
   if (Version >= VERSION_OWNER) {
     Stream.Read(sizeof(WBEntityRef), &m_Owner);
+    #ifdef __amigaos4__
+    uint tmp = (unsigned long)m_Owner;
+    littleBigEndian(&tmp);
+    m_Owner=tmp;
+    #endif
   }
 }
 

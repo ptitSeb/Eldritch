@@ -81,6 +81,12 @@ void FilePacker::ReadInFile(const IDataStream& Stream) {
 
 void FilePacker::ReadPackFile(const IDataStream& Stream) {
   Stream.Read(sizeof(SPackageFileHeader), &m_Header);
+  #ifdef __amigaos4__
+  littleBigEndian(&m_Header.m_MagicID);
+  littleBigEndian(&m_Header.m_NumFiles);
+  littleBigEndian(&m_Header.m_OffsetToFiles);
+  littleBigEndian(&m_Header.m_FilesSize);
+  #endif
   ASSERT(m_Header.m_MagicID == 'KPCD');
 
   for (uint i = 0; i < m_Header.m_NumFiles; ++i) {

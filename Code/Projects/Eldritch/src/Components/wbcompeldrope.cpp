@@ -232,6 +232,11 @@ void WBCompEldRope::Load(const IDataStream& Stream) {
 
   if (Version >= VERSION_ANCHOR) {
     Stream.Read(sizeof(Vector), &m_Anchor);
+    #ifdef __amigaos4__
+    littleBigEndian(&m_Anchor.x);
+    littleBigEndian(&m_Anchor.y);
+    littleBigEndian(&m_Anchor.z);
+    #endif
   }
 
   if (Version >= VERSION_DROPPED) {

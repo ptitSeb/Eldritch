@@ -309,9 +309,19 @@ void WBCompEldParticles::Load(const IDataStream& Stream) {
 
         Vector Location;
         Stream.Read(sizeof(Vector), &Location);
+        #ifdef __amigaos4__
+        littleBigEndian(&Location.x);
+        littleBigEndian(&Location.y);
+        littleBigEndian(&Location.z);
+        #endif
 
         Angles Orientation;
         Stream.Read(sizeof(Angles), &Orientation);
+        #ifdef __amigaos4__
+        littleBigEndian(&Orientation.Pitch);
+        littleBigEndian(&Orientation.Roll);
+        littleBigEndian(&Orientation.Yaw);
+        #endif
 
         const SimpleString DefinitionName = Stream.ReadString();
 

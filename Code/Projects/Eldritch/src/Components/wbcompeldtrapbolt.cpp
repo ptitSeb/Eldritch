@@ -271,11 +271,27 @@ void WBCompEldTrapBolt::Load(const IDataStream& Stream) {
   if (Version >= VERSION_ANCHORS) {
     Stream.Read(sizeof(Vector), &m_AnchorStart);
     Stream.Read(sizeof(Vector), &m_AnchorEnd);
+    #ifdef __amigaos4__
+    littleBigEndian(&m_AnchorStart.x);
+    littleBigEndian(&m_AnchorStart.y);
+    littleBigEndian(&m_AnchorStart.z);
+    littleBigEndian(&m_AnchorEnd.x);
+    littleBigEndian(&m_AnchorEnd.y);
+    littleBigEndian(&m_AnchorEnd.z);
+    #endif
   }
 
   if (Version >= VERSION_ENDPOINTS) {
     Stream.Read(sizeof(Vector), &m_Start);
     Stream.Read(sizeof(Vector), &m_End);
+    #ifdef __amigaos4__
+    littleBigEndian(&m_Start.x);
+    littleBigEndian(&m_Start.y);
+    littleBigEndian(&m_Start.z);
+    littleBigEndian(&m_End.x);
+    littleBigEndian(&m_End.y);
+    littleBigEndian(&m_End.z);
+    #endif
   }
 
   if (Version >= VERSION_TRIGGERED) {

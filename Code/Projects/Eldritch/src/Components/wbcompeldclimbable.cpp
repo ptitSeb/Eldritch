@@ -99,5 +99,11 @@ void WBCompEldClimbable::Load(const IDataStream& Stream) {
 
   if (Version >= VERSION_SNAPPLANE) {
     Stream.Read(sizeof(Plane), &m_SnapPlane);
+    #ifdef __amigaos4__
+    littleBigEndian(&m_SnapPlane.m_Normal.x);
+    littleBigEndian(&m_SnapPlane.m_Normal.y);
+    littleBigEndian(&m_SnapPlane.m_Normal.z);
+    littleBigEndian(&m_SnapPlane.m_Distance);
+    #endif
   }
 }

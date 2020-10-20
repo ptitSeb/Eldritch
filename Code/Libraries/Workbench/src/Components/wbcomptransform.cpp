@@ -53,10 +53,20 @@ void WBCompTransform::Load(const IDataStream& Stream) {
 
   if (Version >= VERSION_LOCATION) {
     Stream.Read(sizeof(Vector), &m_Location);
+    #ifdef __amigaos4__
+    littleBigEndian(&m_Location.x);
+    littleBigEndian(&m_Location.y);
+    littleBigEndian(&m_Location.z);
+    #endif
   }
 
   if (Version >= VERSION_VELOCITY) {
     Stream.Read(sizeof(Vector), &m_Velocity);
+    #ifdef __amigaos4__
+    littleBigEndian(&m_Velocity.x);
+    littleBigEndian(&m_Velocity.y);
+    littleBigEndian(&m_Velocity.z);
+    #endif
   }
 }
 

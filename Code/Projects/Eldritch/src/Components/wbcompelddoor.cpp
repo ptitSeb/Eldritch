@@ -654,6 +654,29 @@ void WBCompEldDoor::Load(const IDataStream& Stream) {
     Stream.Read(sizeof(Vector), &m_OpenFrobOffset);
     Stream.Read(sizeof(Vector), &m_OpenFrobExtents);
     Stream.Read(sizeof(Vector), &m_OpenIrradianceOffset);
+    #ifdef __amigaos4__
+    littleBigEndian(&m_ClosedOffset.x);
+    littleBigEndian(&m_ClosedOffset.y);
+    littleBigEndian(&m_ClosedOffset.z);
+    littleBigEndian(&m_ClosedFrobOffset.x);
+    littleBigEndian(&m_ClosedFrobOffset.y);
+    littleBigEndian(&m_ClosedFrobOffset.z);
+    littleBigEndian(&m_ClosedFrobExtents.x);
+    littleBigEndian(&m_ClosedFrobExtents.y);
+    littleBigEndian(&m_ClosedFrobExtents.z);
+    littleBigEndian(&m_ClosedIrradianceOffset.x);
+    littleBigEndian(&m_ClosedIrradianceOffset.y);
+    littleBigEndian(&m_ClosedIrradianceOffset.z);
+    littleBigEndian(&m_OpenOffset.x);
+    littleBigEndian(&m_OpenOffset.y);
+    littleBigEndian(&m_OpenOffset.z);
+    littleBigEndian(&m_OpenFrobExtents.x);
+    littleBigEndian(&m_OpenFrobExtents.y);
+    littleBigEndian(&m_OpenFrobExtents.z);
+    littleBigEndian(&m_OpenIrradianceOffset.x);
+    littleBigEndian(&m_OpenIrradianceOffset.y);
+    littleBigEndian(&m_OpenIrradianceOffset.z);
+    #endif
   }
 
   if (Version >= VERSION_LOCKED) {

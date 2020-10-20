@@ -165,6 +165,11 @@ void WBCompEldAnchor::Load(const IDataStream& Stream) {
 
   if (Version >= VERSION_ANCHOR) {
     Stream.Read(sizeof(Vector), &m_AnchorPoint);
+    #ifdef __amigaos4__
+    littleBigEndian(&m_AnchorPoint.x);
+    littleBigEndian(&m_AnchorPoint.y);
+    littleBigEndian(&m_AnchorPoint.z);
+    #endif
     m_IsAnchored = Stream.ReadBool();
   }
 }

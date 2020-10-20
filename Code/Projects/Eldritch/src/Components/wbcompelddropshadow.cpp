@@ -234,5 +234,10 @@ void WBCompEldDropShadow::Load(const IDataStream& Stream) {
   if (Version >= VERSION_MESHLOCATION) {
     ASSERT(m_Mesh);
     Stream.Read(sizeof(m_Mesh->m_Location), &m_Mesh->m_Location);
+    #ifdef __amigaos4__
+    littleBigEndian(&m_Mesh->m_Location.x);
+    littleBigEndian(&m_Mesh->m_Location.y);
+    littleBigEndian(&m_Mesh->m_Location.z);
+    #endif
   }
 }

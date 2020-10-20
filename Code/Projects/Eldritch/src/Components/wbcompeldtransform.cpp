@@ -343,18 +343,38 @@ void WBCompEldTransform::Load(const IDataStream& Stream) {
 
   if (Version >= VERSION_LOCATION) {
     Stream.Read(sizeof(Vector), &m_Location);
+    #ifdef __amigaos4__
+    littleBigEndian(&m_Location.x);
+    littleBigEndian(&m_Location.y);
+    littleBigEndian(&m_Location.z);
+    #endif
   }
 
   if (Version >= VERSION_VELOCITY) {
     Stream.Read(sizeof(Vector), &m_Velocity);
+    #ifdef __amigaos4__
+    littleBigEndian(&m_Velocity.x);
+    littleBigEndian(&m_Velocity.y);
+    littleBigEndian(&m_Velocity.z);
+    #endif
   }
 
   if (Version >= VERSION_ACCELERATION) {
     Stream.Read(sizeof(Vector), &m_Acceleration);
+    #ifdef __amigaos4__
+    littleBigEndian(&m_Acceleration.x);
+    littleBigEndian(&m_Acceleration.y);
+    littleBigEndian(&m_Acceleration.z);
+    #endif
   }
 
   if (Version >= VERSION_ORIENTATION) {
     Stream.Read(sizeof(Vector), &m_Orientation);
+    #ifdef __amigaos4__
+    littleBigEndian(&m_Orientation.x);
+    littleBigEndian(&m_Orientation.y);
+    littleBigEndian(&m_Orientation.z);
+    #endif
   }
 
   if (Version >= VERSION_ISSETTLED) {

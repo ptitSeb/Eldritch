@@ -779,12 +779,22 @@ void WBCompEldCollision::Load(const IDataStream& Stream) {
     for (uint TouchingIndex = 0; TouchingIndex < NumTouching; ++TouchingIndex) {
       WBEntityRef Touching;
       Stream.Read(sizeof(WBEntityRef), &Touching);
+      #ifdef __amigaos4__
+      uint tmp = (unsigned long)Touching;
+      littleBigEndian(&tmp);
+      Touching=tmp;
+      #endif
       m_Touching.Insert(Touching);
     }
   }
 
   if (Version >= VERSION_HALFEXTENTS) {
     Stream.Read(sizeof(Vector), &m_HalfExtents);
+    #ifdef __amigaos4__
+    littleBigEndian(&m_HalfExtents.x);
+    littleBigEndian(&m_HalfExtents.y);
+    littleBigEndian(&m_HalfExtents.z);
+    #endif
   }
 
   if (Version >= VERSION_CANTOUCH) {

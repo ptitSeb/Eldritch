@@ -236,6 +236,11 @@ void WBCompRodinKnowledge::Load(const IDataStream& Stream) {
          ++KnowledgeIndex) {
       WBEntityRef Entity;
       Stream.Read(sizeof(WBEntityRef), &Entity);
+      #ifdef __amigaos4__
+      uint tmp = (unsigned long)Entity;
+      littleBigEndian(&tmp);
+      Entity=tmp;
+      #endif
 
       const uint PackedKnowledgeSize = Stream.ReadUInt32();
       WBPackedEvent PackedKnowledge;
