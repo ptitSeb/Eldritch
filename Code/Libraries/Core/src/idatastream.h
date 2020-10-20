@@ -51,7 +51,6 @@ class IDataStream {
   inline void WriteBool(bool b) const { Write(1, &b); }
   inline void WriteHashedString(const HashedString& h) const {
     uint32 f = h.GetHash();
-    littleBigEndian(&f);
     WriteUInt32(f);
   }
   #else
