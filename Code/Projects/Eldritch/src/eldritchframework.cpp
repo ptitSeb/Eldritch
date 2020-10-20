@@ -1495,6 +1495,8 @@ void EldritchFramework::GoToLevel(const HashedString& WorldDef) {
 /*virtual*/ SimpleString EldritchFramework::GetSaveLoadPath() {
 #if BUILD_MAC
   return ObjCJunk::GetUserDirectory();
+#elif defined(__amigaos4__)
+  return SimpleString("PROGDIR:.eldritch/");
 #else
   return SimpleString("./");
 #endif

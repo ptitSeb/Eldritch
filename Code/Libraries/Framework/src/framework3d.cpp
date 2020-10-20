@@ -895,7 +895,11 @@ void Framework3D::ConditionalRefreshDisplay() {
 
 // By default, just save to the working directory.
 /*virtual*/ SimpleString Framework3D::GetSaveLoadPath() {
+#ifdef __amigaos4__
+  return SimpleString("PROGDIR:.eldritch/");
+#else
   return SimpleString("./");
+#endif
 }
 
 bool Framework3D::HasRequestedExit() {
