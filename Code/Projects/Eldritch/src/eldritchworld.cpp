@@ -2060,11 +2060,11 @@ void EldritchWorld::Save(const IDataStream& Stream) {
   }
   Stream.Write(sizeof(SVoxelIrradiance), &tmp);
   Vector4 vtmp = m_AOColor;
-  littleBigEndian(&tmp.x);
-  littleBigEndian(&tmp.y);
-  littleBigEndian(&tmp.z);
-  littleBigEndian(&tmp.w);
-  Stream.Write(sizeof(Vector4), &tmp);
+  littleBigEndian(&vtmp.x);
+  littleBigEndian(&vtmp.y);
+  littleBigEndian(&vtmp.z);
+  littleBigEndian(&vtmp.w);
+  Stream.Write(sizeof(Vector4), &vtmp);
   #else
   Stream.Write(sizeof(SVoxelIrradiance), &m_GlobalLight);
   Stream.Write(sizeof(Vector4), &m_AOColor);

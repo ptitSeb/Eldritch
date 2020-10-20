@@ -259,7 +259,7 @@ void WBCompEldTrapBolt::Save(const IDataStream& Stream) {
   littleBigEndian(&tmp.y);
   littleBigEndian(&tmp.z);
   Stream.Write(sizeof(Vector), &tmp);
-  tmp = m_AnchorEnd
+  tmp = m_AnchorEnd;
   littleBigEndian(&tmp.x);
   littleBigEndian(&tmp.y);
   littleBigEndian(&tmp.z);
