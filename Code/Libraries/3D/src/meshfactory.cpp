@@ -1587,27 +1587,9 @@ Mesh* MeshFactory::Read(const IDataStream& Stream, const char* Filename,
   if (Header.m_NumMaterials) {
     Stream.Read(sizeof(SMaterial) * Header.m_NumMaterials, Materials);
     #ifdef __amigaos4__
-    for(int jj=0; jj<Header.m_NumMaterials; ++jj) {
-      //IShaderProgram* m_ShaderProgram;
-      //ShaderDataProvider* m_SDP;
-      littleBigEndian(&Materials[jj].m_Flags);
-      littleBigEndian(&Materials[jj].m_RenderState.m_CullMode);
-      littleBigEndian(&Materials[jj].m_RenderState.m_ZEnable);
-      littleBigEndian(&Materials[jj].m_RenderState.m_ZWriteEnable);
-      littleBigEndian(&Materials[jj].m_RenderState.m_AlphaBlendEnable);
-      littleBigEndian(&Materials[jj].m_RenderState.m_SrcBlend);
-      littleBigEndian(&Materials[jj].m_RenderState.m_DestBlend);
-    
-      for(int ii=0; ii<MAX_TEXTURE_STAGES; ++ii) {
-        //m_Texture
-        littleBigEndian(&Materials[jj].m_RenderState.m_SamplerStates[ii].m_AddressU);
-        littleBigEndian(&Materials[jj].m_RenderState.m_SamplerStates[ii].m_AddressV);
-        littleBigEndian(&Materials[jj].m_RenderState.m_SamplerStates[ii].m_MinFilter);
-        littleBigEndian(&Materials[jj].m_RenderState.m_SamplerStates[ii].m_MagFilter);
-        littleBigEndian(&Materials[jj].m_RenderState.m_SamplerStates[ii].m_MipFilter);
-      }
-    }
-    littleBigEndian(&Materials.m_NumSamplers);
+    // no need to swap here
+    //char m_Filename[MAT_FILENAME_LENGTH];
+    //unsigned char m_Type;
     #endif
   }
 
