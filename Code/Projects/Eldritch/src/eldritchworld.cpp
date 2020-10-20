@@ -2035,14 +2035,40 @@ void EldritchWorld::Save(const IDataStream& Stream) {
   // Write lights
   Stream.WriteUInt32(m_LightMap.Size());
   FOR_EACH_MAP(LightIter, m_LightMap, vidx_t, SVoxelLight) {
+    #ifdef __amigaos4__
+    SVoxelLight Light = LightIter.GetValue();
+    littleBigEndian(&Light.m_Color.x);
+    littleBigEndian(&Light.m_Color.y);
+    littleBigEndian(&Light.m_Color.z);
+    littleBigEndian(&Light.m_Color.w);
+    littleBigEndian(&Light.m_Radius);
+    #else
     const SVoxelLight& Light = LightIter.GetValue();
+    #endif
     Stream.WriteUInt32(LightIter.GetKey());
     Stream.Write(sizeof(SVoxelLight), &Light);
   }
 
   // Write global light
+  #ifdef __amigaos4__
+  SVoxelIrradiance tmp = m_GlobalLight;
+  for(int ii=0; ii<6; ++ii) {
+    littleBigEndian(&tmp.m_Light[ii].x);
+    littleBigEndian(&tmp.m_Light[ii].y);
+    littleBigEndian(&tmp.m_Light[ii].z);
+    littleBigEndian(&tmp.m_Light[ii].w);
+  }
+  Stream.Write(sizeof(SVoxelIrradiance), &tmp);
+  Vector4 vtmp = m_AOColor;
+  littleBigEndian(&tmp.x);
+  littleBigEndian(&tmp.y);
+  littleBigEndian(&tmp.z);
+  littleBigEndian(&tmp.w);
+  Stream.Write(sizeof(Vector4), &tmp);
+  #else
   Stream.Write(sizeof(SVoxelIrradiance), &m_GlobalLight);
   Stream.Write(sizeof(Vector4), &m_AOColor);
+  #endif
 
   // Write world def
   Stream.WriteHashedString(m_CurrentWorldDef);

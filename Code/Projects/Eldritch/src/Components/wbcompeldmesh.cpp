@@ -603,7 +603,15 @@ void WBCompEldMesh::Save(const IDataStream& Stream) {
   Stream.WriteString(m_MeshName);
   Stream.WriteString(m_TextureName);
 
+  #ifdef __amigaos4__
+  Vector tmp = m_Mesh->m_Scale;
+  littleBigEndian(&tmp.x);
+  littleBigEndian(&tmp.y);
+  littleBigEndian(&tmp.z);
+  Stream.Write(sizeof(Vector), &tmp);
+  #else
   Stream.Write(sizeof(Vector), &m_Mesh->m_Scale);
+  #endif
 
   Stream.WriteBool(m_Hidden);
 

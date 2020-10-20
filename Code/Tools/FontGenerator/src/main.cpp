@@ -157,7 +157,7 @@ struct SFGProps {
   Array<SGlyphSubstitute> m_GlyphSubstitutes;  // Not locale-specific. They
                                                // should generally live in the
                                                // private use area
-                                               // (U+E000–U+F8FF).
+                                               // (U+E000ï¿½U+F8FF).
 
   // For anti-aliased fonts
   float m_AlphaScalar;
@@ -383,6 +383,13 @@ void SaveTGA(const IDataStream& Stream, const Surface& WindowSurface,
   TGAHeader.m_Height = static_cast<uint16>(WindowSurface.GetHeight());
   TGAHeader.m_BitDepth = 32;
   TGAHeader.m_ImageDescriptor = 8;
+  #ifdef __amigaos4__
+  littleBigEndian(&TGAHeader.m_ImageType);
+  littleBigEndian(&TGAHeader.m_Width);
+  littleBigEndian(&TGAHeader.m_Height);
+  littleBigEndian(&TGAHeader.m_BitDepth);
+  littleBigEndian(&TGAHeader.m_ImageDescriptor);
+  #endif
 
   Stream.Write(sizeof(TGAHeader), &TGAHeader);
 

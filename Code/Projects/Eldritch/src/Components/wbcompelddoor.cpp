@@ -620,6 +620,50 @@ void WBCompEldDoor::Save(const IDataStream& Stream) {
 
   Stream.WriteBool(m_Open);
 
+  #ifdef __amigaos4__
+  Vector tmp = m_ClosedOffset;
+  littleBigEndian(&tmp.x);
+  littleBigEndian(&tmp.y);
+  littleBigEndian(&tmp.z);
+  Stream.Write(sizeof(Vector), &tmp);
+  Stream.WriteFloat(m_ClosedOrientation.Yaw);
+  tmp = m_ClosedFrobOffset;
+  littleBigEndian(&tmp.x);
+  littleBigEndian(&tmp.y);
+  littleBigEndian(&tmp.z);
+  Stream.Write(sizeof(Vector), &tmp);
+  tmp = m_ClosedFrobExtents;
+  littleBigEndian(&tmp.x);
+  littleBigEndian(&tmp.y);
+  littleBigEndian(&tmp.z);
+  Stream.Write(sizeof(Vector), &tmp);
+  tmp = m_ClosedIrradianceOffset;
+  littleBigEndian(&tmp.x);
+  littleBigEndian(&tmp.y);
+  littleBigEndian(&tmp.z);
+  Stream.Write(sizeof(Vector), &tmp);
+  tmp = m_OpenOffset;
+  littleBigEndian(&tmp.x);
+  littleBigEndian(&tmp.y);
+  littleBigEndian(&tmp.z);
+  Stream.Write(sizeof(Vector), &tmp);
+  Stream.WriteFloat(m_OpenOrientation.Yaw);
+  tmp = m_OpenFrobOffset;
+  littleBigEndian(&tmp.x);
+  littleBigEndian(&tmp.y);
+  littleBigEndian(&tmp.z);
+  Stream.Write(sizeof(Vector), &tmp);
+  tmp = m_OpenFrobExtents;
+  littleBigEndian(&tmp.x);
+  littleBigEndian(&tmp.y);
+  littleBigEndian(&tmp.z);
+  Stream.Write(sizeof(Vector), &tmp);
+  tmp = m_OpenIrradianceOffset;
+  littleBigEndian(&tmp.x);
+  littleBigEndian(&tmp.y);
+  littleBigEndian(&tmp.z);
+  Stream.Write(sizeof(Vector), &tmp);
+  #else
   Stream.Write(sizeof(Vector), &m_ClosedOffset);
   Stream.WriteFloat(m_ClosedOrientation.Yaw);
   Stream.Write(sizeof(Vector), &m_ClosedFrobOffset);
@@ -630,6 +674,7 @@ void WBCompEldDoor::Save(const IDataStream& Stream) {
   Stream.Write(sizeof(Vector), &m_OpenFrobOffset);
   Stream.Write(sizeof(Vector), &m_OpenFrobExtents);
   Stream.Write(sizeof(Vector), &m_OpenIrradianceOffset);
+  #endif
 
   Stream.WriteBool(m_Locked);
 }

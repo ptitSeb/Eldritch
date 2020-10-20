@@ -42,8 +42,21 @@ uint WBCompTransform::GetSerializationSize() {
 
 void WBCompTransform::Save(const IDataStream& Stream) {
   Stream.WriteUInt32(VERSION_CURRENT);
+  #if __amigaos4__
+  Vector tmp = m_Location;
+  littleBigEndian(&tmp.x);
+  littleBigEndian(&tmp.y);
+  littleBigEndian(&tmp.z);
+  Stream.Write(sizeof(Vector), &tmp);
+  Vector tmp = m_Velocity;
+  littleBigEndian(&tmp.x);
+  littleBigEndian(&tmp.y);
+  littleBigEndian(&tmp.z);
+  Stream.Write(sizeof(Vector), &tmp);
+  #else
   Stream.Write(sizeof(Vector), &m_Location);
   Stream.Write(sizeof(Vector), &m_Velocity);
+  #endif
 }
 
 void WBCompTransform::Load(const IDataStream& Stream) {

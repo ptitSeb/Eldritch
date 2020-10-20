@@ -1736,12 +1736,33 @@ void WBCompEldPlayer::Save(const IDataStream& Stream) {
   Stream.WriteFloat(m_UnclimbingGravity);
 
   Stream.WriteBool(m_HasSetSpawnPoint);
+  #ifdef __amigaos4__
+  Vector vtmp = m_SpawnLocation;
+  littleBigEndian(&vtmp.x);
+  littleBigEndian(&vtmp.y);
+  littleBigEndian(&vtmp.z);
+  Stream.Write(sizeof(Vector), &vtmp);
+  Angles atmp = m_SpawnOrientation;
+  littleBigEndian(&atmp.Pitch);
+  littleBigEndian(&atmp.Roll);
+  littleBigEndian(&atmp.Yaw);
+  Stream.Write(sizeof(Angles), &atmp);
+  #else
   Stream.Write(sizeof(Vector), &m_SpawnLocation);
   Stream.Write(sizeof(Angles), &m_SpawnOrientation);
+  #endif
 
   Stream.WriteBool(m_IsPowerSliding);
   Stream.WriteFloat(m_PowerSlideEndTime - GetTime());
+  #ifdef __amigaos4__
+  vtmp = m_PowerSlideY;
+  littleBigEndian(&vtmp.x);
+  littleBigEndian(&vtmp.y);
+  littleBigEndian(&vtmp.z);
+  Stream.Write(sizeof(Vector), &vtmp);
+  #else
   Stream.Write(sizeof(Vector), &m_PowerSlideY);
+  #enfig
 
   Stream.WriteBool(m_IsDisablingPause);
 }

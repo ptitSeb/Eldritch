@@ -359,7 +359,11 @@ void WBCompEldInventory::PullPersistence() {
   Stream.WriteUInt32(m_InventoryMap.Size());
   FOR_EACH_MAP(InventoryIter, m_InventoryMap, HashedString, WBEntityRef) {
     Stream.WriteHashedString(InventoryIter.GetKey());
+    #ifdef __amigaos4__
+    Stream.WriteUInt32(InventoryIter.GetValue());
+    #else
     Stream.Write(sizeof(WBEntityRef), &InventoryIter.GetValue());
+    #endif
   }
 }
 

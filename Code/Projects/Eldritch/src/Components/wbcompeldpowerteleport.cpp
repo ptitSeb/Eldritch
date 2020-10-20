@@ -98,7 +98,11 @@ void WBCompEldPowerTeleport::TryTeleport() const {
 /*virtual*/ void WBCompEldPowerTeleport::Save(const IDataStream& Stream) {
   Stream.WriteUInt32(VERSION_CURRENT);
 
+  #ifdef __amigaos4__
+  Stream.WriteUInt32((unsigned long)m_Beacon);
+  #else
   Stream.Write(sizeof(WBEntityRef), &m_Beacon);
+  #endif
 }
 
 /*virtual*/ void WBCompEldPowerTeleport::Load(const IDataStream& Stream) {

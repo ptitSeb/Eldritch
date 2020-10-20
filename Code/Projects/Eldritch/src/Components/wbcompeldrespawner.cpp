@@ -147,8 +147,21 @@ void WBCompEldRespawner::Save(const IDataStream& Stream) {
   Stream.WriteUInt32(VERSION_CURRENT);
 
   Stream.WriteBool(m_OriginSet);
+  #ifdef __amigaos4__
+  Vector vtmp = m_OriginLocation;
+  littleBigEndian(&vtmp.x);
+  littleBigEndian(&vtmp.y);
+  littleBigEndian(&vtmp.z);
+  Stream.Write(sizeof(Vector), &vtmp);
+  Angles atmp = m_OriginOrientation;
+  littleBigEndian(&atmp.Pitch);
+  littleBigEndian(&atmp.Roll);
+  littleBigEndian(&atmp.Yaw);
+  Stream.Write(sizeof(Angles), &atmp);
+  #else
   Stream.Write(sizeof(Vector), &m_OriginLocation);
   Stream.Write(sizeof(Angles), &m_OriginOrientation);
+  #endif
 }
 
 void WBCompEldRespawner::Load(const IDataStream& Stream) {

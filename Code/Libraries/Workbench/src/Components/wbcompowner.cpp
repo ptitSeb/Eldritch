@@ -72,7 +72,12 @@ uint WBCompOwner::GetSerializationSize() {
 
 void WBCompOwner::Save(const IDataStream& Stream) {
   Stream.WriteUInt32(VERSION_CURRENT);
+  #ifdef __amigaos4__
+  uint tmp = (unsigned long)m_Owner;
+  Stream.WriteUInt32(tmp);
+  #else
   Stream.Write(sizeof(WBEntityRef), &m_Owner);
+  #endif
 }
 
 void WBCompOwner::Load(const IDataStream& Stream) {

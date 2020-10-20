@@ -327,10 +327,33 @@ uint WBCompEldTransform::GetSerializationSize() {
 
 void WBCompEldTransform::Save(const IDataStream& Stream) {
   Stream.WriteUInt32(VERSION_CURRENT);
+  #ifdef __amigaos4__
+  Vector vtmp = m_Location;
+  littleBigEndian(&tmp.x);
+  littleBigEndian(&tmp.y);
+  littleBigEndian(&tmp.z);
+  Stream.Write(sizeof(Vector), &tmp);
+  vtmp = m_Velocity;
+  littleBigEndian(&tmp.x);
+  littleBigEndian(&tmp.y);
+  littleBigEndian(&tmp.z);
+  Stream.Write(sizeof(Vector), &tmp);
+  vtmp = m_Acceleration;
+  littleBigEndian(&tmp.x);
+  littleBigEndian(&tmp.y);
+  littleBigEndian(&tmp.z);
+  Stream.Write(sizeof(Vector), &tmp);
+  Angles atmp = m_Orientation;
+  littleBigEndian(&tmp.Pitch);
+  littleBigEndian(&tmp.Roll);
+  littleBigEndian(&tmp.Yaw);
+  Stream.Write(sizeof(Angles), &tmp);
+  #else
   Stream.Write(sizeof(Vector), &m_Location);
   Stream.Write(sizeof(Vector), &m_Velocity);
   Stream.Write(sizeof(Vector), &m_Acceleration);
   Stream.Write(sizeof(Angles), &m_Orientation);
+  #endif
   Stream.WriteBool(m_IsSettled);
   Stream.WriteFloat(m_Gravity);
   Stream.WriteBool(m_CanMove);

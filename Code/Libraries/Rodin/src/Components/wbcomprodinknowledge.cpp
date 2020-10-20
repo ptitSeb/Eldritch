@@ -217,7 +217,12 @@ void WBCompRodinKnowledge::Save(const IDataStream& Stream) {
     WBPackedEvent PackedKnowledge;
     Knowledge.Pack(PackedKnowledge);
 
+    #ifdef __amigaos4__
+    uint tmp = (unsigned long)Entity;
+    Stream.WriteUInt32(tmp);
+    #else
     Stream.Write(sizeof(WBEntityRef), &Entity);
+    #endif
     Stream.WriteUInt32(PackedKnowledge.GetSize());
     Stream.Write(PackedKnowledge.GetSize(), PackedKnowledge.GetData());
   }

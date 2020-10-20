@@ -220,7 +220,15 @@ uint WBCompEldRope::GetSerializationSize() {
 
 void WBCompEldRope::Save(const IDataStream& Stream) {
   Stream.WriteUInt32(VERSION_CURRENT);
+  #ifdef __amigaos4__
+  Vector tmp = m_Anchor;
+  littleBigEndian(&tmp.x);
+  littleBigEndian(&tmp.y);
+  littleBigEndian(&tmp.z);
+  Stream.Write(sizeof(Vector), &tmp);
+  #else
   Stream.Write(sizeof(Vector), &m_Anchor);
+  #endif
 
   Stream.WriteBool(m_Dropped);
 }

@@ -755,10 +755,22 @@ void WBCompEldCollision::Save(const IDataStream& Stream) {
   Stream.WriteUInt32(m_Touching.Size());
   FOR_EACH_ARRAY(TouchingIter, m_Touching, WBEntityRef) {
     const WBEntityRef& Touching = TouchingIter.GetValue();
+    #ifdef __amigaos4__
+    Stream.WriteUInt32((unsigned long)Touching);
+    #else
     Stream.Write(sizeof(WBEntityRef), &Touching);
+    #endif
   }
 
+  #ifdef __amigaos4__
+  Vector tmp = m_HalfExtents;
+  littleBigEndian(&tmp.x);
+  littleBigEndian(&tmp.y);
+  littleBigEndian(&tmp.z);
+  Stream.Write(sizeof(Vector), &tmp);
+  #else
   Stream.Write(sizeof(Vector), &m_HalfExtents);
+  #endif
 
   Stream.WriteBool(m_CanTouch);
 

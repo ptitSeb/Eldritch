@@ -88,8 +88,16 @@ uint WBCompEldClimbable::GetSerializationSize() {
 
 void WBCompEldClimbable::Save(const IDataStream& Stream) {
   Stream.WriteUInt32(VERSION_CURRENT);
-
+  #ifdef __amigaos4__
+  Plane tmp = m_SnapPlane;
+  littleBigEndian(&tmp.m_Normal.x);
+  littleBigEndian(&tmp.m_Normal.y);
+  littleBigEndian(&tmp.m_Normal.z);
+  littleBigEndian(&tmp.m_Distance);
+  Stream.Write(sizeof(Plane), &tmp);
+  #else
   Stream.Write(sizeof(Plane), &m_SnapPlane);
+  #endif
 }
 
 void WBCompEldClimbable::Load(const IDataStream& Stream) {

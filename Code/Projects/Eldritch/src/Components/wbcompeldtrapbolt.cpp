@@ -253,10 +253,33 @@ uint WBCompEldTrapBolt::GetSerializationSize() {
 
 void WBCompEldTrapBolt::Save(const IDataStream& Stream) {
   Stream.WriteUInt32(VERSION_CURRENT);
+  #ifdef __amigaos4__
+  Vector tmp = m_AnchorStart;
+  littleBigEndian(&tmp.x);
+  littleBigEndian(&tmp.y);
+  littleBigEndian(&tmp.z);
+  Stream.Write(sizeof(Vector), &tmp);
+  tmp = m_AnchorEnd
+  littleBigEndian(&tmp.x);
+  littleBigEndian(&tmp.y);
+  littleBigEndian(&tmp.z);
+  Stream.Write(sizeof(Vector), &tmp);
+  tmp = m_Start;
+  littleBigEndian(&tmp.x);
+  littleBigEndian(&tmp.y);
+  littleBigEndian(&tmp.z);
+  Stream.Write(sizeof(Vector), &tmp);
+  tmp = m_End;
+  littleBigEndian(&tmp.x);
+  littleBigEndian(&tmp.y);
+  littleBigEndian(&tmp.z);
+  Stream.Write(sizeof(Vector), &tmp);
+  #else
   Stream.Write(sizeof(Vector), &m_AnchorStart);
   Stream.Write(sizeof(Vector), &m_AnchorEnd);
   Stream.Write(sizeof(Vector), &m_Start);
   Stream.Write(sizeof(Vector), &m_End);
+  #endif
 
   Stream.WriteBool(m_Triggered);
 

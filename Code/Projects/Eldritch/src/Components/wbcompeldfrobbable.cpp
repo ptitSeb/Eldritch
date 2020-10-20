@@ -369,8 +369,21 @@ void WBCompEldFrobbable::Save(const IDataStream& Stream) {
 
   Stream.WriteString(m_FrobVerb);
 
+  #ifdef __amigaos4__
+  Vector tmp = m_BoundOffset;
+  littleBigEndian(&tmp.x);
+  littleBigEndian(&tmp.y);
+  littleBigEndian(&tmp.z);
+  Stream.Write(sizeof(Vector), &tmp);
+  tmp = m_BoundExtents;
+  littleBigEndian(&tmp.x);
+  littleBigEndian(&tmp.y);
+  littleBigEndian(&tmp.z);
+  Stream.Write(sizeof(Vector), &tmp);
+  #else
   Stream.Write(sizeof(Vector), &m_BoundOffset);
   Stream.Write(sizeof(Vector), &m_BoundExtents);
+  #endif
 }
 
 void WBCompEldFrobbable::Load(const IDataStream& Stream) {

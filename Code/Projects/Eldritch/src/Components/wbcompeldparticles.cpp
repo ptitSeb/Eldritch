@@ -283,8 +283,21 @@ void WBCompEldParticles::Save(const IDataStream& Stream) {
     Stream.WriteBool(ParticleSystem.m_Serialize);
     if (ParticleSystem.m_Serialize) {
       Stream.WriteBool(ParticleSystem.m_Attached);
+      #ifdef __amigaos4__
+      Vector vtmp = ParticleSystem.m_Location;
+      littleBigEndian(&vtmp.x);
+      littleBigEndian(&vtmp.y);
+      littleBigEndian(&vtmp.z);
+      Stream.Write(sizeof(Vector), &vtmp);
+      Angles atmp = ParticleSystem.m_Orientation;
+      littleBigEndian(&atmp.Pitch);
+      littleBigEndian(&atmp.Roll);
+      littleBigEndian(&atmp.Yaw);
+      Stream.Write(sizeof(Angles), &atmp);
+      #else
       Stream.Write(sizeof(Vector), &ParticleSystem.m_Location);
       Stream.Write(sizeof(Angles), &ParticleSystem.m_Orientation);
+      #endif
       Stream.WriteString(ParticleSystem.m_DefinitionName);
     }
   }

@@ -575,9 +575,22 @@ void MeshCompiler::Write(const IDataStream& Stream) {
   PRINTF("Writing mesh...\n");
 
   // Write header
+  #ifdef __amigaos4__
+  SCompiledMeshHeader tmp1 = m_Header;
+  littleBigEndian(&tmp1.m_MagicID);
+  littleBigEndian(&tmp1.m_NumVertices);
+  littleBigEndian(&tmp1.m_NumIndices);
+  littleBigEndian(&tmp1.m_NumFrames);
+  littleBigEndian(&tmp1.m_NumCollisionTris);
+  Stream.Write(sizeof(m_Header), &tmp1);
+  #else
   Stream.Write(sizeof(m_Header), &m_Header);
+  #endif
 
   // Write positions
+  #ifdef __amigaos4__
+  #warning TODO...
+  #endif
   Stream.Write(sizeof(Vector) * m_Header.m_NumVertices, m_Positions.GetData());
 
   // Write colors

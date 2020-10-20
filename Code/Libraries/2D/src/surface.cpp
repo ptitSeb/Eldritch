@@ -324,8 +324,28 @@ void Surface::SaveBMP(const IDataStream& Stream) {
   Header.m_Size = static_cast<uint>(54 + Size);
   Header.m_OffsetBits = 54;
 
+  #ifdef __amigaos4__
+  littleBigEndian(&Header.m_Type);
+  littleBigEndian(&Header.m_Size);
+  littleBigEndian(&Header.m_OffsetBits);
+  Stream.Write(sizeof(SBitmapFileHeader), &Header);
+  SBitmapInfoHeader Info = m_BitmapInfo.m_Header;
+  littleBigEndian(&Info.m_Size);
+  littleBigEndian(&Info.m_Width);
+  littleBigEndian(&Info.m_Height);
+  littleBigEndian(&Info.m_Planes);
+  littleBigEndian(&Info.m_BitCount);
+  littleBigEndian(&Info.m_Compression);
+  littleBigEndian(&Info.m_SizeImage);
+  littleBigEndian(&Info.m_PixelsPerMeterX);
+  littleBigEndian(&Info.m_PixelsPerMeterY);
+  littleBigEndian(&Info.m_ColorUsed);
+  littleBigEndian(&Info.m_ColorImportant);
+  Stream.Write(sizeof(SBitmapInfoHeader), &Info);
+  #else
   Stream.Write(sizeof(SBitmapFileHeader), &Header);
   Stream.Write(sizeof(SBitmapInfoHeader), &m_BitmapInfo.m_Header);
+  #endif
   Stream.Write(Size, m_pPixels);
 }
 

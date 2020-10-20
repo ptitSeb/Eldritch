@@ -215,7 +215,15 @@ void WBCompEldDropShadow::Save(const IDataStream& Stream) {
   Stream.WriteUInt32(VERSION_CURRENT);
   Stream.WriteBool(m_Hidden);
   Stream.WriteBool(m_ScriptHidden);
+  #ifdef __amigaos4__
+  Vector tmp = m_Mesh->m_Location;
+  littleBigEndian(&tmp.x);
+  littleBigEndian(&tmp.y);
+  littleBigEndian(&tmp.z);
+  Stream.Write(sizeof(Vector), &tmp);
+  #else
   Stream.Write(sizeof(m_Mesh->m_Location), &m_Mesh->m_Location);
+  #endif
 }
 
 void WBCompEldDropShadow::Load(const IDataStream& Stream) {

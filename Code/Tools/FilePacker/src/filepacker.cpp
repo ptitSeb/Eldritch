@@ -134,7 +134,16 @@ void FilePacker::WritePackFile(const IDataStream& Stream) {
   m_Header.m_OffsetToFiles = GetFilesOffset();
   m_Header.m_FilesSize = m_ExistingPackFileSize + m_InFileCompressionSize;
 
+  #ifdef __amigaos4__
+  SPackageFileHeader tmp = m_Header;
+  littleBigEndian(&tmp.m_MagicID);
+  littleBigEndian(&tmp.m_NumFiles);
+  littleBigEndian(&tmp.m_OffsetToFiles);
+  littleBigEndian(&tmp.m_FilesSize);
+  Stream.Write(sizeof(SPackageFileHeader), &tmp);
+  #else
   Stream.Write(sizeof(SPackageFileHeader), &m_Header);
+  #endif
 
   // Write file table of contents
   for (uint i = 0; i < m_FileEntries.Size(); ++i) {
