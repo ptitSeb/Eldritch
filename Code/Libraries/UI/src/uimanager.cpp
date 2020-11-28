@@ -39,7 +39,11 @@ UIManager::~UIManager() {
 void UIManager::Reinitialize() {
   FOR_EACH_MAP(ScreenIter, m_Screens, HashedString, UIScreen*) {
     UIScreen* const pScreen = ScreenIter.GetValue();
-    pScreen->Reinitialize();
+    if (!pScreen) {
+      PRINTF("Tried to reinitialize nullptr\n");
+    } else {
+      pScreen->Reinitialize();
+    }
   }
 }
 
