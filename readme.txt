@@ -12,8 +12,8 @@ redistribution but can be downloaded at http://www.fmod.org/.
 Eldritch was built with FMOD Ex 4.44.15, but any recent release
 is likely to build fine.
 
-It will be necessary for OS X and Linux users to download SDL 2.0
-to build Eldritch. For Windows users, the library files included
+It will be necessary for OS X and Linux users to download GL and
+GLEW or GLES. For Windows users, the library files included
 here should suffice.
 
 IDE project files are provided for Visual Studio 2005, Code::Blocks,

@@ -10,8 +10,6 @@ option(DEBUG_ENABLED "Build a DEBUG version (if not, then it's a RELEASE version
 option(FINAL_ENABLED "Build a FINAL version" OFF)
 
 pkg_search_module(ALUT REQUIRED freealut)
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -Wall")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall")
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
@@ -30,6 +28,7 @@ endif()
 if(FINAL_ENABLED)
 	add_definitions(-D_FINAL)
 endif()
+
 add_subdirectory(Libraries/Core/)
 add_subdirectory(Libraries/Math/)
 add_subdirectory(Libraries/2D/)
