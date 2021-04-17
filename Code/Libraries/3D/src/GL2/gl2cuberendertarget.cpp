@@ -19,6 +19,10 @@ GL2CubeRenderTarget::~GL2CubeRenderTarget()
 
 	if( m_DepthStencilRenderBufferObject != 0 )
 	{
+#ifdef HAVE_GLES
+		glDeleteRenderbuffers( 1, &m_DepthStencilRenderBufferObject );
+		GLERRORCHECK;
+#else
 		if( GLEW_ARB_framebuffer_object )
 		{
 			glDeleteRenderbuffers( 1, &m_DepthStencilRenderBufferObject );
@@ -29,10 +33,15 @@ GL2CubeRenderTarget::~GL2CubeRenderTarget()
 			glDeleteRenderbuffersEXT( 1, &m_DepthStencilRenderBufferObject );
 			GLERRORCHECK;
 		}
+#endif
 	}
 
 	if( m_FrameBufferObject != 0 )
 	{
+#ifdef HAVE_GLES
+		glDeleteRenderbuffers( 1, &m_FrameBufferObject );
+		GLERRORCHECK;
+#else
 		if( GLEW_ARB_framebuffer_object )
 		{
 			glDeleteFramebuffers( 1, &m_FrameBufferObject );
@@ -43,6 +52,7 @@ GL2CubeRenderTarget::~GL2CubeRenderTarget()
 			glDeleteFramebuffersEXT( 1, &m_FrameBufferObject );
 			GLERRORCHECK;
 		}
+#endif
 	}
 }
 
@@ -79,8 +89,10 @@ static GLenum GLCubemapTarget[] =
 		ASSERT( m_CubemapTextureObject != 0 );
 		glBindTexture( GL_TEXTURE_CUBE_MAP, m_CubemapTextureObject );
 
+#ifndef HAVE_GLES
 		glTexParameteri( GL_TEXTURE_CUBE_MAP, GL_TEXTURE_BASE_LEVEL, 0 );
 		glTexParameteri( GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_LEVEL, 0 );
+#endif
 
 		const GLenum ColorFormat = GL2RenderTarget::GetGLFormat( Params.ColorFormat );
 		for( uint Side = 0; Side < 6; ++Side )
@@ -89,7 +101,7 @@ static GLenum GLCubemapTarget[] =
 
 			// The image format parameters don't necessarily match the color format,
 			// but it doesn't matter because we're not providing image data here.
-			glTexImage2D( Target, MipLevel, ColorFormat, Params.Width, Params.Width, Border, GL_BGRA, GL_UNSIGNED_BYTE, pNullPixels );
+			glTexImage2D( Target, MipLevel, ColorFormat, Params.Width, Params.Width, Border, GL_RGBA, GL_UNSIGNED_BYTE, pNullPixels );
 			GLERRORCHECK;
 		}
 
@@ -98,6 +110,13 @@ static GLenum GLCubemapTarget[] =
 
 	if( Params.DepthStencilFormat != ERTF_None )
 	{
+#ifdef HAVE_GLES
+		glGenRenderbuffers( 1, &m_DepthStencilRenderBufferObject );
+		ASSERT( m_DepthStencilRenderBufferObject != 0 );
+		glBindRenderbuffer( GL_RENDERBUFFER, m_DepthStencilRenderBufferObject );
+		const GLenum DepthStencilFormat = GL2RenderTarget::GetGLFormat( Params.DepthStencilFormat );
+		glRenderbufferStorage( GL_RENDERBUFFER, DepthStencilFormat, Params.Width, Params.Width );
+#else
 		if( GLEW_ARB_framebuffer_object )
 		{
 			glGenRenderbuffers( 1, &m_DepthStencilRenderBufferObject );
@@ -114,6 +133,7 @@ static GLenum GLCubemapTarget[] =
 			const GLenum DepthStencilFormat = GL2RenderTarget::GetGLFormat( Params.DepthStencilFormat );
 			glRenderbufferStorageEXT( GL_RENDERBUFFER_EXT, DepthStencilFormat, Params.Width, Params.Width );
 		}
+#endif
 	}
 
 	CreateFBO();
@@ -123,6 +143,22 @@ static GLenum GLCubemapTarget[] =
 
 void GL2CubeRenderTarget::CreateFBO()
 {
+#ifdef HAVE_GLES
+	glGenFramebuffers( 1, &m_FrameBufferObject );
+	ASSERT( m_FrameBufferObject != 0 );
+	glBindFramebuffer( GL_FRAMEBUFFER, m_FrameBufferObject );
+	GLERRORCHECK;
+
+	// Just attach the first side now for completeness; we'll swap them later
+	glFramebufferTexture2D( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X, m_CubemapTextureObject, 0 );
+	glFramebufferRenderbuffer( GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_DepthStencilRenderBufferObject );
+	glFramebufferRenderbuffer( GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_DepthStencilRenderBufferObject );
+	GLERRORCHECK;
+
+	const GLenum FrameBufferStatus = glCheckFramebufferStatus( GL_FRAMEBUFFER );
+	ASSERT( FrameBufferStatus == GL_FRAMEBUFFER_COMPLETE );
+	Unused( FrameBufferStatus );
+#else
 	// FBOs were supported in GL 2.1 only by extension, but some newer drivers
 	// don't still support that extension. Use whichever is available.
 	ASSERT( GLEW_EXT_framebuffer_object || GLEW_ARB_framebuffer_object );
@@ -160,4 +196,5 @@ void GL2CubeRenderTarget::CreateFBO()
 		ASSERT( FrameBufferStatus == GL_FRAMEBUFFER_COMPLETE_EXT );
 		Unused( FrameBufferStatus );
 	}
+#endif
 }
