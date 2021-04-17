@@ -3,17 +3,20 @@
 
 #include "uiscreen.h"
 
-class UIScreenWaitDialog : public UIScreen {
- public:
-  UIScreenWaitDialog();
-  virtual ~UIScreenWaitDialog();
+class UIScreenWaitDialog : public UIScreen
+{
+public:
+	UIScreenWaitDialog();
+	virtual ~UIScreenWaitDialog();
 
-  DEFINE_UISCREEN_FACTORY(WaitDialog);
+	DEFINE_UISCREEN_FACTORY( WaitDialog );
 
-  virtual ETickReturn Tick(float DeltaTime, bool HasFocus);
+	virtual ETickReturn	Tick( const float DeltaTime, bool HasFocus );
 
-  void SetParameters(bool PauseGame, const SimpleString& WaitString,
-                     const SimpleString& WaitDynamicString);
+	void SetParameters(
+		bool				PauseGame,
+		const SimpleString&	WaitString,
+		const SimpleString&	WaitDynamicString );
 };
 
-#endif  // UISCREENWAITDIALOG_H
+#endif // UISCREENWAITDIALOG_H

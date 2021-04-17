@@ -15,232 +15,363 @@
 #endif
 
 Display::Display()
-    : m_Width(0),
-      m_Height(0),
-      m_ScreenWidth(0),
-      m_ScreenHeight(0),
-      m_AspectRatio(0.0f),
-      m_Fullscreen(false),
-      m_DisplayModes() {
-  STATICHASH(DisplayWidth);
-  STATICHASH(DisplayHeight);
-  STATICHASH(FOV);
-  STATICHASH(Fullscreen);
+:	m_Width( 0 )
+,	m_Height( 0 )
+,	m_FrameWidth( 0 )
+,	m_FrameHeight( 0 )
+,	m_PropWidth( 0 )
+,	m_PropHeight( 0 )
+,	m_ScreenWidth( 0 )
+,	m_ScreenHeight( 0 )
+,	m_AspectRatio( 0.0f )
+,	m_Fullscreen( false )
+,	m_UpscaleFullscreen( false )
+,	m_VSync( false )
+,	m_DisplayModes()
+{
+	STATICHASH( DisplayWidth );
+	m_Width = ConfigManager::GetInt( sDisplayWidth );
 
-  m_Width = ConfigManager::GetInt(sDisplayWidth);
-  m_Height = ConfigManager::GetInt(sDisplayHeight);
-  m_AspectRatio = (float)m_Width / (float)m_Height;
+	STATICHASH( DisplayHeight );
+	m_Height = ConfigManager::GetInt( sDisplayHeight );
+
+	m_AspectRatio = static_cast<float>( m_Width ) / static_cast<float>( m_Height );
+
+	STATICHASH( Fullscreen );
 #ifdef PANDORA
-  m_Fullscreen = true;
+	m_Fullscreen = true;
 #else
-  m_Fullscreen = ConfigManager::GetBool(sFullscreen);
+	m_Fullscreen = ConfigManager::GetBool( sFullscreen );
 #endif
 
-// Get the stored resolution
+#if BUILD_LINUX
+	// On Linux, changing the screen resolution isn't really supported, so always upscale.
+	m_UpscaleFullscreen = true;
+#else
+	STATICHASH( UpscaleFullscreen );
+	m_UpscaleFullscreen = ConfigManager::GetBool( sUpscaleFullscreen );
+#endif
+
+	STATICHASH( VSync );
+	m_VSync = ConfigManager::GetBool( sVSync );
+
+	PRINTF( "Desired display mode: %dx%d", m_Width, m_Height );
+	PRINTF( m_Fullscreen		? " / fullscreen" : " / windowed" );
+	PRINTF( m_UpscaleFullscreen	? " / upscaling" : " / no upscaling" );
+	PRINTF( m_VSync				? " / vsync\n" : " / no vsync\n" );
+
+	// Get the stored resolution
 #if BUILD_WINDOWS_NO_SDL
-  DEVMODE DevMode;
-  XTRACE_BEGIN(EnumDisplaySettings);
-  EnumDisplaySettings(NULL, ENUM_REGISTRY_SETTINGS, &DevMode);
-  XTRACE_END;
-  m_ScreenWidth = DevMode.dmPelsWidth;
-  m_ScreenHeight = DevMode.dmPelsHeight;
+	DEVMODE DevMode;
+	XTRACE_BEGIN( EnumDisplaySettings );
+		EnumDisplaySettings( NULL, ENUM_REGISTRY_SETTINGS, &DevMode );
+	XTRACE_END;
+	m_ScreenWidth	= DevMode.dmPelsWidth;
+	m_ScreenHeight	= DevMode.dmPelsHeight;
 #endif
 #if BUILD_SDL
-  SDL_DisplayMode DisplayMode;
-  SDL_GetDesktopDisplayMode(0, &DisplayMode);
-  m_ScreenWidth = DisplayMode.w;
-  m_ScreenHeight = DisplayMode.h;
+	SDL_DisplayMode DisplayMode;
+	SDL_GetDesktopDisplayMode( 0, &DisplayMode );
+	m_ScreenWidth	= DisplayMode.w;
+	m_ScreenHeight	= DisplayMode.h;
 #endif
 
-  UpdateDisplay();
+	RefreshFrameDimensions();
+	UpdateDisplay();
 }
 
-Display::~Display() {
-  if (m_Fullscreen) {
-    SetDisplay(true);
-  }
+Display::~Display()
+{
+	if( m_Fullscreen )
+	{
+		SetDisplay( true );
+	}
 
-  m_DisplayModes.Clear();
+	m_DisplayModes.Clear();
 }
 
-void Display::SetFullScreen(bool FullScreen) {
-  m_Fullscreen = FullScreen;
-  STATICHASH(Fullscreen);
-  ConfigManager::SetBool(sFullscreen,
-                         FullScreen);  // Keep config var in sync with display
+void Display::SetFullscreen( bool Fullscreen )
+{
+	m_Fullscreen = Fullscreen;
+
+	// Keep config var in sync with display
+	STATICHASH( Fullscreen );
+	ConfigManager::SetBool( sFullscreen, Fullscreen );
+
+	RefreshFrameDimensions();
 }
 
-void Display::SetResolution(uint Width, uint Height) {
-  m_Width = Width;
-  m_Height = Height;
-  m_AspectRatio = (float)m_Width / (float)m_Height;
+void Display::SetVSync( const bool VSync )
+{
+	m_VSync = VSync;
 
-  // Keep config vars in sync with display
-  STATICHASH(DisplayWidth);
-  STATICHASH(DisplayHeight);
-  ConfigManager::SetInt(sDisplayWidth, m_Width);
-  ConfigManager::SetInt(sDisplayHeight, m_Height);
+	// Keep config var in sync with display
+	STATICHASH( VSync );
+	ConfigManager::SetBool( sVSync, VSync );
 }
 
-void Display::UpdateDisplay() {
-  STATICHASH(DisplayDepth);
-  STATICHASH(DisplayRate);
-  if (m_Fullscreen) {
-    SetDisplay(false, m_Fullscreen, m_Width, m_Height,
-      #ifdef HAVE_GLES
-               ConfigManager::GetInt(sDisplayDepth, 16),
-      #else
-               ConfigManager::GetInt(sDisplayDepth, 32),
-      #endif
-               ConfigManager::GetInt(sDisplayRate, 60));
-  } else {
-    SetDisplay(true);
-  }
+void Display::SetResolution( uint Width, uint Height )
+{
+	m_Width = Width;
+	m_Height = Height;
+	m_AspectRatio = ( float )m_Width / ( float )m_Height;
+
+	// Keep config vars in sync with display
+	STATICHASH( DisplayWidth );
+	STATICHASH( DisplayHeight );
+	ConfigManager::SetInt( sDisplayWidth, m_Width );
+	ConfigManager::SetInt( sDisplayHeight, m_Height );
+
+	RefreshFrameDimensions();
 }
 
-bool Display::NeedsUpdate() {
+void Display::RefreshFrameDimensions()
+{
+	if( m_Fullscreen && m_UpscaleFullscreen )
+	{
+		m_FrameWidth	= m_ScreenWidth;
+		m_FrameHeight	= m_ScreenHeight;
+	}
+	else
+	{
+		m_FrameWidth	= m_Width;
+		m_FrameHeight	= m_Height;
+	}
+
+	// Cache proportional frame dimensions
+	const uint	PropWidth		= ( m_FrameHeight * m_Width ) / m_Height;
+	const uint	PropHeight		= ( m_FrameWidth * m_Height ) / m_Width;
+	const float	fDisplayWidth	= static_cast<float>( m_Width );
+	const float	fDisplayHeight	= static_cast<float>( m_Height );
+	const float	fFrameWidth		= static_cast<float>( m_FrameWidth );
+	const float	fFrameHeight	= static_cast<float>( m_FrameHeight );
+	const float	DisplayAspect	= fDisplayWidth / fDisplayHeight;
+	const float	FrameAspect		= fFrameWidth / fFrameHeight;
+	const bool	WideFrame		= FrameAspect >= DisplayAspect;
+	m_PropWidth					= WideFrame ? PropWidth : m_FrameWidth;
+	m_PropHeight				= WideFrame ? m_FrameHeight : PropHeight;
+}
+
+bool Display::ShouldUpscaleFullscreen() const
+{
+	if( m_Width != m_FrameWidth || m_Height != m_FrameHeight )
+	{
+		DEVASSERT( m_Fullscreen && m_UpscaleFullscreen );
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+void Display::UpdateDisplay()
+{
+	int CurrentWidth = 0;
+	int CurrentHeight = 0;
+	int CurrentRefreshRate = 0;
+	GetCurrentDisplayMode( CurrentWidth, CurrentHeight, CurrentRefreshRate );
+
+	STATICHASH( DisplayDepth );
+#ifdef USE_GLES
+	const uint DisplayDepth = ConfigManager::GetInt( sDisplayDepth, 16 );
+#else
+	const uint DisplayDepth = ConfigManager::GetInt( sDisplayDepth, 32 );
+#endif
+
+	// Used to default to 60Hz; now defaults to whatever the display is already set to
+	STATICHASH( DisplayRate );
+	const uint DisplayRate = ConfigManager::GetInt( sDisplayRate, CurrentRefreshRate );
+
+	if( m_Fullscreen )
+	{
+		SetDisplay( false, m_Fullscreen, m_FrameWidth, m_FrameHeight, DisplayDepth, DisplayRate );
+	}
+	else
+	{
+		SetDisplay( true );
+	}
+}
+
+bool Display::NeedsUpdate()
+{
 #if BUILD_WINDOWS_NO_SDL
-  DEVMODE DevMode;
-  ZeroMemory(&DevMode, sizeof(DEVMODE));
+	DEVMODE DevMode;
+	ZeroMemory( &DevMode, sizeof( DEVMODE ) );
 
-  EnumDisplaySettings(NULL, ENUM_CURRENT_SETTINGS, &DevMode);
+	EnumDisplaySettings( NULL, ENUM_CURRENT_SETTINGS, &DevMode );
 
-  return m_Fullscreen &&
-         (DevMode.dmPelsWidth != m_Width || DevMode.dmPelsHeight != m_Height);
+	return m_Fullscreen && ( DevMode.dmPelsWidth != m_FrameWidth || DevMode.dmPelsHeight != m_FrameHeight );
 #endif
 #if BUILD_SDL
-  SDL_DisplayMode DisplayMode;
-  SDL_GetCurrentDisplayMode(0, &DisplayMode);
+	SDL_DisplayMode DisplayMode;
+	SDL_GetCurrentDisplayMode( 0, &DisplayMode );
 
-  return m_Fullscreen && (DisplayMode.w != static_cast<int>(m_Width) ||
-                          DisplayMode.h != static_cast<int>(m_Height));
+	return m_Fullscreen && ( DisplayMode.w != static_cast<int>( m_FrameWidth ) || DisplayMode.h != static_cast<int>( m_FrameHeight ) );
+#endif
+}
+
+void Display::GetCurrentDisplayMode( int& Width, int& Height, int& RefreshRate )
+{
+#if BUILD_WINDOWS_NO_SDL
+	DEVMODE DevMode;
+	ZeroMemory( &DevMode, sizeof( DEVMODE ) );
+
+	EnumDisplaySettings( NULL, ENUM_CURRENT_SETTINGS, &DevMode );
+
+	Width = DevMode.dmPelsWidth;
+	Height = DevMode.dmPelsHeight;
+	RefreshRate = DevMode.dmDisplayFrequency;
+#elif BUILD_SDL
+	SDL_DisplayMode DisplayMode;
+	SDL_GetCurrentDisplayMode( 0, &DisplayMode );
+
+	Width = DisplayMode.w;
+	Height = DisplayMode.h;
+	RefreshRate = DisplayMode.refresh_rate;
+#else
+#error Unknown display system
 #endif
 }
 
 // TODO: Check return value of ChangeDisplaySettings and react appropriately
-/*static*/ void Display::SetDisplay(bool Reset /*= true*/,
-                                    bool FullScreen /*= false*/,
-                                    int Width /*= 0*/, int Height /*= 0*/,
-                                    int BitDepth /*= 0*/,
-                                    int Frequency /*= 0*/) {
-  XTRACE_FUNCTION;
+/*static*/ void Display::SetDisplay( bool Reset /*= true*/, bool Fullscreen /*= false*/, int Width /*= 0*/, int Height /*= 0*/, int BitDepth /*= 0*/, int Frequency /*= 0*/ )
+{
+	XTRACE_FUNCTION;
 
 #if BUILD_SDL
-  // SDL manages display through its window system.
-  Unused(Reset);
-  Unused(FullScreen);
-  Unused(Width);
-  Unused(Height);
-  Unused(BitDepth);
-  Unused(Frequency);
-  return;
+	// SDL manages display through its window system.
+	Unused( Reset );
+	Unused( Fullscreen );
+	Unused( Width );
+	Unused( Height );
+	Unused( BitDepth );
+	Unused( Frequency );
+	return;
 #endif
 
 #if BUILD_WINDOWS_NO_SDL
-  if (Reset) {
-    DEBUGCATPRINTF("Core", 1, "Resetting display\n");
+	if( Reset )
+	{
+		PRINTF( "Resetting display\n" );
 
-    ChangeDisplaySettings(NULL, 0);
-  } else {
-    DEBUGCATPRINTF("Core", 1, "Setting display:\n\t%dx%d %dbpp %dHz\n", Width,
-                   Height, BitDepth, Frequency);
+		ChangeDisplaySettings( NULL, 0 );
+	}
+	else
+	{
+		PRINTF( "Setting display: %dx%d %dbpp %dHz", Width, Height, BitDepth, Frequency );
+		PRINTF( Fullscreen ? " fullscreen\n" : " windowed\n" );
 
-    DEVMODE DevMode;
-    ZeroMemory(&DevMode, sizeof(DEVMODE));
+		DEVMODE DevMode;
+		ZeroMemory( &DevMode, sizeof( DEVMODE ) );
 
-    DevMode.dmSize = sizeof(DEVMODE);
-    DevMode.dmPelsWidth = Width;
-    DevMode.dmPelsHeight = Height;
-    DevMode.dmBitsPerPel = BitDepth;
-    DevMode.dmDisplayFrequency = Frequency;
-    DevMode.dmFields = 0;
-    DevMode.dmFields |= (Width > 0) ? DM_PELSWIDTH : 0;
-    DevMode.dmFields |= (Height > 0) ? DM_PELSHEIGHT : 0;
-    DevMode.dmFields |= (BitDepth > 0) ? DM_BITSPERPEL : 0;
-    DevMode.dmFields |= (Frequency > 0) ? DM_DISPLAYFREQUENCY : 0;
+		DevMode.dmSize = sizeof( DEVMODE );
+		DevMode.dmPelsWidth = Width;
+		DevMode.dmPelsHeight = Height;
+		DevMode.dmBitsPerPel = BitDepth;
+		DevMode.dmDisplayFrequency = Frequency;
+		DevMode.dmFields = 0;
+		DevMode.dmFields |= ( Width > 0 ) ? DM_PELSWIDTH : 0;
+		DevMode.dmFields |= ( Height > 0 ) ? DM_PELSHEIGHT : 0;
+		DevMode.dmFields |= ( BitDepth > 0 ) ? DM_BITSPERPEL : 0;
+		DevMode.dmFields |= ( Frequency > 0 ) ? DM_DISPLAYFREQUENCY : 0;
 
-    DWORD Flags = (FullScreen) ? CDS_FULLSCREEN : 0;
-    if (DISP_CHANGE_SUCCESSFUL ==
-        ChangeDisplaySettings(&DevMode, Flags | CDS_TEST)) {
-      ChangeDisplaySettings(&DevMode, Flags);
-    }
-  }
+		DWORD Flags = ( Fullscreen ) ? CDS_FULLSCREEN : 0;
+		if( DISP_CHANGE_SUCCESSFUL == ChangeDisplaySettings( &DevMode, Flags | CDS_TEST ) )
+		{
+			ChangeDisplaySettings( &DevMode, Flags );
+		}
+	}
 #endif
 }
 
-/*static*/ void Display::EnumerateDisplayModes(
-    Array<SDisplayMode>& DisplayModes) {
-  DisplayModes.Clear();
+/*static*/ void Display::EnumerateDisplayModes( Array<SDisplayMode>& DisplayModes )
+{
+	DisplayModes.Clear();
 
 #if BUILD_WINDOWS_NO_SDL
-  DEVMODE DevMode;
-  uint ModeIndex = 0;
-  BOOL Valid = TRUE;
-  for (; Valid; ++ModeIndex) {
-    Valid = EnumDisplaySettings(NULL, ModeIndex, &DevMode);
+	PRINTF( "Enumerating Windows display modes...\n" );
+	DEVMODE	DevMode;
+	uint	ModeIndex	= 0;
+	BOOL	Valid		= TRUE;
+	for( ; Valid; ++ModeIndex )
+	{
+		Valid = EnumDisplaySettings( NULL, ModeIndex, &DevMode );
 
-    // Some users have problems if their refresh rate is set to 59 Hz. Maybe I
-    // should reconsider this?
-    if (DevMode.dmBitsPerPel == 32) {
-      SDisplayMode Mode;
-      Mode.Width = DevMode.dmPelsWidth;
-      Mode.Height = DevMode.dmPelsHeight;
-      DisplayModes.PushBackUnique(Mode);
-    }
-  }
+		// Some users have problems if their refresh rate is set to 59 Hz. Maybe I should reconsider this?
+		if( DevMode.dmBitsPerPel == 32 )
+		{
+			SDisplayMode Mode;
+			Mode.Width	= DevMode.dmPelsWidth;
+			Mode.Height	= DevMode.dmPelsHeight;
+
+			if( DisplayModes.PushBackUnique( Mode ) )
+			{
+				PRINTF( "Enumerated mode %dx%d\n", Mode.Width, Mode.Height );
+			}
+		}
+	}
 #endif
 #if BUILD_SDL
-  PRINTF("Enumerating SDL display modes...\n");
-  const int NumDisplays = SDL_GetNumVideoDisplays();
-  for (int DisplayIndex = 0; DisplayIndex < NumDisplays; ++DisplayIndex) {
-    const int NumModes = SDL_GetNumDisplayModes(DisplayIndex);
-    for (int ModeIndex = 0; ModeIndex < NumModes; ++ModeIndex) {
-      SDL_DisplayMode DisplayMode;
-      SDL_GetDisplayMode(DisplayIndex, ModeIndex, &DisplayMode);
+	PRINTF( "Enumerating SDL display modes...\n" );
+	const int NumDisplays		= SDL_GetNumVideoDisplays();
+	for( int DisplayIndex = 0; DisplayIndex < NumDisplays; ++DisplayIndex )
+	{
+		const int NumModes = SDL_GetNumDisplayModes( DisplayIndex );
+		for( int ModeIndex = 0; ModeIndex < NumModes; ++ModeIndex )
+		{
+			SDL_DisplayMode DisplayMode;
+			SDL_GetDisplayMode( DisplayIndex, ModeIndex, &DisplayMode );
+
 #ifdef PANDORA
-      if (SDL_BYTESPERPIXEL(DisplayMode.format) >= 2)
+			if( SDL_BYTESPERPIXEL( DisplayMode.format ) >= 2 )
 #else
-      if (SDL_BYTESPERPIXEL(DisplayMode.format) == 4)
+			if( SDL_BYTESPERPIXEL( DisplayMode.format ) == 4 )
 #endif
-      {
-        SDisplayMode Mode;
-        Mode.Width = DisplayMode.w;
-        Mode.Height = DisplayMode.h;
-        DisplayModes.PushBackUnique(Mode);
+			{
+				SDisplayMode Mode;
+				Mode.Width	= DisplayMode.w;
+				Mode.Height	= DisplayMode.h;
 
-        PRINTF("Enumerated mode %dx%d\n", Mode.Width, Mode.Height);
-      }
-    }
-  }
+				if( DisplayModes.PushBackUnique( Mode ) )
+				{
+					PRINTF( "Enumerated mode %dx%d\n", Mode.Width, Mode.Height );
+				}
+			}
+		}
+	}
 #endif
 
-  ASSERT(DisplayModes.Size());
+	ASSERT( DisplayModes.Size() );
 }
 
-/*static*/ SDisplayMode Display::GetBestDisplayMode(const uint DesiredWidth,
-                                                    const uint DesiredHeight) {
-  Array<SDisplayMode> DisplayModes;
-  EnumerateDisplayModes(DisplayModes);
+/*static*/ SDisplayMode Display::GetBestDisplayMode( const uint DesiredWidth, const uint DesiredHeight )
+{
+	Array<SDisplayMode> DisplayModes;
+	EnumerateDisplayModes( DisplayModes );
 
-  SDisplayMode BestDisplayMode;
-  FOR_EACH_ARRAY(ModeIter, DisplayModes, SDisplayMode) {
-    const SDisplayMode& Mode = ModeIter.GetValue();
-    if (Mode.Width >= BestDisplayMode.Width &&
-        Mode.Height >= BestDisplayMode.Height && Mode.Width <= DesiredWidth &&
-        Mode.Height <= DesiredHeight) {
-      BestDisplayMode = Mode;
-    }
-  }
+	SDisplayMode BestDisplayMode;
+	FOR_EACH_ARRAY( ModeIter, DisplayModes, SDisplayMode )
+	{
+		const SDisplayMode& Mode = ModeIter.GetValue();
+		if( Mode.Width	>= BestDisplayMode.Width &&
+			Mode.Height	>= BestDisplayMode.Height &&
+			Mode.Width	<= DesiredWidth &&
+			Mode.Height	<= DesiredHeight )
+		{
+			BestDisplayMode = Mode;
+		}
+	}
 
-  // This case can occur if our desired dimensions are *smaller* than any
-  // available display mode.
-  if (BestDisplayMode.Width == 0 || BestDisplayMode.Height == 0) {
-    PRINTF("Could not find a more suitable display mode.\n");
-    BestDisplayMode.Width = DesiredWidth;
-    BestDisplayMode.Height = DesiredHeight;
-  }
+	// This case can occur if our desired dimensions are *smaller* than any available display mode.
+	if( BestDisplayMode.Width == 0 ||
+		BestDisplayMode.Height == 0 )
+	{
+		PRINTF( "Could not find a more suitable display mode.\n" );
+		BestDisplayMode.Width   = DesiredWidth;
+		BestDisplayMode.Height  = DesiredHeight;
+	}
 
-  PRINTF("Using display mode %dx%d\n", BestDisplayMode.Width,
-         BestDisplayMode.Height);
-  return BestDisplayMode;
+	PRINTF( "Using display mode %dx%d\n", BestDisplayMode.Width, BestDisplayMode.Height );
+	return BestDisplayMode;
 }

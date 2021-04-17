@@ -1,10 +1,10 @@
 #ifndef WBSCENE_H
 #define WBSCENE_H
 
-// The Workbench scene just manages the entities in the scene. It doesn't
-// represent the world,
-// which will generally have more game-specific needs than Workbench should know
-// about.
+// ELDTODO: Use the tag "SRF" to mark things I need to look at in a big scene refactor.
+
+// The Workbench scene just manages the entities in the scene. It doesn't represent the world,
+// which will generally have more game-specific needs than Workbench should know about.
 
 #include "map.h"
 #include "array.h"
@@ -12,61 +12,70 @@
 class WBEntity;
 class Vector;
 
-class WBScene {
- public:
-  WBScene();
-  ~WBScene();
+class WBScene
+{
+public:
+	WBScene();
+	~WBScene();
 
-  void Initialize();
+	void			Initialize();
 
-  void Tick();
+	void			Tick();
 
-  uint GetUID() const { return m_UID; }
-  void SetUID(uint EntityUID) { m_UID = EntityUID; }
+	uint			GetUID() const { return m_UID; }
+	void			SetUID( uint EntityUID ) { m_UID = EntityUID; }
 
-  WBEntity* GetEntity(const uint EntitySceneHandle) const;
-  uint AddEntity(WBEntity* const Entity);
-  void AddEntity(WBEntity* const Entity, const uint EntitySceneHandle);
-  void RemoveEntity(const uint EntitySceneHandle);
-  void DeferredRemoveEntity(const uint EntitySceneHandle);
+	WBEntity*		GetEntity( const uint EntitySceneHandle ) const;
+	uint			AddEntity( WBEntity* const Entity );
+	void			AddEntity( WBEntity* const Entity, const uint EntitySceneHandle );
+	void			DeferredRemoveEntity( const uint EntitySceneHandle );
 
-  WBEntity* GetFirstEntityByComponent(const HashedString& ComponentName) const;
-  void GetEntitiesByComponent(Array<WBEntity*>& OutEntities,
-                              const HashedString& ComponentName) const;
+	void			GetAllEntities( Array<WBEntity*>& OutEntities ) const;
 
-  // NOTE: This function needs to be implemented per-project using that
-  // project's transform component.
-  void GetEntitiesByRadius(Array<WBEntity*>& OutEntities,
-                           const Vector& Location, const float Radius) const;
+	WBEntity*		GetFirstEntityByComponent( const HashedString& ComponentName ) const;
+	void			GetEntitiesByComponent( Array<WBEntity*>& OutEntities, const HashedString& ComponentName ) const;
 
+	// NOTE: This function needs to be implemented per-project using that project's transform component.
+	void			GetEntitiesByRadius( Array<WBEntity*>& OutEntities, const Vector& Location, const float Radius ) const;
+
+#if BUILD_DEV
 #define WBSCENE_REPORT_PREFIX "  "
-  void Report() const;
+	void			Report() const;
+#endif
 
-  void Load(const IDataStream& Stream);
-  void Save(const IDataStream& Stream) const;
+	void			Load( const IDataStream& Stream );
+	void			Save( const IDataStream& Stream ) const;
 
-  // Helper shortcut to WBWorld::GetInstance()->GetDefaultScene()
-  static WBScene* GetDefault();
+	// Helper shortcut to WBWorld::GetInstance()->GetDefaultScene()
+	static WBScene*	GetDefault();
 
- private:
-  struct SEntityRef {
-    SEntityRef() : m_Entity(NULL), m_Removed(false) {}
+private:
+	// This shouldn't be called directly! Used DeferredRemoveEntity and this will clean it up on the next tick.
+	void			RemoveEntity( const uint EntitySceneHandle );
 
-    WBEntity* m_Entity;
-    bool m_Removed;
-  };
+	struct SEntityRef
+	{
+		SEntityRef()
+		:	m_Entity( NULL )
+		,	m_Removed( false )
+		{
+		}
 
-  uint m_UID;
+		WBEntity*	m_Entity;
+		bool		m_Removed;
+	};
 
-  Map<uint, SEntityRef> m_Entities;
-  uint m_LastEntitySceneHandle;
+	uint					m_UID;
 
-  uint m_NumValidEntities;
-  Array<uint> m_DeferredRemoveHandles;
+	Map<uint, SEntityRef>	m_Entities;
+	uint					m_LastEntitySceneHandle;
+
+	uint					m_NumValidEntities;
+	Array<uint>				m_DeferredRemoveHandles;
 
 #if BUILD_DEBUG
-  mutable bool m_IteratingEntities;
+	mutable bool			m_IteratingEntities;
 #endif
 };
 
-#endif  // WBSCENE_H
+#endif // WBSCENE_H

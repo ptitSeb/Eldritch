@@ -4,28 +4,31 @@
 #include "wbcomponent.h"
 #include "wbevent.h"
 
-class WBCompVariableMap : public WBComponent {
- public:
-  WBCompVariableMap();
-  virtual ~WBCompVariableMap();
+class WBCompVariableMap : public WBComponent
+{
+public:
+	WBCompVariableMap();
+	virtual ~WBCompVariableMap();
 
-  DEFINE_WBCOMP(VariableMap, WBComponent);
+	DEFINE_WBCOMP( VariableMap, WBComponent );
 
-  virtual int GetTickOrder() { return ETO_NoTick; }
+	virtual int		GetTickOrder() { return ETO_NoTick; }
 
-  virtual void HandleEvent(const WBEvent& Event);
+	virtual void	HandleEvent( const WBEvent& Event );
 
-  virtual uint GetSerializationSize();
-  virtual void Save(const IDataStream& Stream);
-  virtual void Load(const IDataStream& Stream);
+	virtual uint	GetSerializationSize();
+	virtual void	Save( const IDataStream& Stream );
+	virtual void	Load( const IDataStream& Stream );
 
-  virtual void Report() const;
+#if BUILD_DEV
+	virtual void	Report() const;
+#endif
 
-  WBEvent& GetVariables() { return m_Variables; }
-  const WBEvent& GetVariables() const { return m_Variables; }
+	WBEvent&		GetVariables() { return m_Variables; }
+	const WBEvent&	GetVariables() const { return m_Variables; }
 
- private:
-  WBEvent m_Variables;  // Serialized
+private:
+	WBEvent	m_Variables;	// Serialized
 };
 
-#endif  // WBCOMPVARIABLEMAP_H
+#endif // WBCOMPVARIABLEMAP_H

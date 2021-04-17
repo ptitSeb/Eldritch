@@ -3,24 +3,23 @@
 
 #include "wbpe.h"
 
-class WBPELookup : public WBPE {
- public:
-  WBPELookup();
-  virtual ~WBPELookup();
+class WBPELookup : public WBPE
+{
+public:
+	WBPELookup();
+	virtual ~WBPELookup();
 
-  DEFINE_WBPE_FACTORY(Lookup);
+	DEFINE_WBPE_FACTORY( Lookup );
 
-  virtual void InitializeFromDefinition(const SimpleString& DefinitionName);
-  virtual void Evaluate(
-      const WBParamEvaluator::SPEContext& Context,
-      WBParamEvaluator::SEvaluatedParam& EvaluatedParam) const;
+	virtual void	InitializeFromDefinition( const SimpleString& DefinitionName );
+	virtual void	Evaluate( const WBParamEvaluator::SPEContext& Context, WBParamEvaluator::SEvaluatedParam& EvaluatedParam ) const;
 
- private:
-  HashedString m_Key;
+private:
+	HashedString	m_Key;
 
 #if BUILD_DEV
-  bool m_WarnFailure;
+	bool			m_WarnFailure;
 #endif
 };
 
-#endif  // WBPELOOKUP_H
+#endif // WBPELOOKUP_H

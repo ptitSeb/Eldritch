@@ -2,26 +2,31 @@
 #include "rodinbtnodeconditionpe.h"
 #include "configmanager.h"
 
-RodinBTNodeConditionPE::RodinBTNodeConditionPE() : m_ValuePE() {}
-
-RodinBTNodeConditionPE::~RodinBTNodeConditionPE() {}
-
-void RodinBTNodeConditionPE::InitializeFromDefinition(
-    const SimpleString& DefinitionName) {
-  MAKEHASH(DefinitionName);
-
-  STATICHASH(ValuePE);
-  m_ValuePE.InitializeFromDefinition(
-      ConfigManager::GetString(sValuePE, "", sDefinitionName));
+RodinBTNodeConditionPE::RodinBTNodeConditionPE()
+:	m_ValuePE()
+{
 }
 
-RodinBTNode::ETickStatus RodinBTNodeConditionPE::Tick(float DeltaTime) {
-  Unused(DeltaTime);
+RodinBTNodeConditionPE::~RodinBTNodeConditionPE()
+{
+}
 
-  WBParamEvaluator::SPEContext Context;
-  Context.m_Entity = GetEntity();
+void RodinBTNodeConditionPE::InitializeFromDefinition( const SimpleString& DefinitionName )
+{
+	MAKEHASH( DefinitionName );
 
-  m_ValuePE.Evaluate(Context);
+	STATICHASH( ValuePE );
+	m_ValuePE.InitializeFromDefinition( ConfigManager::GetString( sValuePE, "", sDefinitionName ) );
+}
 
-  return m_ValuePE.GetBool() ? ETS_Success : ETS_Fail;
+RodinBTNode::ETickStatus RodinBTNodeConditionPE::Tick( const float DeltaTime )
+{
+	Unused( DeltaTime );
+
+	WBParamEvaluator::SPEContext Context;
+	Context.m_Entity = GetEntity();
+
+	m_ValuePE.Evaluate( Context );
+
+	return m_ValuePE.GetBool() ? ETS_Success : ETS_Fail;
 }

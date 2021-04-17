@@ -10,35 +10,37 @@
 #define GLINDEXFORMAT GL_UNSIGNED_SHORT
 #endif
 
-class GL2IndexBuffer : public IIndexBuffer {
- public:
-  GL2IndexBuffer();
-  virtual ~GL2IndexBuffer();
+class GL2IndexBuffer : public IIndexBuffer
+{
+public:
+	GL2IndexBuffer();
+	virtual ~GL2IndexBuffer();
 
-  virtual void Init(uint NumIndices, index_t* Indices);
+	virtual void	Init( uint NumIndices, index_t* Indices );
 
-  virtual void* GetIndices();
+	virtual void*	GetIndices();
 
-  virtual uint GetNumIndices();
-  virtual void SetNumIndices(uint NumIndices);
-  virtual uint GetNumPrimitives();
+	virtual uint	GetNumIndices();
+	virtual void	SetNumIndices( uint NumIndices );
+	virtual uint	GetNumPrimitives();
 
-  virtual void SetPrimitiveType(EPrimitiveType PrimitiveType);
+	virtual void	SetPrimitiveType( EPrimitiveType PrimitiveType );
 
-  virtual int AddReference();
-  virtual int Release();
+	virtual int		AddReference();
+	virtual int		Release();
 
-  GLenum GetPrimitiveType() { return m_PrimitiveType; }
+	GLenum			GetPrimitiveType() { return m_PrimitiveType; }
 
- private:
-  int m_RefCount;
-  uint m_NumIndices;
-  GLenum m_PrimitiveType;
+private:
+	int			m_RefCount;
+	uint		m_NumIndices;
+	GLenum		m_PrimitiveType;
+
 #ifdef NO_VBO
-  void* m_IndicesVBO;
+	void*		m_IndicesVBO;
 #else
-  GLuint m_IndicesVBO;
+	GLuint		m_IndicesVBO;
 #endif
 };
 
-#endif  // GL2INDEXBUFFER_H
+#endif // GL2INDEXBUFFER_H

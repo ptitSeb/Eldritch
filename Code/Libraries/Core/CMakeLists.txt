@@ -1,101 +1,49 @@
-cmake_minimum_required(VERSION 2.6)
- 
+cmake_minimum_required(VERSION 3.0)
+
 set(core_src
-src/TinyXML/tinyxml.cpp
-src/TinyXML/tinyxml.h
-src/TinyXML/tinyxmlerror.cpp
-src/TinyXML/tinyxmlparser.cpp
-src/allocator.cpp
-src/allocator.h
-src/allocatorchunk.cpp
-src/allocatorchunk.h
-src/array.h
-src/arraystack.h
-src/bmp-format.h
-src/bufferedfilestream.cpp
-src/bufferedfilestream.h
-src/checksum.cpp
-src/checksum.h
-src/clock.cpp
-src/clock.h
-src/color.h
-src/configmanager.cpp
-src/configmanager.h
-src/configparser.cpp
-src/configparser.h
-src/configvar.cpp
-src/configvar.h
-src/core.h
-src/customassert.cpp
-src/customassert.h
-src/customnew.cpp
-src/customnew.h
-src/datapipe.cpp
-src/datapipe.h
-src/display.cpp
-src/display.h
-src/dynamicmemorystream.cpp
-src/dynamicmemorystream.h
-src/exceptionhandler.h
-src/exceptiontrace.cpp
-src/exceptiontrace.h
-src/exceptionuploadlog.h
-src/file.cpp
-src/file.h
-src/filestream.cpp
-src/filestream.h
-src/hashedstring.cpp
-src/hashedstring.h
-src/hashtable.h
-src/icontroller.h
-src/idatastream.h
-src/iinputsystemobserver.h
-src/inputcontext.cpp
-src/inputcontext.h
-src/inputsystem.cpp
-src/inputsystem.h
-src/interpolator.h
-src/keyboard.cpp
-src/keyboard.h
-src/list.h
-src/map.h
-src/mathcore.h
-src/memorystream.cpp
-src/memorystream.h
-src/mouse.cpp
-src/mouse.h
-src/multimap.h
-src/packstream.cpp
-src/packstream.h
-src/printmanager.cpp
-src/printmanager.h
-src/profiler.cpp
-src/profiler.h
-src/profilerhook.cpp
-src/profilerhook.h
-src/profilertable.cpp
-src/profilertable.h
-src/reversehash.cpp
-src/reversehash.h
-src/set.h
-src/simplestring.cpp
-src/simplestring.h
-src/stack.h
-src/stopwatch.cpp
-src/stopwatch.h
-src/stringmanager.cpp
-src/stringmanager.h
-src/test.cpp
-src/test.h
-src/timer.cpp
-src/timer.h
-src/versions.h
-src/windowwrapper.cpp
-src/windowwrapper.h
-src/xinputcontroller.cpp
-src/xinputcontroller.h
+	src/TinyXML/tinyxml.cpp
+	src/TinyXML/tinyxmlerror.cpp
+	src/TinyXML/tinyxmlparser.cpp
+	src/allocator.cpp
+	src/allocatorchunk.cpp
+	src/bufferedfilestream.cpp
+	src/checksum.cpp
+	src/clock.cpp
+	src/configmanager.cpp
+	src/configparser.cpp
+	src/configvar.cpp
+	src/customassert.cpp
+	src/customnew.cpp
+	src/datapipe.cpp
+	src/display.cpp
+	src/dynamicmemorystream.cpp
+	src/exceptiontrace.cpp
+	src/filestream.cpp
+	src/fileutil.cpp
+	src/hashedstring.cpp
+	src/inputcontext.cpp
+	src/inputsystem.cpp
+	src/keyboard.cpp
+	src/memorystream.cpp
+	src/mouse.cpp
+	src/packstream.cpp
+	src/printmanager.cpp
+	src/profiler.cpp
+	src/profilerhook.cpp
+	src/profilertable.cpp
+	src/reversehash.cpp
+	src/simplestring.cpp
+	src/stopwatch.cpp
+	src/stringmanager.cpp
+	src/test.cpp
+	src/timedate.cpp
+	src/timer.cpp
+	src/windowwrapper.cpp
+	src/xinputcontroller.cpp
 )
- 
+
 add_library(Core ${core_src})
 
-target_link_libraries(Core z)
+find_package(SDL2 REQUIRED)
+include_directories(${SDL2_INCLUDE_DIRS})
+target_link_libraries(Core z ${SDL2_LIBRARIES})

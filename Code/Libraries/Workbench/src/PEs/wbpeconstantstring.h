@@ -3,20 +3,19 @@
 
 #include "wbpe.h"
 
-class WBPEConstantString : public WBPE {
- public:
-  WBPEConstantString();
-  virtual ~WBPEConstantString();
+class WBPEConstantString : public WBPE
+{
+public:
+	WBPEConstantString();
+	virtual ~WBPEConstantString();
 
-  DEFINE_WBPE_FACTORY(ConstantString);
+	DEFINE_WBPE_FACTORY( ConstantString );
 
-  virtual void InitializeFromDefinition(const SimpleString& DefinitionName);
-  virtual void Evaluate(
-      const WBParamEvaluator::SPEContext& Context,
-      WBParamEvaluator::SEvaluatedParam& EvaluatedParam) const;
+	virtual void	InitializeFromDefinition( const SimpleString& DefinitionName );
+	virtual void	Evaluate( const WBParamEvaluator::SPEContext& Context, WBParamEvaluator::SEvaluatedParam& EvaluatedParam ) const;
 
- private:
-  SimpleString m_Value;
+private:
+	SimpleString	m_Value;
 };
 
-#endif  // WBPECONSTANTSTRING_H
+#endif // WBPECONSTANTSTRING_H

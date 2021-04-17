@@ -3,14 +3,15 @@
 
 #include "rodinbtnodecompositesingular.h"
 
-class RodinBTNodeSequence : public RodinBTNodeCompositeSingular {
- public:
-  RodinBTNodeSequence();
-  virtual ~RodinBTNodeSequence();
+class RodinBTNodeSequence : public RodinBTNodeCompositeSingular
+{
+public:
+	RodinBTNodeSequence();
+	virtual ~RodinBTNodeSequence();
 
-  DEFINE_RODINBTNODE_FACTORY(Sequence);
+	DEFINE_RODINBTNODE_FACTORY( Sequence );
 
-  virtual ETickStatus Tick(float DeltaTime);
+	virtual ETickStatus Tick( const float DeltaTime );
 };
 
-#endif  // RODINBTNODESEQUENCE_H
+#endif // RODINBTNODESEQUENCE_H

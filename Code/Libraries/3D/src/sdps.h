@@ -4,6 +4,6 @@
 
 #else
 
-ADDSDPFACTORY(Base);
+ADDSDPFACTORY( Base );
 
 #endif

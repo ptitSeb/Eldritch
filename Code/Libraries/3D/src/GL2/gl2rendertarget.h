@@ -3,37 +3,50 @@
 
 #include "irendertarget.h"
 #include "gl2.h"
+#include "array.h"
 
-class GL2RenderTarget : public IRenderTarget {
- public:
-  GL2RenderTarget();
-  virtual ~GL2RenderTarget();
+class GL2RenderTarget : public IRenderTarget
+{
+public:
+	GL2RenderTarget();
+	virtual ~GL2RenderTarget();
 
-  virtual void Initialize(const SRenderTargetParams& Params);
+	virtual void		Initialize( const SRenderTargetParams& Params );
 
-  virtual void Release();
-  virtual void Reset();
+	virtual void		Release();
+	virtual void		Reset();
 
-  virtual uint GetWidth() { return m_Width; }
-  virtual uint GetHeight() { return m_Height; }
+	virtual uint		GetWidth() { return m_Width; }
+	virtual uint		GetHeight() { return m_Height; }
+	virtual uint		GetNumSurfaces() { return m_ColorTextureObjects.Size(); }
 
-  virtual void* GetHandle();
-  virtual void* GetColorRenderTargetHandle();
-  virtual void* GetDepthStencilRenderTargetHandle();
-  virtual ITexture* GetColorTextureHandle();
-  virtual ITexture* GetDepthStencilTextureHandle();
+	virtual void*		GetHandle();
+	virtual void*		GetColorRenderTargetHandle( const uint Index );
+	virtual void*		GetDepthStencilRenderTargetHandle();
+	virtual ITexture*	GetColorTextureHandle( const uint Index );
 
- private:
-  GLuint m_FrameBufferObject;
-  GLuint m_ColorTextureObject;
-  ITexture* m_ColorTexture;
-  GLuint m_DepthStencilRenderBufferObject;
-#if defined(PANDORA) || defined(__amigaos4__)
-  GLuint m_StencilRenderBufferObject;
+	virtual void		AttachColorFrom( IRenderTarget* const pRenderTarget, const uint Index );
+	virtual void		AttachDepthStencilFrom( IRenderTarget* const pRenderTarget );
+	virtual void		FinishAttach();
+
+	static GLenum		GetGLFormat( const ERenderTargetFormat Format );
+
+private:
+#ifndef HAVE_GLES
+	void				CreateFBO();
 #endif
 
-  uint m_Width;
-  uint m_Height;
+	GLuint				m_FrameBufferObject;
+	Array<GLuint>		m_ColorTextureObjects;
+	Array<ITexture*>	m_ColorTextures;
+	GLuint				m_DepthStencilRenderBufferObject;
+#if defined(PANDORA) || defined(__amigaos4__)
+	GLuint				m_StencilRenderBufferObject;
+#endif
+	uint				m_Width;
+	uint				m_Height;
+
+	bool				m_IsChild;	// Doesn't own its textures
 };
 
-#endif  // GL2RENDERTARGET_H
+#endif // GL2RENDERTARGET_H

@@ -3,20 +3,21 @@
 
 #include "rodinbtnodedecorator.h"
 
-class RodinBTNodeLoop : public RodinBTNodeDecorator {
- public:
-  RodinBTNodeLoop();
-  virtual ~RodinBTNodeLoop();
+class RodinBTNodeLoop : public RodinBTNodeDecorator
+{
+public:
+	RodinBTNodeLoop();
+	virtual ~RodinBTNodeLoop();
 
-  DEFINE_RODINBTNODE_FACTORY(Loop);
+	DEFINE_RODINBTNODE_FACTORY( Loop );
 
-  virtual void InitializeFromDefinition(const SimpleString& DefinitionName);
-  virtual ETickStatus Tick(float DeltaTime);
+	virtual void		InitializeFromDefinition( const SimpleString& DefinitionName );
+	virtual ETickStatus Tick( const float DeltaTime );
 
- protected:
-  bool m_CanFail;
-  bool m_CanSucceed;
-  float m_LastTickTime;
+protected:
+	bool				m_CanFail;
+	bool				m_CanSucceed;
+	float				m_LastTickTime;
 };
 
-#endif  // RODINBTNODELOOP_H
+#endif // RODINBTNODELOOP_H

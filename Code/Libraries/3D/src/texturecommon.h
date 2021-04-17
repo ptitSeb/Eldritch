@@ -3,42 +3,61 @@
 
 #include "itexture.h"
 #include "3d.h"
+#include "array.h"
 
 class IDataStream;
 
-class TextureCommon : public ITexture {
- public:
-  TextureCommon();
-  virtual ~TextureCommon();
+typedef Array<byte>			TTextureMip;
+typedef Array<TTextureMip>	TTextureMipChain;
 
-  virtual uint GetWidth() const { return m_Width; }
-  virtual uint GetHeight() const { return m_Height; }
-
-  void Initialize(const char* const Filename);
-
- protected:
-  int CountMipLevels();
-
-  void InitializeFromFile(const char* const Filename, byte*& OutARGBImage);
-  void LoadBMP(const IDataStream& Stream, int& Width, int& Height,
-               byte*& ARGBImage);
-  void LoadTGA(const IDataStream& Stream, int& Width, int& Height,
-               byte*& ARGBImage);
-
-  virtual void CreateTexture(byte* const ARGBImage) = 0;
-  virtual void CreateTextureFromDDS(const IDataStream& Stream) = 0;
-
-  unsigned char* ConvertRGBtoARGB(int Width, int Height, unsigned char* Image);
-  unsigned char* MakeMip(int Width, int Height, int& MipWidth, int& MipHeight,
-                         unsigned char* Image);  // Makes the next smaller mip
-                                                 // for the given
-                                                 // texture--delete manually
-                                                 // after use!
-  unsigned char* MakeDebugMip(int MipLevel, int Width, int Height,
-                              int& MipWidth, int& MipHeight);
-
-  uint m_Width;
-  uint m_Height;
+enum EImageFormat
+{
+	EIF_Unknown,
+	EIF_ARGB8,
+	EIF_ARGB32F,
+	EIF_DXT1,
+	EIF_DXT3,
+	EIF_DXT5,
 };
 
-#endif  // TEXTURECOMMON_H
+struct STextureData
+{
+	STextureData()
+	:	m_Width( 0 )
+	,	m_Height( 0 )
+	,	m_Format( EIF_Unknown )
+	,	m_MipChain()
+	{
+	}
+
+	uint				m_Width;
+	uint				m_Height;
+	EImageFormat		m_Format;
+	TTextureMipChain	m_MipChain;
+};
+
+class TextureCommon : public ITexture
+{
+public:
+	TextureCommon();
+	virtual ~TextureCommon();
+
+	virtual bool	IsCubemap() const { return false; }
+
+	// NoMips is just a hint; DXT images may already have mips, and those will be loaded
+	void			Initialize( const SimpleString& Filename, const bool NoMips );
+
+	// Static + public for reuse in cubemap code
+	static uint		StaticCountMipLevels( const uint Width, const uint Height );
+	static void		StaticMakeMip( STextureData& OutTextureData, const uint MipLevel );
+	static void		StaticLoadBMP( const IDataStream& Stream, STextureData& OutTextureData, const bool NoMips );
+	static void		StaticLoadTGA( const IDataStream& Stream, STextureData& OutTextureData, const bool NoMips );
+
+	static void		StaticSaveTGA( const IDataStream& Stream, const STextureData& TextureData );
+
+protected:
+	virtual void	LoadDDS( const IDataStream& Stream, STextureData& OutTextureData ) = 0;
+	virtual void	CreateTexture( const STextureData& TextureData ) = 0;
+};
+
+#endif // TEXTURECOMMON_H

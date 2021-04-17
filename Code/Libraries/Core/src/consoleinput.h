@@ -1,41 +1,41 @@
 #ifndef CONSOLEINPUT_H
 #define CONSOLEINPUT_H
 
-// This just grabs the console cursor location. Everything else should use my
-// existing input classes.
+// This just grabs the console cursor location. Everything else should use my existing input classes.
 
 #include "simplestring.h"
 
 #include <Windows.h>
 
-typedef bool (*ConsoleInputHandlerCallback)(uint);
+typedef bool ( *ConsoleInputHandlerCallback )( uint );
 
-class ConsoleInput {
- public:
-  ConsoleInput();
-  ~ConsoleInput();
+class ConsoleInput
+{
+public:
+	ConsoleInput();
+	~ConsoleInput();
 
-  void Tick();
+	void	Tick();
 
-  int GetCursorX();
-  int GetCursorY();
+	int		GetCursorX();
+	int		GetCursorY();
 
-  bool HasFocus();
+	bool	HasFocus();
 
-  SimpleString GetUserInput() const;
+	SimpleString	GetUserInput() const;
 
-  static BOOL WINAPI ConsoleHandler(DWORD dwCtrlType);
-  static void SetHandlerCallback(ConsoleInputHandlerCallback NewCallback);
+	static BOOL WINAPI ConsoleHandler( DWORD dwCtrlType );
+	static void SetHandlerCallback( ConsoleInputHandlerCallback NewCallback );
 
- private:
-  HANDLE m_hConsoleInput;
+private:
+	HANDLE	m_hConsoleInput;
 
-  int m_CursorX;
-  int m_CursorY;
+	int		m_CursorX;
+	int		m_CursorY;
 
-  bool m_HasFocus;
+	bool	m_HasFocus;
 
-  static ConsoleInputHandlerCallback m_HandlerCallback;
+	static ConsoleInputHandlerCallback m_HandlerCallback;
 };
 
-#endif  // CONSOLEINPUT_H
+#endif // CONSOLEINPUT_H

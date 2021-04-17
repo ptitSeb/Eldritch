@@ -2,43 +2,61 @@
 #include "uimanagerframework.h"
 #include "framework3d.h"
 
-UIManagerFramework::UIManagerFramework(Framework3D* pFramework)
-    : m_Framework(pFramework) {}
-
-UIManagerFramework::~UIManagerFramework() {}
-
-/*virtual*/ Window* UIManagerFramework::GetWindow() const {
-  return m_Framework->GetWindow();
+UIManagerFramework::UIManagerFramework( Framework3D* pFramework )
+:	m_Framework( pFramework )
+{
 }
 
-/*virtual*/ Keyboard* UIManagerFramework::GetKeyboard() const {
-  return m_Framework->GetKeyboard();
+UIManagerFramework::~UIManagerFramework()
+{
 }
 
-/*virtual*/ Mouse* UIManagerFramework::GetMouse() const {
-  return m_Framework->GetMouse();
+/*virtual*/ Window* UIManagerFramework::GetWindow() const
+{
+	return m_Framework->GetWindow();
 }
 
-/*virtual*/ IUIInputMap* UIManagerFramework::GetUIInputMap() const {
-  return m_Framework->GetUIInputMap();
+/*virtual*/ InputSystem* UIManagerFramework::GetInputSystem() const
+{
+	return m_Framework->GetInputSystem();
 }
 
-/*virtual*/ Clock* UIManagerFramework::GetClock() const {
-  return m_Framework->GetClock();
+/*virtual*/ Keyboard* UIManagerFramework::GetKeyboard() const
+{
+	return m_Framework->GetKeyboard();
 }
 
-/*virtual*/ Display* UIManagerFramework::GetDisplay() const {
-  return m_Framework->GetDisplay();
+/*virtual*/ Mouse* UIManagerFramework::GetMouse() const
+{
+	return m_Framework->GetMouse();
 }
 
-/*virtual*/ IRenderer* UIManagerFramework::GetRenderer() const {
-  return m_Framework->GetRenderer();
+/*virtual*/ IUIInputMap* UIManagerFramework::GetUIInputMap() const
+{
+	return m_Framework->GetUIInputMap();
 }
 
-/*virtual*/ IAudioSystem* UIManagerFramework::GetAudioSystem() const {
-  return m_Framework->GetAudioSystem();
+/*virtual*/ Clock* UIManagerFramework::GetClock() const
+{
+	return m_Framework->GetClock();
 }
 
-/*virtual*/ LineBatcher* UIManagerFramework::GetLineBatcher() const {
-  return nullptr;
+/*virtual*/ Display* UIManagerFramework::GetDisplay() const
+{
+	return m_Framework->GetDisplay();
+}
+
+/*virtual*/ IRenderer* UIManagerFramework::GetRenderer() const
+{
+	return m_Framework->GetRenderer();
+}
+
+/*virtual*/ IAudioSystem* UIManagerFramework::GetAudioSystem() const
+{
+	return m_Framework->GetAudioSystem();
+}
+
+/*virtual*/ LineBatcher* UIManagerFramework::GetLineBatcher() const
+{
+	return NULL;
 }

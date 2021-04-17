@@ -4,36 +4,39 @@
 #include "Components/wbcomprodinblackboard.h"
 
 RodinBTNodeBlackboardWrite::RodinBTNodeBlackboardWrite()
-    : m_BlackboardKey(), m_ValuePE() {}
-
-RodinBTNodeBlackboardWrite::~RodinBTNodeBlackboardWrite() {}
-
-void RodinBTNodeBlackboardWrite::InitializeFromDefinition(
-    const SimpleString& DefinitionName) {
-  MAKEHASH(DefinitionName);
-
-  STATICHASH(BlackboardKey);
-  m_BlackboardKey = ConfigManager::GetHash(
-      sBlackboardKey, HashedString::NullString, sDefinitionName);
-
-  STATICHASH(ValuePE);
-  m_ValuePE.InitializeFromDefinition(
-      ConfigManager::GetString(sValuePE, "", sDefinitionName));
+:	m_BlackboardKey()
+,	m_ValuePE()
+{
 }
 
-RodinBTNode::ETickStatus RodinBTNodeBlackboardWrite::Tick(float DeltaTime) {
-  Unused(DeltaTime);
+RodinBTNodeBlackboardWrite::~RodinBTNodeBlackboardWrite()
+{
+}
 
-  WBEntity* const pEntity = GetEntity();
-  WBCompRodinBlackboard* const pBlackboard =
-      GET_WBCOMP(pEntity, RodinBlackboard);
-  ASSERT(pBlackboard);
+void RodinBTNodeBlackboardWrite::InitializeFromDefinition( const SimpleString& DefinitionName )
+{
+	MAKEHASH( DefinitionName );
 
-  WBParamEvaluator::SPEContext Context;
-  Context.m_Entity = pEntity;
+	STATICHASH( BlackboardKey );
+	m_BlackboardKey = ConfigManager::GetHash( sBlackboardKey, HashedString::NullString, sDefinitionName );
 
-  m_ValuePE.Evaluate(Context);
-  pBlackboard->Set(m_BlackboardKey, m_ValuePE);
+	STATICHASH( ValuePE );
+	m_ValuePE.InitializeFromDefinition( ConfigManager::GetString( sValuePE, "", sDefinitionName ) );
+}
 
-  return ETS_Success;
+RodinBTNode::ETickStatus RodinBTNodeBlackboardWrite::Tick( const float DeltaTime )
+{
+	Unused( DeltaTime );
+
+	WBEntity* const					pEntity			= GetEntity();
+	WBCompRodinBlackboard* const	pBlackboard	= GET_WBCOMP( pEntity, RodinBlackboard );
+	ASSERT( pBlackboard );
+
+	WBParamEvaluator::SPEContext Context;
+	Context.m_Entity = pEntity;
+
+	m_ValuePE.Evaluate( Context );
+	pBlackboard->Set( m_BlackboardKey, m_ValuePE );
+
+	return ETS_Success;
 }

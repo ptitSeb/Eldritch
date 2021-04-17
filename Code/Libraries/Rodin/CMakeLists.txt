@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.0)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -8,73 +8,40 @@ include_directories(../Workbench/src)
 include_directories(src)
 
 set(rodin_src
-src/Actions/wbactionrodinblackboardwrite.cpp
-src/Actions/wbactionrodinblackboardwrite.h
-src/BTNodes/rodinbtnodeblackboardwrite.cpp
-src/BTNodes/rodinbtnodeblackboardwrite.h
-src/BTNodes/rodinbtnodecastresult.cpp
-src/BTNodes/rodinbtnodecastresult.h
-src/BTNodes/rodinbtnodecomposite.cpp
-src/BTNodes/rodinbtnodecomposite.h
-src/BTNodes/rodinbtnodecompositesingular.cpp
-src/BTNodes/rodinbtnodecompositesingular.h
-src/BTNodes/rodinbtnodeconditionpe.cpp
-src/BTNodes/rodinbtnodeconditionpe.h
-src/BTNodes/rodinbtnodedecorator.cpp
-src/BTNodes/rodinbtnodedecorator.h
-src/BTNodes/rodinbtnodelog.cpp
-src/BTNodes/rodinbtnodelog.h
-src/BTNodes/rodinbtnodelookup.cpp
-src/BTNodes/rodinbtnodelookup.h
-src/BTNodes/rodinbtnodeloop.cpp
-src/BTNodes/rodinbtnodeloop.h
-src/BTNodes/rodinbtnodenull.cpp
-src/BTNodes/rodinbtnodenull.h
-src/BTNodes/rodinbtnodeparallel.cpp
-src/BTNodes/rodinbtnodeparallel.h
-src/BTNodes/rodinbtnodeplayactions.cpp
-src/BTNodes/rodinbtnodeplayactions.h
-src/BTNodes/rodinbtnodeselector.cpp
-src/BTNodes/rodinbtnodeselector.h
-src/BTNodes/rodinbtnodesendevent.cpp
-src/BTNodes/rodinbtnodesendevent.h
-src/BTNodes/rodinbtnodesequence.cpp
-src/BTNodes/rodinbtnodesequence.h
-src/BTNodes/rodinbtnodesleep.cpp
-src/BTNodes/rodinbtnodesleep.h
-src/BTNodes/rodinbtnodetimeout.cpp
-src/BTNodes/rodinbtnodetimeout.h
-src/BTNodes/rodinbtnodeuseresource.cpp
-src/BTNodes/rodinbtnodeuseresource.h
-src/BTNodes/rodinbtnodeusestatmod.cpp
-src/BTNodes/rodinbtnodeusestatmod.h
-src/BTNodes/rodinbtnodewait.cpp
-src/BTNodes/rodinbtnodewait.h
-src/BTNodes/rodinbtnodewaitforevent.cpp
-src/BTNodes/rodinbtnodewaitforevent.h
-src/Components/wbcomprodinbehaviortree.cpp
-src/Components/wbcomprodinbehaviortree.h
-src/Components/wbcomprodinblackboard.cpp
-src/Components/wbcomprodinblackboard.h
-src/Components/wbcomprodinknowledge.cpp
-src/Components/wbcomprodinknowledge.h
-src/Components/wbcomprodinresourcemap.cpp
-src/Components/wbcomprodinresourcemap.h
-src/PEs/wbperodinblackboardget.cpp
-src/PEs/wbperodinblackboardget.h
-src/PEs/wbperodingetlastknownlocation.cpp
-src/PEs/wbperodingetlastknownlocation.h
-src/PEs/wbperodingetlastknowntime.cpp
-src/PEs/wbperodingetlastknowntime.h
-src/irodinresourceuser.h
-src/rodinbtnode.cpp
-src/rodinbtnode.h
-src/rodinbtnodefactory.cpp
-src/rodinbtnodefactory.h
-src/rodinbtnodes.h
-src/rodinwbactions.h
-src/rodinwbcomponents.h
-src/rodinwbpes.h
+	src/Actions/wbactionrodinblackboardwrite.cpp
+	src/BTNodes/rodinbtnodeactiondecorator.cpp
+	src/BTNodes/rodinbtnodeblackboardwrite.cpp
+	src/BTNodes/rodinbtnodecastresult.cpp
+	src/BTNodes/rodinbtnodecomposite.cpp
+	src/BTNodes/rodinbtnodecompositesingular.cpp
+	src/BTNodes/rodinbtnodeconditiontimeout.cpp
+	src/BTNodes/rodinbtnodeconditionpe.cpp
+	src/BTNodes/rodinbtnodedecorator.cpp
+	src/BTNodes/rodinbtnodelog.cpp
+	src/BTNodes/rodinbtnodelookup.cpp
+	src/BTNodes/rodinbtnodeloop.cpp
+	src/BTNodes/rodinbtnodenull.cpp
+	src/BTNodes/rodinbtnodeparallel.cpp
+	src/BTNodes/rodinbtnodeplayactions.cpp
+	src/BTNodes/rodinbtnodeselector.cpp
+	src/BTNodes/rodinbtnodesendevent.cpp
+	src/BTNodes/rodinbtnodesequence.cpp
+	src/BTNodes/rodinbtnodesleep.cpp
+	src/BTNodes/rodinbtnodetimeout.cpp
+	src/BTNodes/rodinbtnodeuseresource.cpp
+	src/BTNodes/rodinbtnodeusestatmod.cpp
+	src/BTNodes/rodinbtnodewait.cpp
+	src/BTNodes/rodinbtnodewaitforevent.cpp
+	src/Components/wbcomprodinbehaviortree.cpp
+	src/Components/wbcomprodinblackboard.cpp
+	src/Components/wbcomprodinknowledge.cpp
+	src/Components/wbcomprodinresourcemap.cpp
+	src/PEs/wbperodinblackboardget.cpp
+	src/PEs/wbperodingetknowledge.cpp
+	src/PEs/wbperodingetlastknownlocation.cpp
+	src/PEs/wbperodingetlastknowntime.cpp
+	src/rodinbtnode.cpp
+	src/rodinbtnodefactory.cpp
 )
 
 add_library(Rodin ${rodin_src})

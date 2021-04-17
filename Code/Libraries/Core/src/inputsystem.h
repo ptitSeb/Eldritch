@@ -1,8 +1,7 @@
 #ifndef INPUTSYSTEM_H
 #define INPUTSYSTEM_H
 
-// Data-driven input mapping system, subsumes and replaces InputMap for new
-// projects.
+// Data-driven input mapping system, subsumes and replaces InputMap for new projects.
 
 #include "icontroller.h"
 #include "hashedstring.h"
@@ -18,276 +17,338 @@ class XInputController;
 class IInputSystemObserver;
 class Clock;
 
-class InputSystem {
- public:
-  InputSystem();
-  ~InputSystem();
+#define INPUT_NONE		0x0
+#define INPUT_ISLOW		0x0
+#define INPUT_ISHIGH	0x1
+#define INPUT_ONRISE	0x2
+#define INPUT_ONHOLD	0x4
+#define INPUT_ONFALL	0x8
+#define INPUT_TEST( i, f ) ( ( ( i ) & ( f ) ) == ( f ) )
 
-  void Initialize(const SimpleString& DefinitionName);
-  void InitializeSignalMaps();
+class InputSystem
+{
+public:
+	InputSystem();
+	~InputSystem();
 
-  void SetKeyboard(Keyboard* const pKeyboard) { m_Keyboard = pKeyboard; }
-  void SetMouse(Mouse* const pMouse) { m_Mouse = pMouse; }
-  void SetController(XInputController* const pController) {
-    m_Controller = pController;
-  }
-  void SetClock(Clock* const pClock) { m_Clock = pClock; }
+	void	Initialize( const SimpleString& DefinitionName );
+	void	InitializeSignalMaps();
 
-  void Tick();
+	void	SetKeyboard( Keyboard* const pKeyboard )				{ m_Keyboard = pKeyboard; }
+	void	SetMouse( Mouse* const pMouse )							{ m_Mouse = pMouse; }
+	void	SetController( XInputController* const pController )	{ m_Controller = pController; }
+	void	SetClock( Clock* const pClock )							{ m_Clock = pClock; }
 
-  bool IsBinding() const { return m_Binding; }
+	Keyboard*			GetKeyboard() const		{ return m_Keyboard; }
+	Mouse*				GetMouse() const		{ return m_Mouse; }
+	XInputController*	GetController() const	{ return m_Controller; }
+	Clock*				GetClock() const		{ return m_Clock; }
 
-  void PushContext(const HashedString& ContextName);
-  void PopContext(const HashedString& ContextName);  // Removes the topmost
-                                                     // instance of context
-                                                     // regardless of position
-                                                     // in stack
-  void PopAllContexts();
-  uint GetNumActiveContexts() { return m_ActiveInputContexts.Size(); }
+	void	SetRelativeFrameTime( const float RelativeFrameTime ) { m_RcpRelativeFrameTime = ( RelativeFrameTime > 0.0f ) ? ( 1.0f / RelativeFrameTime ) : 1.0f; }
 
-  bool IsSuppressed(const HashedString& Input) const;
+	void	Tick();
 
-  bool IsHigh(const HashedString& Signal) const;
-  bool IsLow(const HashedString& Signal) const;
-  bool OnRise(const HashedString& Signal) const;
-  bool OnHold(const HashedString& Signal) const;
-  bool OnFall(const HashedString& Signal) const;
+	void	UpdateIsUsingControllerExclusively();
 
-  enum EInputEdge {
-    EIE_None,
-    EIE_OnRise,
-    EIE_OnHold,
-    EIE_OnFall,
-  };
+	bool	IsBinding() const { return m_Binding; }
 
-  // Convenience function for things that deal with rise, hold, and fall.
-  int OnEdge(const HashedString& Signal) const;
+	void	PushContext( const HashedString& ContextName );
+	void	PopContext( const HashedString& ContextName );	// Removes the topmost instance of context regardless of position in stack
+	void	PopAllContexts();
+	uint	GetNumActiveContexts() { return m_ActiveInputContexts.Size(); }
 
-  float GetPosition(const HashedString& Axis) const;
-  float GetVelocity(const HashedString& Axis) const;
+	bool	IsSuppressed( const HashedString& Input ) const;
 
-  void SetMouseScale(const HashedString& Axis, const float Scale);
-  void SetMouseInvert(const HashedString& Axis, const bool Invert);
-  void SetControllerScale(const HashedString& Axis, const float Scale);
-  void SetControllerPower(const HashedString& Axis, const float Power);
-  void SetControllerInvert(const HashedString& Axis, const bool Invert);
+	bool	IsHigh( const HashedString& Signal ) const;
+	bool	IsLow( const HashedString& Signal ) const;
+	bool	OnRise( const HashedString& Signal ) const;
+	bool	OnHold( const HashedString& Signal ) const;
+	bool	OnFall( const HashedString& Signal ) const;
 
-  bool GetMouseInvert(const HashedString& Axis);
-  bool GetControllerInvert(const HashedString& Axis);
+	// Convenience function for things that deal with any input (high, rise, hold, or fall).
+	uint	OnInput( const HashedString& Signal ) const;
 
-  void BindInput(const SimpleString& InputName);
-  void WriteConfigBinds(const IDataStream& Stream);
+	float	GetPosition( const HashedString& Axis ) const;
+	float	GetVelocity( const HashedString& Axis ) const;
 
-  const Array<SimpleString>& GetExposedInputs() const {
-    return m_ExposedInputs;
-  }
+	void	SetMouseScale( const HashedString& Axis, const float Scale );
+	void	SetMouseInvert( const HashedString& Axis, const bool Invert );
+	void	SetControllerScale( const HashedString& Axis, const float Scale );
+	void	SetControllerPower( const HashedString& Axis, const float Power );
+	void	SetControllerInvert( const HashedString& Axis, const bool Invert );
 
-  uint GetBoundKeyboardSignal(
-      const HashedString& Input) const;  // E.g. "Jump" -> Keyboard::EB_Space
-  uint GetBoundMouseSignal(const HashedString& Input) const;
-  uint GetBoundControllerSignal(const HashedString& Input) const;
-  SimpleString GetInputBoundToKeyboard(
-      const uint Signal) const;  // E.g. Keyboard::EB_Space -> "Jump"
-  SimpleString GetInputBoundToMouse(const uint Signal) const;
-  SimpleString GetInputBoundToController(const uint Signal) const;
+	bool	GetMouseInvert( const HashedString& Axis );
+	bool	GetControllerInvert( const HashedString& Axis );
 
-  uint GetKeyboardSignal(
-      const HashedString& Name) const;  // E.g. "Space" -> Keyboard::EB_Space
-  uint GetMouseSignal(const HashedString& Name) const;
-  uint GetControllerSignal(const HashedString& Name) const;
-  const SimpleString& GetKeyboardSignalName(
-      const uint Signal) const;  // E.g. Keyboard::EB_Space -> "Space"
-  const SimpleString& GetMouseSignalName(const uint Signal) const;
-  const SimpleString& GetControllerSignalName(const uint Signal) const;
+	void	BindInput( const SimpleString& InputName );
+	void	WriteConfigBinds( const IDataStream& Stream );
 
-  uint GetBoundMouseAnalogSignal(const HashedString& Input) const;
-  uint GetBoundControllerAnalogSignal(const HashedString& Input) const;
-  SimpleString GetAnalogInputBoundToMouse(const uint Signal) const;
-  SimpleString GetAnalogInputBoundToController(const uint Signal) const;
+	const Array<SimpleString>&	GetExposedInputs() const { return m_ExposedInputs; }
 
-  uint GetMouseAnalogSignal(const HashedString& Name) const;
-  uint GetControllerAnalogSignal(const HashedString& Name) const;
-  const SimpleString& GetMouseAnalogSignalName(const uint Signal) const;
-  const SimpleString& GetControllerAnalogSignalName(const uint Signal) const;
+	uint					GetBoundKeyboardSignal( const HashedString& Input ) const;		// E.g. "Jump" -> Keyboard::EB_Space
+	uint					GetBoundMouseSignal( const HashedString& Input ) const;
+	uint					GetBoundControllerSignal( const HashedString& Input ) const;
+	SimpleString			GetInputBoundToKeyboard( const uint Signal ) const;				// E.g. Keyboard::EB_Space -> "Jump"
+	SimpleString			GetInputBoundToMouse( const uint Signal ) const;
+	SimpleString			GetInputBoundToController( const uint Signal ) const;
 
-  void AddInputSystemObserver(IInputSystemObserver* const pObserver);
-  void RemoveInputSystemObserver(IInputSystemObserver* const pObserver);
+	uint					GetKeyboardSignal( const HashedString& Name ) const;			// E.g. "Space" -> Keyboard::EB_Space
+	uint					GetMouseSignal( const HashedString& Name ) const;
+	uint					GetControllerSignal( const HashedString& Name ) const;
+	const SimpleString&		GetKeyboardSignalName( const uint Signal ) const;				// E.g. Keyboard::EB_Space -> "Space"
+	const SimpleString&		GetMouseSignalName( const uint Signal ) const;
+	const SimpleString&		GetControllerSignalName( const uint Signal ) const;
+	const SimpleString&		GetPreferredControllerSignalName( const SimpleString& Name ) const;	// E.g. "xA" -> "ps_X"
 
- private:
-  friend class InputContext;
-  struct SControllerGear;
-  struct SAnalogAdjustment;
+	uint					GetBoundMouseAnalogSignal( const HashedString& Input ) const;
+	uint					GetBoundControllerAnalogSignal( const HashedString& Input ) const;
+	SimpleString			GetAnalogInputBoundToMouse( const uint Signal ) const;
+	SimpleString			GetAnalogInputBoundToController( const uint Signal ) const;
 
-  HashedString GetContextualInput(const HashedString& Input) const;
+	uint					GetMouseAnalogSignal( const HashedString& Name ) const;
+	uint					GetControllerAnalogSignal( const HashedString& Name ) const;
+	const SimpleString&		GetMouseAnalogSignalName( const uint Signal ) const;
+	const SimpleString&		GetControllerAnalogSignalName( const uint Signal ) const;
 
-  void UpdateBindingsFromConfig();
+	void					AddInputSystemObserver( IInputSystemObserver* const pObserver );
+	void					RemoveInputSystemObserver( IInputSystemObserver* const pObserver );
 
-  void TickBinding();
+	void					CycleControllerType();
+	bool					IsUsingControllerExclusively() const { return m_IsUsingControllerExclusively; }
 
-  // Return true if binding input was bound to signal
-  bool TryKeyboardBind(const uint Signal);
-  bool TryMouseBind(const uint KeyboardSignal, const uint MouseSignal);
-  bool TryControllerBind(const uint Signal);
-  bool TryMouseBindAnalog(const uint Signal);
-  bool TryControllerBindAnalog(const uint Signal);
+	// Made public so this can be called when resetting everything
+	void					UpdateBindingsFromConfig();
 
-  bool CanBindToKeyboard(const HashedString& Input) const;
-  bool CanBindToMouse(const HashedString& Input) const;
-  bool CanBindToController(const HashedString& Input) const;
-  bool CanBindToMouseAnalog(const HashedString& Input) const;
-  bool CanBindToControllerAnalog(const HashedString& Input) const;
+	void					SetControllerType( const HashedString& ControllerType );
 
-  void NotifyObserversOnInputContextsChanged() const;
+private:
+	friend class InputContext;
+	struct SControllerGear;
+	struct SAnalogAdjustment;
+	struct SDisplayInput;
 
-  float GetTime() const;
+	HashedString		GetContextualInput( const HashedString& Input ) const;			// Get the current contextual input for a base input, e.g., Jump -> HackUse
 
-  void TickControllerGear(SControllerGear& Gear, const float InputPosition);
-  float ModifyControllerInputPosition(const float InputPosition,
-                                      const SAnalogAdjustment& Adjustment);
+	void				TickBinding();
 
-  Keyboard* m_Keyboard;
-  Mouse* m_Mouse;
-  XInputController* m_Controller;
-  Clock* m_Clock;
+	// Return true if binding input was bound to signal
+	bool				TryKeyboardBind( const uint Signal );
+	bool				TryMouseBind( const uint KeyboardSignal, const uint MouseSignal );
+	bool				TryControllerBind( const uint Signal );
+	bool				TryMouseBindAnalog( const uint Signal );
+	bool				TryControllerBindAnalog( const uint Signal );
 
-  // Which section of config file each device reads/writes in
-  SimpleString m_KeyboardConfigContext;
-  SimpleString m_MouseConfigContext;
-  SimpleString m_ControllerConfigContext;
+	bool				CanBindToKeyboard( const HashedString& Input ) const;
+	bool				CanBindToMouse( const HashedString& Input ) const;
+	bool				CanBindToController( const HashedString& Input ) const;
+	bool				CanBindToMouseAnalog( const HashedString& Input ) const;
+	bool				CanBindToControllerAnalog( const HashedString& Input ) const;
 
-  struct SInput {
-    HashedString m_Hash;
-    SimpleString m_String;
-  };
+	void				NotifyObserversOnInputContextsChanged() const;
 
-  struct SAnalogInput {
-    HashedString m_Hash;
-    SimpleString m_String;
-    bool m_Clamp;
-    float m_ClampMin;
-    float m_ClampMax;
-    // TODO: Maybe provide southpaw/legacy options as an axial inversion in
-    // here?
-  };
+	float				GetTime() const;
 
-  struct SAnalogAdjustment {
-    SAnalogAdjustment()
-        : m_ScaleFactor(1.0f), m_PowerFactor(1.0f), m_InvertFactor(false) {}
+	void				TickControllerGear( SControllerGear& Gear, const float InputPosition );
+	float				ModifyControllerInputPosition( const float InputPosition, const SAnalogAdjustment& Adjustment );
 
-    float m_ScaleFactor;
-    float m_PowerFactor;
-    bool m_InvertFactor;
-  };
+	void				PublishInputStrings();
+	void				PublishControllerGlyphString( const SimpleString& Input );
+	void				PublishInputString( const SimpleString& Input );
+	void				PublishDisplayInputString( const SDisplayInput& DisplayInput );
 
-  // Array of named inputs (e.g., "Jump", "Fire")
-  Array<SInput> m_Inputs;
-  Array<SAnalogInput> m_AnalogInputs;
-  Array<SimpleString>
-      m_ExposedInputs;  // For player-facing stuff like the bind screen
+	Keyboard*			m_Keyboard;
+	Mouse*				m_Mouse;
+	XInputController*	m_Controller;
+	Clock*				m_Clock;
 
-  // Input contexts to filter or redirect inputs (e.g., "Jump" remapped to
-  // "Fire")
-  Map<HashedString, InputContext*> m_InputContexts;
-  Array<InputContext*> m_ActiveInputContexts;
+	SimpleString		m_DefinitionName;
+	bool				m_IsUsingControllerExclusively;
 
-  // Map from input name to the device signals (e.g., "Jump" to space bar)
-  Map<HashedString, uint> m_KeyboardBindings;
-  Map<HashedString, uint> m_MouseBindings;
-  Map<HashedString, uint> m_ControllerBindings;
-  Map<HashedString, uint> m_MouseAnalogBindings;  // Analog bindings need to be
-                                                  // separate only because the
-                                                  // devices
-  Map<HashedString, uint> m_ControllerAnalogBindings;  // have different
-                                                       // enumerations for bool
-                                                       // and float signals.
+	// Which section of config file each device reads/writes in
+	SimpleString		m_KeyboardContext;
+	SimpleString		m_MouseContext;
+	SimpleString		m_ControllerContext;
+	SimpleString		m_ControllerTypeContext;	// For storing the input-to-glyph map (e.g., "Jump" to "ps_X")
 
-  Map<HashedString, SAnalogAdjustment> m_MouseAdjustments;
-  Map<HashedString, SAnalogAdjustment> m_ControllerAdjustments;
+	// HACKHACK for mouse adjustment
+	float				m_RcpRelativeFrameTime;
 
-  // "Gear" in the car sense. Shifting between high and low speeds.
-  struct SControllerGear {
-    SControllerGear()
-        : m_HighGear(false),
-          m_Shifting(false),
-          m_HighGearScalar(1.0f),
-          m_HighGearThreshold(0.0f),
-          m_LowGearScalar(1.0f),
-          m_LowGearThreshold(0.0f),
-          m_HighGearShiftTime(0.0f),
-          m_LowGearShiftTime(0.0f),
-          m_ShiftStartTime(0.0f) {}
+	struct SInput
+	{
+		HashedString	m_Hash;
+		SimpleString	m_String;
+	};
 
-    bool m_HighGear;
-    bool m_Shifting;
-    float m_HighGearScalar;
-    float m_HighGearThreshold;
-    float m_LowGearScalar;
-    float m_LowGearThreshold;
-    float m_HighGearShiftTime;
-    float m_LowGearShiftTime;
-    float m_ShiftStartTime;
-  };
+	struct SAnalogInput
+	{
+		HashedString	m_Hash;
+		SimpleString	m_String;
+		bool			m_Clamp;
+		float			m_ClampMin;
+		float			m_ClampMax;
+		// TODO: Maybe provide southpaw/legacy options as an axial inversion in here?
+	};
 
-  Map<HashedString, SControllerGear> m_ControllerGears;
+	struct SAnalogAdjustment
+	{
+		SAnalogAdjustment()
+		:	m_ScaleFactor( 1.0f )
+		,	m_PowerFactor( 1.0f )
+		,	m_InvertFactor( false )
+		{
+		}
 
-  Set<HashedString> m_UnbindableKeyboardInputs;
-  Set<HashedString> m_UnbindableMouseInputs;
-  Set<HashedString> m_UnbindableControllerInputs;
-  Set<HashedString> m_UnbindableMouseAnalogInputs;
-  Set<HashedString> m_UnbindableControllerAnalogInputs;
+		float	m_ScaleFactor;
+		float	m_PowerFactor;
+		bool	m_InvertFactor;
+	};
 
-  // Map from key names to signals and back (e.g., "Space" <-> space bar)
-  Map<HashedString, uint> m_KeyboardMap;
-  Map<uint, SimpleString> m_ReverseKeyboardMap;
-  Map<HashedString, uint> m_MouseMap;
-  Map<uint, SimpleString> m_ReverseMouseMap;
-  Map<HashedString, uint> m_ControllerMap;
-  Map<uint, SimpleString> m_ReverseControllerMap;
-  Map<HashedString, uint> m_MouseAnalogMap;
-  Map<uint, SimpleString> m_ReverseMouseAnalogMap;
-  Map<HashedString, uint> m_ControllerAnalogMap;
-  Map<uint, SimpleString> m_ReverseControllerAnalogMap;
+	// HACKHACK for things that only need to be displayed (e.g. UI input prompts)
+	struct SDisplayInput
+	{
+		SDisplayInput()
+		:	m_Name()
+		,	m_KeyboardInput( 0 )
+		,	m_MouseInput( 0 )
+		,	m_ControllerInput( 0 )
+		{
+		}
 
-  float m_HoldTime;
+		SimpleString	m_Name;
+		uint			m_KeyboardInput;
+		uint			m_MouseInput;
+		uint			m_ControllerInput;
+	};
 
-  // Cached state of each high-level input.
-  // Instead of copying current to last state, just swap pointers each tick.
-  typedef Map<HashedString, bool> InputState;
-  InputState m_StateA;
-  InputState m_StateB;
-  InputState* m_CurrentState;
-  InputState* m_LastState;
+	// Array of named inputs (e.g., "Jump", "Fire")
+	Array<SInput>						m_Inputs;
+	Array<SAnalogInput>					m_AnalogInputs;
+	Array<SimpleString>					m_ExposedInputs;	// For player-facing stuff like the bind screen
+	Array<SDisplayInput>				m_DisplayInputs;	// HACKHACK for things that only need to be displayed (e.g. UI input prompts)
 
-  struct SHoldState {
-    SHoldState() : m_Held(false), m_WaitingForHold(false), m_RiseTime(0.0f) {}
+	// Input contexts to filter or redirect inputs (e.g., "Jump" remapped to "Fire")
+	Map<HashedString, InputContext*>	m_InputContexts;
+	Array<InputContext*>				m_ActiveInputContexts;
 
-    bool m_Held;
-    bool m_WaitingForHold;
-    float m_RiseTime;
-  };
+	// Map from input name to the device signals (e.g., "Jump" to space bar)
+	Map<HashedString, uint>				m_KeyboardBindings;
+	Map<HashedString, uint>				m_MouseBindings;
+	Map<HashedString, uint>				m_ControllerBindings;
+	Map<HashedString, uint>				m_MouseAnalogBindings;		// Analog bindings need to be separate only because the devices
+	Map<HashedString, uint>				m_ControllerAnalogBindings;	// have different enumerations for bool and float signals.
 
-  typedef Map<HashedString, SHoldState> HoldState;
-  HoldState m_HoldState;  // No need to double buffer this; and in fact, it
-                          // would cause problems!
+	Map<HashedString, SAnalogAdjustment>	m_MouseAdjustments;
+	Map<HashedString, SAnalogAdjustment>	m_ControllerAdjustments;
 
-  typedef Map<HashedString, float> AnalogInputState;
-  AnalogInputState m_AnalogStateA;
-  AnalogInputState m_AnalogStateB;
-  AnalogInputState* m_CurrentAnalogState;
-  AnalogInputState* m_LastAnalogState;
+	// See also GetPreferredControllerSignalName
+	typedef Map<HashedString, SimpleString>	TControllerType;	// Map from default to preferred signal name, e.g. "xA" -> "ps_X"
+	struct SControllerType
+	{
+		SControllerType()
+		:	m_Name()
+		,	m_Map()
+		{
+		}
 
-  // For run-time input binding
-  bool m_Binding;
-  bool m_BindingInputIsAnalog;
-  SimpleString m_BindingInput;
+		SimpleString	m_Name;
+		TControllerType	m_Map;
+	};
 
-  bool m_CanBindKeyboard;
-  bool m_CanBindMouse;
-  bool m_CanBindController;
-  bool m_CanBindMouseAnalog;
-  bool m_CanBindControllerAnalog;
+	Array<SControllerType>	m_ControllerTypes;	// Map from controller type name (e.g., "Controller_PS") to data
+	uint					m_ControllerType;	// Current preference
 
-  Array<IInputSystemObserver*> m_InputSystemObservers;
+	// "Gear" in the car sense. Shifting between high and low speeds.
+	struct SControllerGear
+	{
+		SControllerGear()
+		:	m_HighGear( false )
+		,	m_Shifting( false )
+		,	m_HighGearScalar( 1.0f )
+		,	m_HighGearThreshold( 0.0f )
+		,	m_LowGearScalar( 1.0f )
+		,	m_LowGearThreshold( 0.0f )
+		,	m_HighGearShiftTime( 0.0f )
+		,	m_LowGearShiftTime( 0.0f )
+		,	m_ShiftStartTime( 0.0f )
+		{
+		}
+
+		bool	m_HighGear;
+		bool	m_Shifting;
+		float	m_HighGearScalar;
+		float	m_HighGearThreshold;
+		float	m_LowGearScalar;
+		float	m_LowGearThreshold;
+		float	m_HighGearShiftTime;
+		float	m_LowGearShiftTime;
+		float	m_ShiftStartTime;
+	};
+
+	Map<HashedString, SControllerGear>	m_ControllerGears;
+
+	Set<HashedString>					m_UnbindableKeyboardInputs;
+	Set<HashedString>					m_UnbindableMouseInputs;
+	Set<HashedString>					m_UnbindableControllerInputs;
+	Set<HashedString>					m_UnbindableMouseAnalogInputs;
+	Set<HashedString>					m_UnbindableControllerAnalogInputs;
+
+	// Map from key names to signals and back (e.g., "Space" <-> space bar)
+	Map<HashedString, uint>				m_KeyboardMap;
+	Map<uint, SimpleString>				m_ReverseKeyboardMap;
+	Map<HashedString, uint>				m_MouseMap;
+	Map<uint, SimpleString>				m_ReverseMouseMap;
+	Map<HashedString, uint>				m_ControllerMap;
+	Map<uint, SimpleString>				m_ReverseControllerMap;
+	Map<HashedString, uint>				m_MouseAnalogMap;
+	Map<uint, SimpleString>				m_ReverseMouseAnalogMap;
+	Map<HashedString, uint>				m_ControllerAnalogMap;
+	Map<uint, SimpleString>				m_ReverseControllerAnalogMap;
+
+	float								m_HoldTime;
+
+	// Cached state of each high-level input.
+	// Instead of copying current to last state, just swap pointers each tick.
+	typedef Map<HashedString, bool> InputState;
+	InputState	m_StateA;
+	InputState	m_StateB;
+	InputState*	m_CurrentState;
+	InputState*	m_LastState;
+
+	struct SHoldState
+	{
+		SHoldState()
+		:	m_Held( false )
+		,	m_WaitingForHold( false )
+		,	m_RiseTime( 0.0f )
+		{
+		}
+
+		bool	m_Held;
+		bool	m_WaitingForHold;
+		float	m_RiseTime;
+	};
+
+	typedef Map<HashedString, SHoldState> HoldState;
+	HoldState	m_HoldState;	// No need to double buffer this; and in fact, it would cause problems!
+
+	typedef Map<HashedString, float> AnalogInputState;
+	AnalogInputState	m_AnalogStateA;
+	AnalogInputState	m_AnalogStateB;
+	AnalogInputState*	m_CurrentAnalogState;
+	AnalogInputState*	m_LastAnalogState;
+
+	// For run-time input binding
+	bool			m_Binding;
+	bool			m_BindingInputIsAnalog;
+	SimpleString	m_BindingInput;
+
+	bool			m_CanBindKeyboard;
+	bool			m_CanBindMouse;
+	bool			m_CanBindController;
+	bool			m_CanBindMouseAnalog;
+	bool			m_CanBindControllerAnalog;
+
+	Array<IInputSystemObserver*>	m_InputSystemObservers;
 };
 
-#endif  // INPUTSYSTEM_H
+#endif // INPUTSYSTEM_H

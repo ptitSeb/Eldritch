@@ -1,5 +1,8 @@
 #include "core.h"
 #include "audio.h"
-#include "openalaudiosystem.h"
+#include "soloudaudiosystem.h"
 
-IAudioSystem* CreateOpenALAudioSystem() { return new OpenALAudioSystem; }
+IAudioSystem* CreateSoLoudAudioSystem()
+{
+	return new SoLoudAudioSystem;
+}

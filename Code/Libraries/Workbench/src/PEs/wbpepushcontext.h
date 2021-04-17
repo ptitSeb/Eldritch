@@ -6,20 +6,19 @@
 
 #include "wbpeunaryop.h"
 
-class WBPEPushContext : public WBPEUnaryOp {
- public:
-  WBPEPushContext();
-  virtual ~WBPEPushContext();
+class WBPEPushContext : public WBPEUnaryOp
+{
+public:
+	WBPEPushContext();
+	virtual ~WBPEPushContext();
 
-  DEFINE_WBPE_FACTORY(PushContext);
+	DEFINE_WBPE_FACTORY( PushContext );
 
-  virtual void InitializeFromDefinition(const SimpleString& DefinitionName);
-  virtual void Evaluate(
-      const WBParamEvaluator::SPEContext& Context,
-      WBParamEvaluator::SEvaluatedParam& EvaluatedParam) const;
+	virtual void	InitializeFromDefinition( const SimpleString& DefinitionName );
+	virtual void	Evaluate( const WBParamEvaluator::SPEContext& Context, WBParamEvaluator::SEvaluatedParam& EvaluatedParam ) const;
 
- private:
-  WBPE* m_EntityPE;
+private:
+	WBPE*	m_EntityPE;
 };
 
-#endif  // WBPEPUSHCONTEXT_H
+#endif // WBPEPUSHCONTEXT_H

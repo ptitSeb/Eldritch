@@ -3,19 +3,20 @@
 
 #include "rodinbtnodedecorator.h"
 
-class RodinBTNodeUseStatMod : public RodinBTNodeDecorator {
- public:
-  RodinBTNodeUseStatMod();
-  virtual ~RodinBTNodeUseStatMod();
+class RodinBTNodeUseStatMod : public RodinBTNodeDecorator
+{
+public:
+	RodinBTNodeUseStatMod();
+	virtual ~RodinBTNodeUseStatMod();
 
-  DEFINE_RODINBTNODE_FACTORY(UseStatMod);
+	DEFINE_RODINBTNODE_FACTORY( UseStatMod );
 
-  virtual void InitializeFromDefinition(const SimpleString& DefinitionName);
-  virtual void OnStart();
-  virtual void OnFinish();
+	virtual void		InitializeFromDefinition( const SimpleString& DefinitionName );
+	virtual void		OnStart();
+	virtual void		OnFinish();
 
- protected:
-  HashedString m_StatModEvent;
+protected:
+	HashedString	m_StatModEvent;
 };
 
-#endif  // RODINBTNODEUSESTATMOD_H
+#endif // RODINBTNODEUSESTATMOD_H

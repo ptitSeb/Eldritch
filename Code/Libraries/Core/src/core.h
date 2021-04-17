@@ -4,40 +4,34 @@
 #include "versions.h"
 
 #if BUILD_WINDOWS
-// Requires Windows XP, needed for getting the console window, using
-// SwitchToThread, etc.
+// Requires Windows XP, needed for getting the console window, using SwitchToThread, etc.
 #define _WIN32_WINNT 0x0501
 #endif
 
 #if BUILD_WINDOWS
 #define FUNCTION_NAME __FUNCTION__
 #else
-#define FUNCTION_NAME \
-  "unknown function"  // __func__ exists but is a static variable instead of a
-                      // string literal, so usage will need to change.
+#define FUNCTION_NAME "unknown function"	// __func__ exists but is a static variable instead of a string literal, so usage will need to change.
 #endif
 
 #if BUILD_WINDOWS
-#define VSPRINTF_COUNT(fmt, args) _vscprintf(fmt, args)
-#define VSPRINTF(buf, len, fmt, args) vsprintf_s(buf, len, fmt, args)
-#define FOPEN(file, path, mode) fopen_s(&file, path, mode)
+#define VSPRINTF_COUNT( fmt, args )		_vscprintf( fmt, args )
+#define VSPRINTF( buf, len, fmt, args )	vsprintf_s( buf, len, fmt, args )
+#define FOPEN( file, path, mode )		fopen_s( &file, path, mode )
 #else
-#define VSPRINTF_COUNT(fmt, args) vsnprintf(NULL, 0, fmt, args)
-#define VSPRINTF(buf, len, fmt, args) vsnprintf(buf, len, fmt, args)
-#define FOPEN(file, path, mode) file = fopen(path, mode)
+#define VSPRINTF_COUNT( fmt, args )		vsnprintf( NULL, 0, fmt, args )
+#define VSPRINTF( buf, len, fmt, args )	vsnprintf( buf, len, fmt, args )
+#define FOPEN( file, path, mode )		file = fopen( path, mode )
 #endif
 
 #if !BUILD_WINDOWS
-#define memcpy_s(dst, size, src, count) \
-  memcpy(dst, src, count);              \
-  Unused(size)
-#define strcpy_s(dst, size, src) \
-  strcpy(dst, src);              \
-  Unused(size)
+#define memcpy_s( dst, size, src, count )	memcpy( dst, src, count );	Unused( size )
+#define strcpy_s( dst, size, src )			strcpy( dst, src );			Unused( size )
 #endif
 
 #if BUILD_LINUX
-// Used for raise( SIGINT ), which wasn't even working for me. :p
+// Used for raise( SIGINT ), which wasn't even working for me.
+// (Possibly because CustomAssert::ShouldAssert was commented out? I've changed that now.)
 #include <csignal>
 #endif
 
@@ -46,110 +40,79 @@
 // This should be kept a very lightweight include that can go anywhere.
 
 #if BUILD_WINDOWS
-#pragma warning(disable : 4127)  // conditional expression is constant (thrown
-                                 // by while(0))
-#pragma warning( \
-    disable : 4201)  // nonstandard extension used : nameless struct/union
-#pragma warning(disable : 4351)  // new behavior: elements of array '...' will
-                                 // be default initialized
+#pragma warning( disable: 4127 )	// conditional expression is constant (thrown by while(0))
+#pragma warning( disable: 4201 )	// nonstandard extension used : nameless struct/union
+#pragma warning( disable: 4351 )	// new behavior: elements of array '...' will be default initialized
+#pragma warning( disable: 4456 )	// declaration of '...' hides previous local declaration
+#pragma warning( disable: 4457 )	// declaration of '...' hides function parameter
+#pragma warning( disable: 4458 )	// declaration of '...' hides class member
+#pragma warning( disable: 4459 )	// declaration of '...' hides global declaration
+#pragma warning( disable: 4482 )	// nonstandard extension used: enum used in qualified name
 #endif
 
 #ifdef _DEBUG
-#define BUILD_DEBUG 1    // Defined in Debug only
-#define BUILD_RELEASE 0  // Defined in Release and Final (same as !BUILD_DEBUG)
+#define BUILD_DEBUG		1	// Defined in Debug only
+#define BUILD_RELEASE	0	// Defined in Release and Final (same as !BUILD_DEBUG)
 #else
-#define BUILD_DEBUG 0    // Defined in Debug only
-#define BUILD_RELEASE 1  // Defined in Release and Final (same as !BUILD_DEBUG)
+#define BUILD_DEBUG		0	// Defined in Debug only
+#define BUILD_RELEASE	1	// Defined in Release and Final (same as !BUILD_DEBUG)
 #endif
 
 #ifdef _FINAL
-#define BUILD_FINAL 1  // Defined in Final only
-#define BUILD_DEV 0    // Defined in Debug and Release (same as !BUILD_FINAL)
+#define BUILD_FINAL		1	// Defined in Final only
+#define BUILD_DEV		0	// Defined in Debug and Release (same as !BUILD_FINAL)
 #else
-#define BUILD_FINAL 0  // Defined in Final only
-#define BUILD_DEV 1    // Defined in Debug and Release (same as !BUILD_FINAL)
+#define BUILD_FINAL		0	// Defined in Final only
+#define BUILD_DEV		1	// Defined in Debug and Release (same as !BUILD_FINAL)
 #endif
 
-typedef unsigned int uint;
-typedef unsigned long uint32;
-typedef unsigned short uint16;
-typedef unsigned char uint8;
-typedef long int32;
-typedef short int16;
+typedef unsigned int	uint;
+typedef unsigned int	c_uint32;	// Renamed to avoid conflicts with other headers
+typedef unsigned short	c_uint16;	// Renamed to avoid conflicts with other headers
+typedef unsigned char	c_uint8;	// Renamed to avoid conflicts with other headers
+typedef int				c_int32;	// Renamed to avoid conflicts with other headers
+typedef short			c_int16;	// Renamed to avoid conflicts with other headers
 #ifdef __amigaos4__
-typedef signed char int8;
+typedef signed char		c_int8;		// Renamed to avoid conflicts with other headers
 #else
-typedef char int8;
+typedef char			c_int8;		// Renamed to avoid conflicts with other headers
 #endif
-typedef unsigned char byte;
+typedef unsigned char	byte;
 
-typedef unsigned long u32;
-typedef unsigned short u16;
-typedef unsigned char u8;
-typedef long s32;
-typedef short s16;
-typedef char s8;
-
+#undef NULL
 #define NULL 0
 
 // See http://kernelnewbies.org/FAQ/DoWhile0 for the reason behind this syntax
-#define SafeDelete(ptr) \
-  do {                  \
-    if ((ptr)) {        \
-      delete (ptr);     \
-      (ptr) = NULL;     \
-    }                   \
-  } while (0)
-#define SafeDeleteNoNull(ptr) \
-  do {                        \
-    if ((ptr)) {              \
-      delete (ptr);           \
-    }                         \
-  } while (0)
-#define SafeDeleteArray(ptr) \
-  do {                       \
-    if ((ptr)) {             \
-      delete[](ptr);         \
-      (ptr) = NULL;          \
-    }                        \
-  } while (0)
-#define SafeRelease(ptr) \
-  do {                   \
-    if ((ptr)) {         \
-      (ptr)->Release();  \
-      (ptr) = NULL;      \
-    }                    \
-  } while (0)  // For refcounting interfaces
-#define Unused(exp)      \
-  do {                   \
-    (void)sizeof((exp)); \
-  } while (0)
-#define DoExp(exp) \
-  do {             \
-    (exp);         \
-  } while (0)
-#define DoNothing \
-  do {            \
-    (void)0;      \
-  } while (0)
+#define SafeDelete( ptr )		do { if( ( ptr ) ) { delete ( ptr ); ( ptr ) = NULL; } } while(0)
+#define SafeDeleteNoNull( ptr )	do { if( ( ptr ) ) { delete ( ptr ); } } while(0)
+#define SafeDeleteArray( ptr )	do { if( ( ptr ) ) { delete[] ( ptr ); ( ptr ) = NULL; } } while(0)
+#define SafeRelease( ptr )		do { if( ( ptr ) ) { ( ptr )->Release(); ( ptr ) = NULL; } } while(0) // For refcounting interfaces
+#if BUILD_WINDOWS
+	// The sizeof() thing used to work in older versions of VS, but not anymore
+	#define Unused( exp )			do { ( void )( exp ); } while(0)
+#else
+	#define Unused( exp )			do { ( void )sizeof( ( exp ) ); } while(0)
+#endif
+#define DoExp( exp )			do { ( exp ); } while(0)
+#define DoNothing				do { ( void )0; } while(0)
 
 #if BUILD_DEV
-#if BUILD_WINDOWS
-#define BREAKPOINT DoExp(__debugbreak())
-#elif BUILD_LINUX
-#define BREAKPOINT raise(SIGINT)
+	#if BUILD_WINDOWS
+		#define BREAKPOINT		DoExp( __debugbreak() )
+	#elif BUILD_LINUX
+		#define BREAKPOINT		raise( SIGINT )
+	#else
+		// TODO PORT LATER: Support breakpoints on other platforms
+		#define BREAKPOINT		DoNothing
+	#endif
 #else
-// TODO PORT LATER: Support breakpoints on other platforms
-#define BREAKPOINT DoNothing
-#endif
-#else
-#define BREAKPOINT DoNothing
+	#define BREAKPOINT		DoNothing
 #endif
 
 #if BUILD_DEBUG
-#define DEBUGBREAKPOINT BREAKPOINT
+#define DEBUGBREAKPOINT	BREAKPOINT
 #else
-#define DEBUGBREAKPOINT DoNothing
+#define DEBUGBREAKPOINT	DoNothing
 #endif
 
 #ifdef PANDORA

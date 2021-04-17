@@ -5,275 +5,370 @@
 #include "reversehash.h"
 #include "idatastream.h"
 
-WBEvent WBPackedEvent::Unpack() const {
-  WBEvent UnpackedEvent;
-  UnpackedEvent.Unpack(*this);
-  return UnpackedEvent;
+WBEvent WBPackedEvent::Unpack() const
+{
+	WBEvent UnpackedEvent;
+	UnpackedEvent.Unpack( *this );
+	return UnpackedEvent;
 }
 
-WBEvent::WBEvent() : m_Parameters() {}
-
-WBEvent::~WBEvent() {}
-
-bool WBEvent::SParameter::CoerceBool() const {
-  return m_Type == EWBEPT_Bool ? GetBool() : false;
+WBEvent::WBEvent()
+:	m_Parameters()
+{
 }
 
-int WBEvent::SParameter::CoerceInt() const {
-  if (m_Type == EWBEPT_Int) {
-    return GetInt();
-  } else if (m_Type == EWBEPT_Float) {
-    return static_cast<int>(GetFloat());
-  } else {
-    return 0;
-  }
+WBEvent::~WBEvent()
+{
 }
 
-float WBEvent::SParameter::CoerceFloat() const {
-  if (m_Type == EWBEPT_Float) {
-    return GetFloat();
-  } else if (m_Type == EWBEPT_Int) {
-    return static_cast<float>(GetInt());
-  } else {
-    return 0.0f;
-  }
+bool WBEvent::SParameter::CoerceBool() const
+{
+	switch( m_Type )
+	{
+	case EWBEPT_Bool:		return GetBool();
+	case EWBEPT_Int:		return ( GetInt() != 0 );
+	case EWBEPT_Float:		return ( GetFloat() != 0.0f );
+	case EWBEPT_Hash:		return ( GetHash() != HashedString::NullString );
+	case EWBEPT_Entity:		return ( GetEntity().Get() != NULL );
+	case EWBEPT_Pointer:	return ( GetPointer() != NULL );
+	default:				return false;
+	}
 }
 
-HashedString WBEvent::SParameter::CoerceHash() const {
-  return m_Type == EWBEPT_Hash ? GetHash() : HashedString();
+int WBEvent::SParameter::CoerceInt() const
+{
+	if( m_Type == EWBEPT_Int )
+	{
+		return GetInt();
+	}
+	else if( m_Type == EWBEPT_Float )
+	{
+		return static_cast<int>( GetFloat() );
+	}
+	else
+	{
+		return 0;
+	}
 }
 
-Vector WBEvent::SParameter::CoerceVector() const {
-  return m_Type == EWBEPT_Vector ? GetVector() : Vector();
+float WBEvent::SParameter::CoerceFloat() const
+{
+	if( m_Type == EWBEPT_Float )
+	{
+		return GetFloat();
+	}
+	else if( m_Type == EWBEPT_Int )
+	{
+		return static_cast<float>( GetInt() );
+	}
+	else
+	{
+		return 0.0f;
+	}
 }
 
-Angles WBEvent::SParameter::CoerceAngles() const {
-  return m_Type == EWBEPT_Angles ? GetAngles() : Angles();
+HashedString WBEvent::SParameter::CoerceHash() const
+{
+	if( m_Type == EWBEPT_Hash )
+	{
+		return GetHash();
+	}
+	else if( m_Type == EWBEPT_Int )
+	{
+		return HashedString( GetInt() );
+	}
+	else
+	{
+		return HashedString();
+	}
 }
 
-WBEntity* WBEvent::SParameter::CoerceEntity() const {
-  return m_Type == EWBEPT_Entity ? GetEntity().Get() : nullptr;
+Vector WBEvent::SParameter::CoerceVector() const
+{
+	if( m_Type == EWBEPT_Vector )
+	{
+		return GetVector();
+	}
+	else if( m_Type == EWBEPT_Angles )
+	{
+		return GetAngles().ToVector();
+	}
+	else
+	{
+		return Vector();
+	}
 }
 
-SimpleString WBEvent::SParameter::CoerceString() const {
-  switch (m_Type) {
-    case EWBEPT_None:
-      return "None";
-    case EWBEPT_Bool:
-      return GetBool() ? "True" : "False";
-    case EWBEPT_Int:
-      return SimpleString::PrintF("%d", GetInt());
-    case EWBEPT_Float:
-      return SimpleString::PrintF("%f", GetFloat());
-    case EWBEPT_Hash:
-      return SimpleString::PrintF("%s",
-                                  ReverseHash::ReversedHash(GetHash()).CStr());
-    case EWBEPT_Vector:
-      return GetVector().GetString();
-    case EWBEPT_Angles:
-      return GetAngles().GetString();
-    case EWBEPT_Entity: {
-      WBEntity* const pEntity = GetEntity().Get();
-      return pEntity ? pEntity->GetUniqueName() : "NULL";
-    }
-    case EWBEPT_Pointer:
-      return SimpleString::PrintF("Ptr: 0x%08X", GetPointer());
-    default:
-      return "Unknown";
-  }
+Angles WBEvent::SParameter::CoerceAngles() const
+{
+	if( m_Type == EWBEPT_Angles )
+	{
+		return GetAngles();
+	}
+	else if( m_Type == EWBEPT_Vector )
+	{
+		return GetVector().ToAngles();
+	}
+	else
+	{
+		return Angles();
+	}
 }
 
-void* WBEvent::SParameter::CoercePointer() const {
-  return m_Type == EWBEPT_Pointer ? GetPointer() : nullptr;
+WBEntity* WBEvent::SParameter::CoerceEntity() const
+{
+	return m_Type == EWBEPT_Entity ? GetEntity().Get() : NULL;
 }
 
-void WBEvent::Set(const HashedString& Name,
-                  const SParameter* const pParameter) {
-  if (!pParameter) {
-    return;
-  }
-
-  switch (pParameter->GetType()) {
-    case EWBEPT_Bool:
-      SetBool(Name, pParameter->GetBool());
-      break;
-    case EWBEPT_Int:
-      SetInt(Name, pParameter->GetInt());
-      break;
-    case EWBEPT_Float:
-      SetFloat(Name, pParameter->GetFloat());
-      break;
-    case EWBEPT_Hash:
-      SetHash(Name, pParameter->GetHash());
-      break;
-    case EWBEPT_Vector:
-      SetVector(Name, pParameter->GetVector());
-      break;
-    case EWBEPT_Angles:
-      SetAngles(Name, pParameter->GetAngles());
-      break;
-    case EWBEPT_Entity:
-      SetEntity(Name, pParameter->GetEntity());
-      break;
-    case EWBEPT_Pointer:
-      SetPointer(Name, pParameter->GetPointer());
-      break;
-  }
+SimpleString WBEvent::SParameter::CoerceString() const
+{
+	switch( m_Type )
+	{
+	case EWBEPT_None:		return "None";
+	case EWBEPT_Bool:		return GetBool() ? "True" : "False";
+	case EWBEPT_Int:		return SimpleString::PrintF( "%d", GetInt() );
+	case EWBEPT_Float:		return SimpleString::PrintF( "%f", GetFloat() );
+	case EWBEPT_Hash:		return SimpleString::PrintF( "%s", ReverseHash::ReversedHash( GetHash() ).CStr() );
+	case EWBEPT_Vector:		return GetVector().GetString();
+	case EWBEPT_Angles:		return GetAngles().GetString();
+	case EWBEPT_Entity:		{ WBEntity* const pEntity = GetEntity().Get(); return pEntity ? pEntity->GetUniqueName() : "NULL"; }
+	case EWBEPT_Pointer:	return SimpleString::PrintF( "Ptr: 0x%p", GetPointer() );
+	default:				return "Unknown";
+	}
 }
 
-void WBEvent::Set(const HashedString& Name, const WBParamEvaluator& PE) {
-  switch (PE.GetType()) {
-    case WBParamEvaluator::EPT_Bool:
-      SetBool(Name, PE.GetBool());
-      break;
-    case WBParamEvaluator::EPT_Int:
-      SetInt(Name, PE.GetInt());
-      break;
-    case WBParamEvaluator::EPT_Float:
-      SetFloat(Name, PE.GetFloat());
-      break;
-    case WBParamEvaluator::EPT_String:
-      SetHash(Name, PE.GetString());
-      break;  // Conversion to hash is the best we can do
-    case WBParamEvaluator::EPT_Entity:
-      SetEntity(Name, PE.GetEntity());
-      break;
-    case WBParamEvaluator::EPT_Vector:
-      SetVector(Name, PE.GetVector());
-      break;
-  }
+void* WBEvent::SParameter::CoercePointer() const
+{
+	return m_Type == EWBEPT_Pointer ? GetPointer() : NULL;
 }
 
-void WBEvent::SetEventName(const HashedString& Value) {
-  STATIC_HASHED_STRING(EventName);
-  return SetHash(sEventName, Value);
+void WBEvent::Set( const HashedString& Name, const SParameter* const pParameter )
+{
+	if( !pParameter )
+	{
+		return;
+	}
+
+	switch( pParameter->GetType() )
+	{
+	case EWBEPT_None:		Reset(		Name );								break;
+	case EWBEPT_Bool:		SetBool(	Name, pParameter->GetBool() );		break;
+	case EWBEPT_Int:		SetInt(		Name, pParameter->GetInt() );		break;
+	case EWBEPT_Float:		SetFloat(	Name, pParameter->GetFloat() );		break;
+	case EWBEPT_Hash:		SetHash(	Name, pParameter->GetHash() );		break;
+	case EWBEPT_Vector:		SetVector(	Name, pParameter->GetVector() );	break;
+	case EWBEPT_Angles:		SetAngles(	Name, pParameter->GetAngles() );	break;
+	case EWBEPT_Entity:		SetEntity(	Name, pParameter->GetEntity() );	break;
+	case EWBEPT_Pointer:	SetPointer(	Name, pParameter->GetPointer() );	break;
+	default:                                                                break;
+	}
 }
 
-HashedString WBEvent::GetEventName() const {
-  STATIC_HASHED_STRING(EventName);
-  return GetHash(sEventName);
+void WBEvent::Set( const HashedString& Name, const WBParamEvaluator& PE )
+{
+	switch( PE.GetType() )
+	{
+	case WBParamEvaluator::EPT_None:	Reset(		Name );					break;
+	case WBParamEvaluator::EPT_Bool:	SetBool(	Name, PE.GetBool() );	break;
+	case WBParamEvaluator::EPT_Int:		SetInt(		Name, PE.GetInt() );	break;
+	case WBParamEvaluator::EPT_Float:	SetFloat(	Name, PE.GetFloat() );	break;
+	case WBParamEvaluator::EPT_String:	SetHash(	Name, PE.GetString() ); break;	// Conversion to hash is the best we can do
+	case WBParamEvaluator::EPT_Entity:	SetEntity(	Name, PE.GetEntity() );	break;
+	case WBParamEvaluator::EPT_Vector:	SetVector(	Name, PE.GetVector() );	break;
+	case WBParamEvaluator::EPT_Angles:	SetAngles(	Name, PE.GetAngles() );	break;
+	default:                                                                break;
+	}
 }
 
-const WBEvent::SParameter* WBEvent::GetParameter(
-    const HashedString& Name) const {
-  TParameterMap::Iterator ParamIter = m_Parameters.Search(Name);
-  return ParamIter.IsValid() ? &ParamIter.GetValue() : nullptr;
+void WBEvent::SetEventName( const HashedString& Value )
+{
+	STATIC_HASHED_STRING( EventName );
+	return SetHash( sEventName, Value );
 }
 
-WBEvent::EType WBEvent::GetType(const HashedString& Name) const {
-  TParameterMap::Iterator ParamIter = m_Parameters.Search(Name);
-  return ParamIter.IsValid() ? ParamIter.GetValue().GetType() : EWBEPT_None;
+HashedString WBEvent::GetEventName() const
+{
+	STATIC_HASHED_STRING( EventName );
+	return GetHash( sEventName );
 }
 
-bool WBEvent::GetBool(const HashedString& Name) const {
-  TParameterMap::Iterator ParamIter = m_Parameters.Search(Name);
-  return ParamIter.IsValid() ? ParamIter.GetValue().CoerceBool() : false;
+SimpleString WBEvent::GetEventNameString() const
+{
+	return ReverseHash::ReversedHash( GetEventName() );
 }
 
-int WBEvent::GetInt(const HashedString& Name) const {
-  TParameterMap::Iterator ParamIter = m_Parameters.Search(Name);
-  return ParamIter.IsValid() ? ParamIter.GetValue().CoerceInt() : 0;
+const WBEvent::SParameter* WBEvent::GetParameter( const HashedString& Name ) const
+{
+	TParameterMap::Iterator ParamIter = m_Parameters.Search( Name );
+	return ParamIter.IsValid() ? &ParamIter.GetValue() : NULL;
 }
 
-float WBEvent::GetFloat(const HashedString& Name) const {
-  TParameterMap::Iterator ParamIter = m_Parameters.Search(Name);
-  return ParamIter.IsValid() ? ParamIter.GetValue().CoerceFloat() : 0.0f;
+bool WBEvent::HasParameter( const HashedString& Name ) const
+{
+	TParameterMap::Iterator ParamIter = m_Parameters.Search( Name );
+	return ParamIter.IsValid();
 }
 
-HashedString WBEvent::GetHash(const HashedString& Name) const {
-  TParameterMap::Iterator ParamIter = m_Parameters.Search(Name);
-  return ParamIter.IsValid() ? ParamIter.GetValue().CoerceHash()
-                             : HashedString();
+WBEvent::EType WBEvent::GetType( const HashedString& Name ) const
+{
+	TParameterMap::Iterator ParamIter = m_Parameters.Search( Name );
+	return ParamIter.IsValid() ? ParamIter.GetValue().GetType() : EWBEPT_None;
 }
 
-Vector WBEvent::GetVector(const HashedString& Name) const {
-  TParameterMap::Iterator ParamIter = m_Parameters.Search(Name);
-  return ParamIter.IsValid() ? ParamIter.GetValue().CoerceVector() : Vector();
+bool WBEvent::GetBool( const HashedString& Name ) const
+{
+	TParameterMap::Iterator ParamIter = m_Parameters.Search( Name );
+	return ParamIter.IsValid() ? ParamIter.GetValue().CoerceBool() : false;
 }
 
-Angles WBEvent::GetAngles(const HashedString& Name) const {
-  TParameterMap::Iterator ParamIter = m_Parameters.Search(Name);
-  return ParamIter.IsValid() ? ParamIter.GetValue().CoerceAngles() : Angles();
+int WBEvent::GetInt( const HashedString& Name ) const
+{
+	TParameterMap::Iterator ParamIter = m_Parameters.Search( Name );
+	return ParamIter.IsValid() ? ParamIter.GetValue().CoerceInt() : 0;
 }
 
-WBEntity* WBEvent::GetEntity(const HashedString& Name) const {
-  TParameterMap::Iterator ParamIter = m_Parameters.Search(Name);
-  return ParamIter.IsValid() ? ParamIter.GetValue().CoerceEntity() : nullptr;
+float WBEvent::GetFloat( const HashedString& Name ) const
+{
+	TParameterMap::Iterator ParamIter = m_Parameters.Search( Name );
+	return ParamIter.IsValid() ? ParamIter.GetValue().CoerceFloat() : 0.0f;
 }
 
-SimpleString WBEvent::GetString(const HashedString& Name) const {
-  TParameterMap::Iterator ParamIter = m_Parameters.Search(Name);
-  return ParamIter.IsValid() ? ParamIter.GetValue().CoerceString() : "";
+HashedString WBEvent::GetHash( const HashedString& Name ) const
+{
+	TParameterMap::Iterator ParamIter = m_Parameters.Search( Name );
+	return ParamIter.IsValid() ? ParamIter.GetValue().CoerceHash() : HashedString();
 }
 
-void* WBEvent::GetPointer(const HashedString& Name) const {
-  TParameterMap::Iterator ParamIter = m_Parameters.Search(Name);
-  return ParamIter.IsValid() ? ParamIter.GetValue().CoercePointer() : nullptr;
+Vector WBEvent::GetVector( const HashedString& Name ) const
+{
+	TParameterMap::Iterator ParamIter = m_Parameters.Search( Name );
+	return ParamIter.IsValid() ? ParamIter.GetValue().CoerceVector() : Vector();
 }
 
-WBPackedEvent WBEvent::Pack() const {
-  WBPackedEvent PackedEvent;
-  Pack(PackedEvent);
-  return PackedEvent;
+Angles WBEvent::GetAngles( const HashedString& Name ) const
+{
+	TParameterMap::Iterator ParamIter = m_Parameters.Search( Name );
+	return ParamIter.IsValid() ? ParamIter.GetValue().CoerceAngles() : Angles();
 }
 
-void WBEvent::Pack(WBPackedEvent& PackedEvent) const {
-  PackedEvent.m_PackedEvent.Resize(
-      4 + (m_Parameters.Size() * (sizeof(HashedString) + sizeof(SParameter))));
-
-  MemoryStream Stream(PackedEvent.GetData(), PackedEvent.GetSize());
-  Stream.WriteUInt32(m_Parameters.Size());
-  FOR_EACH_MAP(ParameterIter, m_Parameters, HashedString, SParameter) {
-    const HashedString& ParameterName = ParameterIter.GetKey();
-    const SParameter& Parameter = ParameterIter.GetValue();
-
-    Stream.WriteHashedString(ParameterName);
-    Stream.Write(sizeof(SParameter), &Parameter);
-  }
+WBEntity* WBEvent::GetEntity( const HashedString& Name ) const
+{
+	TParameterMap::Iterator ParamIter = m_Parameters.Search( Name );
+	return ParamIter.IsValid() ? ParamIter.GetValue().CoerceEntity() : NULL;
 }
 
-void WBEvent::Unpack(const WBPackedEvent& PackedEvent) {
-  m_Parameters.Clear();
-
-  MemoryStream Stream(PackedEvent.GetData(), PackedEvent.GetSize());
-
-  uint NumParameters = Stream.ReadUInt32();
-  for (uint ParameterIndex = 0; ParameterIndex < NumParameters;
-       ++ParameterIndex) {
-    const HashedString ParameterName = Stream.ReadHashedString();
-    SParameter& Parameter = m_Parameters[ParameterName];
-
-    Stream.Read(sizeof(SParameter), &Parameter);
-    #ifdef __amigaos4__
-    littleBigEndian(&Parameter.m_Type);
-    littleBigEndian(&Parameter.m_Data1);
-    littleBigEndian(&Parameter.m_Data2);
-    littleBigEndian(&Parameter.m_Data3);
-    #endif
-  }
+SimpleString WBEvent::GetString( const HashedString& Name ) const
+{
+	TParameterMap::Iterator ParamIter = m_Parameters.Search( Name );
+	return ParamIter.IsValid() ? ParamIter.GetValue().CoerceString() : "";
 }
 
-uint WBEvent::GetSerializationSize() const {
-  WBPackedEvent PackedEvent;
-  Pack(PackedEvent);
-
-  return PackedEvent.GetSize() + 4;
+void* WBEvent::GetPointer( const HashedString& Name ) const
+{
+	TParameterMap::Iterator ParamIter = m_Parameters.Search( Name );
+	return ParamIter.IsValid() ? ParamIter.GetValue().CoercePointer() : NULL;
 }
 
-void WBEvent::Save(const IDataStream& Stream) const {
-  WBPackedEvent PackedEvent;
-  Pack(PackedEvent);
+void WBEvent::Report() const
+{
+	const SimpleString EventNameString = GetEventNameString();
+	PRINTF( "WBEvent %s\n", EventNameString.CStr() );
 
-  Stream.WriteUInt32(PackedEvent.GetSize());
-  Stream.Write(PackedEvent.GetSize(), PackedEvent.GetData());
+	STATIC_HASHED_STRING( EventName );
+	FOR_EACH_MAP( ParameterIter, m_Parameters, HashedString, SParameter )
+	{
+		const HashedString&	ParameterName		= ParameterIter.GetKey();
+		const SParameter&	Parameter			= ParameterIter.GetValue();
+
+		if( ParameterName == sEventName )
+		{
+			continue;
+		}
+
+		const SimpleString	ParameterNameString	= ReverseHash::ReversedHash( ParameterName );
+		const SimpleString	ParameterString		= Parameter.CoerceString();
+		PRINTF( "  %s: %s\n", ParameterNameString.CStr(), ParameterString.CStr() );
+	}
 }
 
-void WBEvent::Load(const IDataStream& Stream) {
-  const uint PackedEventSize = Stream.ReadUInt32();
+WBPackedEvent WBEvent::Pack() const
+{
+	WBPackedEvent PackedEvent;
+	Pack( PackedEvent );
+	return PackedEvent;
+}
 
-  WBPackedEvent PackedEvent;
-  PackedEvent.Reinit(nullptr, PackedEventSize);
-  Stream.Read(PackedEventSize, PackedEvent.GetData());
+void WBEvent::Pack( WBPackedEvent& PackedEvent ) const
+{
+	PackedEvent.m_PackedEvent.Resize( 4 + ( m_Parameters.Size() * ( sizeof( HashedString ) + sizeof( SParameter ) ) ) );
 
-  Unpack(PackedEvent);
+	MemoryStream Stream( PackedEvent.GetData(), PackedEvent.GetSize() );
+	Stream.WriteUInt32( m_Parameters.Size() );
+	FOR_EACH_MAP( ParameterIter, m_Parameters, HashedString, SParameter )
+	{
+		const HashedString& ParameterName = ParameterIter.GetKey();
+		const SParameter& Parameter = ParameterIter.GetValue();
+
+		Stream.WriteHashedString( ParameterName );
+#ifdef __amigaos4__
+		SParameter Temp(Parameter);
+		littleBigEndian(&Temp.m_Type);
+		littleBigEndian(&Temp.m_Data1);
+		littleBigEndian(&Temp.m_Data2);
+		littleBigEndian(&Temp.m_Data3);
+		Stream.Write( sizeof( SParameter ), &Temp );
+#else
+		Stream.Write( sizeof( SParameter ), &Parameter );
+#endif
+	}
+}
+
+void WBEvent::Unpack( const WBPackedEvent& PackedEvent )
+{
+	m_Parameters.Clear();
+
+	MemoryStream Stream( PackedEvent.GetData(), PackedEvent.GetSize() );
+
+	uint NumParameters = Stream.ReadUInt32();
+	for( uint ParameterIndex = 0; ParameterIndex < NumParameters; ++ParameterIndex )
+	{
+		const HashedString ParameterName = Stream.ReadHashedString();
+		SParameter& Parameter = m_Parameters[ ParameterName ];
+
+		Stream.Read( sizeof( SParameter ), &Parameter );
+#ifdef __amigaos4__
+		littleBigEndian(&Parameter.m_Type);
+		littleBigEndian(&Parameter.m_Data1);
+		littleBigEndian(&Parameter.m_Data2);
+		littleBigEndian(&Parameter.m_Data3);
+#endif
+	}
+}
+
+uint WBEvent::GetSerializationSize() const
+{
+	WBPackedEvent PackedEvent;
+	Pack( PackedEvent );
+
+	return PackedEvent.GetSize() + 4;
+}
+
+void WBEvent::Save( const IDataStream& Stream ) const
+{
+	WBPackedEvent PackedEvent;
+	Pack( PackedEvent );
+
+	Stream.WriteUInt32( PackedEvent.GetSize() );
+	Stream.Write( PackedEvent.GetSize(), PackedEvent.GetData() );
+}
+
+void WBEvent::Load( const IDataStream& Stream )
+{
+	const uint PackedEventSize = Stream.ReadUInt32();
+
+	WBPackedEvent PackedEvent;
+	PackedEvent.Reinit( NULL, PackedEventSize );
+	Stream.Read( PackedEventSize, PackedEvent.GetData() );
+
+	Unpack( PackedEvent );
 }

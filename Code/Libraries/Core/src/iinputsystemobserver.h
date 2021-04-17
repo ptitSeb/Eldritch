@@ -1,11 +1,14 @@
 #ifndef IINPUTSYSTEMOBSERVER_H
 #define IINPUTSYSTEMOBSERVER_H
 
-class IInputSystemObserver {
- public:
-  virtual ~IInputSystemObserver() {}
+class IInputSystemObserver
+{
+public:
+	virtual ~IInputSystemObserver()
+	{
+	}
 
-  virtual void OnInputContextsChanged() = 0;
+	virtual void OnInputContextsChanged() = 0;
 };
 
-#endif  // IINPUTSYSTEMOBSERVER_H
+#endif // IINPUTSYSTEMOBSERVER_H

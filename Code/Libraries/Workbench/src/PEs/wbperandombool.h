@@ -3,20 +3,19 @@
 
 #include "wbpe.h"
 
-class WBPERandomBool : public WBPE {
- public:
-  WBPERandomBool();
-  virtual ~WBPERandomBool();
+class WBPERandomBool : public WBPE
+{
+public:
+	WBPERandomBool();
+	virtual ~WBPERandomBool();
 
-  DEFINE_WBPE_FACTORY(RandomBool);
+	DEFINE_WBPE_FACTORY( RandomBool );
 
-  virtual void InitializeFromDefinition(const SimpleString& DefinitionName);
-  virtual void Evaluate(
-      const WBParamEvaluator::SPEContext& Context,
-      WBParamEvaluator::SEvaluatedParam& EvaluatedParam) const;
+	virtual void	InitializeFromDefinition( const SimpleString& DefinitionName );
+	virtual void	Evaluate( const WBParamEvaluator::SPEContext& Context, WBParamEvaluator::SEvaluatedParam& EvaluatedParam ) const;
 
- private:
-  float m_Probability;
+private:
+	float	m_Probability;
 };
 
-#endif  // WBPERANDOMBOOL_H
+#endif // WBPERANDOMBOOL_H

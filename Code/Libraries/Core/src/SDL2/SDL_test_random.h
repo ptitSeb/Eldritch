@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2018 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -37,8 +37,8 @@
 
 */
 
-#ifndef _SDL_test_random_h
-#define _SDL_test_random_h
+#ifndef SDL_test_random_h_
+#define SDL_test_random_h_
 
 #include "begin_code.h"
 /* Set up for C function definitions, even when using C++ */
@@ -51,18 +51,19 @@ extern "C" {
 /*
  * Macros that return a random number in a specific format.
  */
-#define SDLTest_RandomInt(c) ((int)SDLTest_Random(c))
+#define SDLTest_RandomInt(c)        ((int)SDLTest_Random(c))
 
 /*
  * Context structure for the random number generator state.
  */
-typedef struct {
-  unsigned int a;
-  unsigned int x;
-  unsigned int c;
-  unsigned int ah;
-  unsigned int al;
-} SDLTest_RandomContext;
+  typedef struct {
+    unsigned int a;
+    unsigned int x;
+    unsigned int c;
+    unsigned int ah;
+    unsigned int al;
+  } SDLTest_RandomContext;
+
 
 /* --- Function prototypes */
 
@@ -77,8 +78,8 @@ typedef struct {
  *  \param ci         integer that defines the random sequence
  *
  */
-void SDLTest_RandomInit(SDLTest_RandomContext *rndContext, unsigned int xi,
-                        unsigned int ci);
+ void SDLTest_RandomInit(SDLTest_RandomContext * rndContext, unsigned int xi,
+                  unsigned int ci);
 
 /**
  *  \brief Initialize random number generator based on current system time.
@@ -86,7 +87,8 @@ void SDLTest_RandomInit(SDLTest_RandomContext *rndContext, unsigned int xi,
  *  \param rndContext     pointer to context structure
  *
  */
-void SDLTest_RandomInitTime(SDLTest_RandomContext *rndContext);
+ void SDLTest_RandomInitTime(SDLTest_RandomContext *rndContext);
+
 
 /**
  *  \brief Initialize random number generator based on current system time.
@@ -99,7 +101,8 @@ void SDLTest_RandomInitTime(SDLTest_RandomContext *rndContext);
  *  \returns A random number (32bit unsigned integer)
  *
  */
-unsigned int SDLTest_Random(SDLTest_RandomContext *rndContext);
+ unsigned int SDLTest_Random(SDLTest_RandomContext *rndContext);
+
 
 /* Ends C function definitions when using C++ */
 #ifdef __cplusplus
@@ -107,6 +110,6 @@ unsigned int SDLTest_Random(SDLTest_RandomContext *rndContext);
 #endif
 #include "close_code.h"
 
-#endif /* _SDL_test_random_h */
+#endif /* SDL_test_random_h_ */
 
 /* vi: set ts=4 sw=4 expandtab: */

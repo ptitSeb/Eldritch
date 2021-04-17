@@ -3,6 +3,6 @@
 
 class IAudioSystem;
 
-IAudioSystem* CreateOpenALAudioSystem();
+IAudioSystem* CreateSoLoudAudioSystem();
 
-#endif  // AUDIO_H
+#endif // AUDIO_H

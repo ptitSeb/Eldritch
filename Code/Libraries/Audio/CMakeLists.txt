@@ -1,47 +1,24 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.0)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 include_directories(../Math/src)
 include_directories(../Core/src)
-include_directories(../GLEW/src)
-
+include_directories(../SoLoud/src)
 
 set(audio_src
-src/audio.cpp
-src/audio.h
-src/audiosystemcommon.cpp
-src/audiosystemcommon.h
-src/openalaudiosystem.cpp
-src/openalaudiosystem.h
-src/openalsound.cpp
-src/openalsound.h
-src/openalsoundinstance.cpp
-src/openalsoundinstance.h
-src/iaudiosystem.h
-src/isound.h
-src/isoundinstance.h
-src/musicmanager.cpp
-src/musicmanager.h
-src/sound3dlistener.cpp
-src/sound3dlistener.h
-src/soundcommon.cpp
-src/soundcommon.h
-src/soundinstancecommon.cpp
-src/soundinstancecommon.h
-src/soundmanager.cpp
-src/soundmanager.h
+	src/audio.cpp
+	src/audiosystemcommon.cpp
+	src/soloudaudiosystem.cpp
+	src/soloudsound.cpp
+	src/soloudsoundinstance.cpp
+	src/sound3dlistener.cpp
+	src/soundcommon.cpp
+	src/soundinstancecommon.cpp
+	src/soundmanager.cpp
 )
- 
+
 add_library(Audio ${audio_src})
-if(TREMOR_ENABLED)
-  target_link_libraries(Audio
-    ${ALUT_LIBRARIES}
-    vorbisidec
-  )
-else()
-  target_link_libraries(Audio
-    ${ALUT_LIBRARIES}
-    vorbisfile
-  )
-endif()
+target_link_libraries(Audio
+	SoLoud
+)

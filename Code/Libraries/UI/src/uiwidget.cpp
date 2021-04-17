@@ -5,9 +5,6 @@
 #include "uiscreen.h"
 #include "configmanager.h"
 #include "iaudiosystem.h"
-#if BUILD_WINDOWS  // TODO: Just remove this stuff, I don't use it anymore.
-#include "consolemanager.h"
-#endif
 #include "vector4.h"
 #include "clock.h"
 #include "wbactionfactory.h"
@@ -15,471 +12,685 @@
 #include "wbevent.h"
 #include "iuiinputmap.h"
 #include "mathcore.h"
+#include "hsv.h"
 #include "irenderer.h"
-#include <stdio.h>
-UIManager* UIWidget::m_UIManager = nullptr;
+
+UIManager* UIWidget::m_UIManager = NULL;
 
 UIWidget::UIWidget()
-    : m_Name(),
-      m_Archetype(),
-      m_RenderPriority(0),
-      m_CanBeFocused(false),
-      m_RenderInWorld(false),
-      m_IsDisabled(false),
-      m_FocusOrder(0),
-      m_EventName(),
-      m_Command(),
-      m_Callback(),
-      m_FocusSound(),
-      m_OwnerScreen(nullptr),
-      m_FocusShiftUp(0),
-      m_FocusShiftDown(0),
-      m_FocusShiftLeft(0),
-      m_FocusShiftRight(0),
-      m_TriggerSound(),
-      m_Actions(),
-      m_OwnsActions(false),
-      m_Hidden(false),
-      m_Hidden_SavedState(false),
-      m_Color(1.0f, 1.0f, 1.0f, 1.0f),
-      m_Highlight(1.0f, 1.0f, 1.0f, 1.0f),
-      m_DisabledColor(1.0f, 1.0f, 1.0f, 1.0f),
-      m_TopLeft(),
-      m_Velocity(),
-      m_AllowNegativeOrigin(false),
-      m_Origin(EWO_TopLeft),
-      m_OriginParent(nullptr),
-      m_UsePulsingHighlight(false),
-      m_PulsingHighlightMul(0.0f),
-      m_PulsingHighlightAdd(0.0f),
-      m_PulsingHighlightTimeScalar(0.0f)
+:	m_Name()
+,	m_LegacyName()
+,	m_RenderPriority( 0 )
+,	m_CanBeFocused( false )
+,	m_RenderInWorld( false )
+,	m_IsDisabled( false )
+,	m_IsDisabled_SavedState( false )
+,	m_FocusOrder( 0 )
+,	m_OwnerScreen( NULL )
+,	m_FocusShiftUp( 0 )
+,	m_FocusShiftDown( 0 )
+,	m_FocusShiftLeft( 0 )
+,	m_FocusShiftRight( 0 )
+,	m_EventName()
+,	m_Callback()
+,	m_Actions()
+,	m_FocusActions()
+,	m_OwnsActions( false )
+,	m_Hidden( false )
+,	m_Hidden_SavedState( false )
+,	m_Color( 1.0f, 1.0f, 1.0f, 1.0f )
+,	m_ScreenColor()
+,	m_Highlight( 1.0f, 1.0f, 1.0f, 1.0f )
+,	m_DisabledColor( 1.0f, 1.0f, 1.0f, 1.0f )
+,	m_Location()
+,	m_Extents()
+,	m_Velocity()
+,	m_AllowNegativeOrigin( false )
+,	m_Origin( EWO_TopLeft )
+,	m_ParentWidget( NULL )
+,	m_ClampToPixelGrid( false )
+,	m_UseVanishingPointY( false )
+,	m_UsePulsingHighlight( false )
+,	m_PulsingHighlightMul( 0.0f )
+,	m_PulsingHighlightAdd( 0.0f )
+,	m_PulsingHighlightTimeScalar( 0.0f )
 #if BUILD_DEBUG
-      ,
-      m_LastRenderedTime(0)
+,	m_LastRenderedTime( 0 )
 #endif
 {
 }
 
-UIWidget::~UIWidget() { ClearActions(); }
+UIWidget::~UIWidget()
+{
+	ClearActions();
+}
 
-void UIWidget::Render(bool HasFocus) {
-  Unused(HasFocus);
+void UIWidget::Render( bool HasFocus )
+{
+	Unused( HasFocus );
 
 #if BUILD_DEBUG
-  m_LastRenderedTime = m_UIManager->GetClock()->GetPhysicalCurrentTime();
+	m_LastRenderedTime = m_UIManager->GetClock()->GetPhysicalCurrentTime();
 #endif
 }
 
-void UIWidget::UpdateRender() {}
-
-void UIWidget::InitializeFromDefinition(const SimpleString& DefinitionName) {
-  STATICHASH(Archetype);
-  STATICHASH(RenderPriority);
-  STATICHASH(Focus);
-  STATICHASH(FocusOrder);
-  STATICHASH(Event);
-  STATICHASH(Command);
-  STATICHASH(FocusSound);
-  STATICHASH(TriggerSound);
-  STATICHASH(RenderInWorld);
-  STATICHASH(ColorR);
-  STATICHASH(ColorG);
-  STATICHASH(ColorB);
-  STATICHASH(ColorA);
-  STATICHASH(HighlightR);
-  STATICHASH(HighlightG);
-  STATICHASH(HighlightB);
-  STATICHASH(HighlightA);
-  STATICHASH(Origin);
-  MAKEHASH(DefinitionName);
-  m_Name = DefinitionName;
-  m_Archetype = ConfigManager::GetString(sArchetype, "", sDefinitionName);
-  if (m_Archetype=="") {
-//    m_Archetype = DefinitionName + SimpleString("Archetype");
-      HashedString magic_hash = HashedString(0x0cfac4f3);
-      m_Archetype = ConfigManager::GetString(magic_hash, "", sDefinitionName);
-//printf("Null Archetype (0x%08X) => \"%s\"...\n", sArchetype.GetHash(), m_Archetype.CStr());
-  }
-
-  MAKEHASH(m_Archetype);
-
-  m_RenderPriority = ConfigManager::GetArchetypeInt(
-      sRenderPriority, sm_Archetype, 0, sDefinitionName);
-  m_CanBeFocused = ConfigManager::GetArchetypeBool(sFocus, sm_Archetype, false,
-                                                   sDefinitionName);
-  m_RenderInWorld = ConfigManager::GetArchetypeBool(
-      sRenderInWorld, sm_Archetype, false, sDefinitionName);
-  m_FocusOrder = ConfigManager::GetArchetypeInt(sFocusOrder, sm_Archetype, 0,
-                                                sDefinitionName);
-//printf("InitializeFromDefinition(\"%s\"), Archetype=\"%s\"(0x%08X) Hash=0x%08X Focus=%d, FocusOrder=%d\n", DefinitionName.CStr(), m_Archetype.CStr(), sm_Archetype.GetHash(),sDefinitionName.GetHash(), m_CanBeFocused, m_FocusOrder);
-  m_EventName = ConfigManager::GetArchetypeString(sEvent, sm_Archetype, "",
-                                                  sDefinitionName);
-  m_Command = ConfigManager::GetArchetypeString(sCommand, sm_Archetype, "",
-                                                sDefinitionName);
-  m_FocusSound = ConfigManager::GetArchetypeString(sFocusSound, sm_Archetype,
-                                                   "", sDefinitionName);
-  m_TriggerSound = ConfigManager::GetArchetypeString(
-      sTriggerSound, sm_Archetype, "", sDefinitionName);
-
-  STATICHASH(AllowNegativeOrigin);
-  m_AllowNegativeOrigin = ConfigManager::GetArchetypeBool(
-      sAllowNegativeOrigin, sm_Archetype, false, sDefinitionName);
-
-  STATICHASH(FocusShiftUp);
-  m_FocusShiftUp = ConfigManager::GetArchetypeInt(sFocusShiftUp, sm_Archetype,
-                                                  0, sDefinitionName);
-
-  STATICHASH(FocusShiftDown);
-  m_FocusShiftDown = ConfigManager::GetArchetypeInt(
-      sFocusShiftDown, sm_Archetype, 0, sDefinitionName);
-
-  STATICHASH(FocusShiftLeft);
-  m_FocusShiftLeft = ConfigManager::GetArchetypeInt(
-      sFocusShiftLeft, sm_Archetype, 0, sDefinitionName);
-
-  STATICHASH(FocusShiftRight);
-  m_FocusShiftRight = ConfigManager::GetArchetypeInt(
-      sFocusShiftRight, sm_Archetype, 0, sDefinitionName);
-
-  m_Color.x = ConfigManager::GetArchetypeFloat(sColorR, sm_Archetype, 1.0f,
-                                               sDefinitionName);
-  m_Color.y = ConfigManager::GetArchetypeFloat(sColorG, sm_Archetype, 1.0f,
-                                               sDefinitionName);
-  m_Color.z = ConfigManager::GetArchetypeFloat(sColorB, sm_Archetype, 1.0f,
-                                               sDefinitionName);
-  m_Color.w = ConfigManager::GetArchetypeFloat(sColorA, sm_Archetype, 1.0f,
-                                               sDefinitionName);
-  m_Highlight.x = ConfigManager::GetArchetypeFloat(sHighlightR, sm_Archetype,
-                                                   1.0f, sDefinitionName);
-  m_Highlight.y = ConfigManager::GetArchetypeFloat(sHighlightG, sm_Archetype,
-                                                   1.0f, sDefinitionName);
-  m_Highlight.z = ConfigManager::GetArchetypeFloat(sHighlightB, sm_Archetype,
-                                                   1.0f, sDefinitionName);
-  m_Highlight.w = ConfigManager::GetArchetypeFloat(sHighlightA, sm_Archetype,
-                                                   1.0f, sDefinitionName);
-
-  STATICHASH(DisabledColorR);
-  m_DisabledColor.r = ConfigManager::GetArchetypeFloat(
-      sDisabledColorR, sm_Archetype, 1.0f, sDefinitionName);
-
-  STATICHASH(DisabledColorG);
-  m_DisabledColor.g = ConfigManager::GetArchetypeFloat(
-      sDisabledColorG, sm_Archetype, 1.0f, sDefinitionName);
-
-  STATICHASH(DisabledColorB);
-  m_DisabledColor.b = ConfigManager::GetArchetypeFloat(
-      sDisabledColorB, sm_Archetype, 1.0f, sDefinitionName);
-
-  STATICHASH(DisabledColorA);
-  m_DisabledColor.a = ConfigManager::GetArchetypeFloat(
-      sDisabledColorA, sm_Archetype, 1.0f, sDefinitionName);
-
-  // Pulsing highlights are currently global
-  {
-    STATICHASH(UI);
-
-    STATICHASH(UsePulsingHighlight);
-    m_UsePulsingHighlight =
-        ConfigManager::GetBool(sUsePulsingHighlight, false, sUI);
-
-    STATICHASH(PulsingHighlightMin);
-    const float PulsingHighlightMin =
-        ConfigManager::GetFloat(sPulsingHighlightMin, 0.0f, sUI);
-
-    STATICHASH(PulsingHighlightMax);
-    const float PulsingHighlightMax =
-        ConfigManager::GetFloat(sPulsingHighlightMax, 0.0f, sUI);
-
-    m_PulsingHighlightMul = (PulsingHighlightMax - PulsingHighlightMin) / 2.0f;
-    m_PulsingHighlightAdd =
-        PulsingHighlightMin - (-1.0f * m_PulsingHighlightMul);
-
-    STATICHASH(PulsingHighlightCycleSeconds);
-    const float PulsingHighlightCycleSeconds =
-        ConfigManager::GetFloat(sPulsingHighlightCycleSeconds, 0.0f, sUI);
-    m_PulsingHighlightTimeScalar =
-        (1.0f / PulsingHighlightCycleSeconds) * 2.0f * PI;
-  }
-
-  STATICHASH(Hidden);
-  m_Hidden = ConfigManager::GetArchetypeBool(sHidden, sm_Archetype, false,
-                                             sDefinitionName);
-
-  STATICHASH(Parent);
-  const HashedString ParentWidget = ConfigManager::GetArchetypeHash(
-      sParent, sm_Archetype, HashedString::NullString, sDefinitionName);
-  if (ParentWidget != HashedString::NullString) {
-    ASSERT(m_OwnerScreen);
-    m_OriginParent = m_OwnerScreen->GetWidget(ParentWidget);
-
-    ASSERTDESC(m_OriginParent, "Could not find specified parent for widget.");
-
-    // This is important not only for rendering but because reinitialization is
-    // based on
-    // render order, and we need parents to be in the correct position to update
-    // children.
-    if (m_OriginParent &&
-        m_RenderPriority <= m_OriginParent->m_RenderPriority) {
-      m_RenderPriority = m_OriginParent->m_RenderPriority + 1;
-
-      STATIC_HASHED_STRING(UI);
-      CATPRINTF(sUI, 2,
-                "Promoting %s's render priority to %d to float above parent.\n",
-                m_Name.CStr(), m_RenderPriority);
-    }
-  }
-
-  STATICHASH(PixelVelocityX);
-  m_Velocity.x = ConfigManager::GetArchetypeFloat(sPixelVelocityX, sm_Archetype,
-                                                  0.0f, sDefinitionName);
-
-  STATICHASH(PixelVelocityY);
-  m_Velocity.y = ConfigManager::GetArchetypeFloat(sPixelVelocityY, sm_Archetype,
-                                                  0.0f, sDefinitionName);
-
-  GetOriginFromString(ConfigManager::GetArchetypeString(sOrigin, sm_Archetype,
-                                                        "", sDefinitionName));
-
-  ClearActions();
-  WBActionFactory::InitializeActionArray(DefinitionName, m_Actions);
-  m_OwnsActions = true;
+void UIWidget::UpdateRender()
+{
 }
 
-void UIWidget::ClearActions() {
-  if (m_OwnsActions) {
-    FOR_EACH_ARRAY(ActionIter, m_Actions, WBAction*) {
-      WBAction* pAction = ActionIter.GetValue();
-      SafeDelete(pAction);
-    }
-  }
+void UIWidget::InitializeFromDefinition( const SimpleString& DefinitionName, const SimpleString& LegacyName )
+{
+	MAKEHASH( DefinitionName );
 
-  m_Actions.Clear();
+	STATICHASH( UI );
+
+	m_Name = DefinitionName;
+	m_LegacyName = LegacyName;
+
+	STATICHASH( RenderPriority );
+	m_RenderPriority	= ConfigManager::GetInheritedInt( sRenderPriority, 0, sDefinitionName );
+
+	STATICHASH( Focus );
+	m_CanBeFocused		= ConfigManager::GetInheritedBool( sFocus, false, sDefinitionName );
+
+	STATICHASH( RenderInWorld );
+	m_RenderInWorld		= ConfigManager::GetInheritedBool( sRenderInWorld, false, sDefinitionName );
+
+	STATICHASH( FocusOrder );
+	m_FocusOrder		= ConfigManager::GetInheritedInt( sFocusOrder, 0, sDefinitionName );
+
+	STATICHASH( Event );
+	m_EventName			= ConfigManager::GetInheritedString( sEvent, "", sDefinitionName );
+
+	STATICHASH( AllowNegativeOrigin );
+	m_AllowNegativeOrigin = ConfigManager::GetInheritedBool( sAllowNegativeOrigin, false, sDefinitionName );
+
+	STATICHASH( FocusShiftUp );
+	m_FocusShiftUp = ConfigManager::GetInheritedInt( sFocusShiftUp, 0, sDefinitionName );
+
+	STATICHASH( FocusShiftDown );
+	m_FocusShiftDown = ConfigManager::GetInheritedInt( sFocusShiftDown, 0, sDefinitionName );
+
+	STATICHASH( FocusShiftLeft );
+	m_FocusShiftLeft = ConfigManager::GetInheritedInt( sFocusShiftLeft, 0, sDefinitionName );
+
+	STATICHASH( FocusShiftRight );
+	m_FocusShiftRight = ConfigManager::GetInheritedInt( sFocusShiftRight, 0, sDefinitionName );
+
+	const Vector ColorHSV = HSV::GetConfigHSV( "Color", sDefinitionName, Vector( 0.0f, 0.0f, 1.0f ) );
+	const Vector ScreenColorHSV = HSV::GetConfigHSV( "ScreenColor", sDefinitionName, Vector() );
+	m_Color			= HSV::GetConfigRGBA( "Color",			sDefinitionName, Vector4( HSV::HSVToRGB( ColorHSV ), 1.0f ) );
+	m_ScreenColor	= HSV::GetConfigRGBA( "ScreenColor",	sDefinitionName, Vector4( HSV::HSVToRGB( ScreenColorHSV ), 0.0f ) );
+	m_Highlight		= HSV::GetConfigRGBA( "Highlight",		sDefinitionName, Vector4( 1.0f, 1.0f, 1.0f, 1.0f ) );
+	m_DisabledColor	= HSV::GetConfigRGBA( "DisabledColor",	sDefinitionName, Vector4( 1.0f, 1.0f, 1.0f, 1.0f ) );
+
+	// Pulsing highlights are currently global
+	{
+		STATICHASH( UsePulsingHighlight );
+		m_UsePulsingHighlight = ConfigManager::GetBool( sUsePulsingHighlight, false, sUI );
+
+		STATICHASH( PulsingHighlightMin );
+		const float PulsingHighlightMin = ConfigManager::GetFloat( sPulsingHighlightMin, 0.0f, sUI );
+
+		STATICHASH( PulsingHighlightMax );
+		const float PulsingHighlightMax = ConfigManager::GetFloat( sPulsingHighlightMax, 0.0f, sUI );
+
+		m_PulsingHighlightMul = ( PulsingHighlightMax - PulsingHighlightMin ) / 2.0f;
+		m_PulsingHighlightAdd = PulsingHighlightMin - ( -1.0f * m_PulsingHighlightMul );
+
+		STATICHASH( PulsingHighlightCycleSeconds );
+		const float PulsingHighlightCycleSeconds = ConfigManager::GetFloat( sPulsingHighlightCycleSeconds, 0.0f, sUI );
+		m_PulsingHighlightTimeScalar = ( 1.0f / PulsingHighlightCycleSeconds ) * 2.0f * PI;
+	}
+
+	STATICHASH( Disabled );
+	m_IsDisabled = ConfigManager::GetInheritedBool( sDisabled, false, sDefinitionName );
+
+	STATICHASH( Hidden );
+	m_Hidden = ConfigManager::GetInheritedBool( sHidden, false, sDefinitionName );
+
+	STATICHASH( Parent );
+	const HashedString ParentWidget = ConfigManager::GetInheritedHash( sParent, HashedString::NullString, sDefinitionName );
+	if( ParentWidget != HashedString::NullString )
+	{
+		ASSERT( m_OwnerScreen );
+		m_ParentWidget = m_OwnerScreen->GetWidget( ParentWidget );
+
+		if( !m_ParentWidget )
+		{
+			PRINTF( "Could not find specified parent for widget %s.\n", DefinitionName.CStr() );
+			WARNDESC( "Could not find specified parent for widget." );
+		}
+	}
+
+	// This is important not only for rendering but because reinitialization is based on
+	// render order, and we need parents to be in the correct position to update children.
+	if( m_ParentWidget && m_RenderPriority <= m_ParentWidget->m_RenderPriority )
+	{
+		m_RenderPriority = m_ParentWidget->m_RenderPriority + 1;
+
+		STATIC_HASHED_STRING( UI );
+		CATPRINTF( sUI, 2, "Promoting %s's render priority to %d to float above parent.\n", m_Name.CStr(), m_RenderPriority );
+	}
+
+	STATICHASH( DefaultClampToPixelGrid );
+	const bool DefaultClampToPixelGrid = ConfigManager::GetBool( sDefaultClampToPixelGrid, true, sUI );
+
+	STATICHASH( ClampToPixelGrid );
+	m_ClampToPixelGrid = ConfigManager::GetInheritedBool( sClampToPixelGrid, DefaultClampToPixelGrid, sDefinitionName );
+
+	STATICHASH( UseVanishingPointY );
+	m_UseVanishingPointY = ConfigManager::GetInheritedBool( sUseVanishingPointY, false, sDefinitionName );
+
+	STATICHASH( DisplayWidth );
+	const float DisplayWidth	= ConfigManager::GetFloat( sDisplayWidth );
+	const float ParentWidth		= m_ParentWidget ? m_ParentWidget->GetWidth() : DisplayWidth;
+
+	STATICHASH( DisplayHeight );
+	const float DisplayHeight	= ConfigManager::GetFloat( sDisplayHeight );
+	const float ParentHeight	= m_ParentWidget ? m_ParentWidget->GetHeight() : DisplayHeight;
+
+	STATICHASH( PixelVelocityX );
+	STATICHASH( ParentWVelocityX );
+	STATICHASH( ScreenWVelocityX );
+	STATICHASH( ParentHVelocityX );
+	STATICHASH( ScreenHVelocityX );
+	m_Velocity.x =
+		Pick(
+			ConfigManager::GetInheritedFloat( sPixelVelocityX, 0.0f, sDefinitionName ),
+			ParentWidth		* ConfigManager::GetInheritedFloat( sParentWVelocityX, 0.0f, sDefinitionName ),
+			DisplayWidth	* ConfigManager::GetInheritedFloat( sScreenWVelocityX, 0.0f, sDefinitionName ),
+			ParentHeight	* ConfigManager::GetInheritedFloat( sParentHVelocityX, 0.0f, sDefinitionName ),
+			DisplayHeight	* ConfigManager::GetInheritedFloat( sScreenHVelocityX, 0.0f, sDefinitionName ) );
+
+	STATICHASH( PixelVelocityY );
+	STATICHASH( ParentHVelocityY );
+	STATICHASH( ScreenHVelocityY );
+	STATICHASH( ParentWVelocityY );
+	STATICHASH( ScreenWVelocityY );
+	m_Velocity.y =
+		Pick(
+			ConfigManager::GetInheritedFloat( sPixelVelocityY, 0.0f, sDefinitionName ),
+			ParentHeight	* ConfigManager::GetInheritedFloat( sParentHVelocityY, 0.0f, sDefinitionName ),
+			DisplayHeight	* ConfigManager::GetInheritedFloat( sScreenHVelocityY, 0.0f, sDefinitionName ),
+			ParentWidth		* ConfigManager::GetInheritedFloat( sParentWVelocityY, 0.0f, sDefinitionName ),
+			DisplayWidth	* ConfigManager::GetInheritedFloat( sScreenWVelocityY, 0.0f, sDefinitionName ) );
+
+	STATICHASH( Origin );
+	GetOrigin( ConfigManager::GetInheritedHash( sOrigin, HashedString::NullString, sDefinitionName ) );
+
+	ClearActions();
+	WBActionFactory::InitializeActionArray( sDefinitionName,			m_Actions );
+	WBActionFactory::InitializeActionArray( sDefinitionName, "Focus",	m_FocusActions );
+	m_OwnsActions = true;
+
+	SetConfigTransform( DefinitionName );
 }
 
-void UIWidget::GetBounds(SRect& OutBounds) { Unused(OutBounds); }
-
-void UIWidget::OnTrigger() {
-  if (m_EventName != HashedString::NullString) {
-    m_UIManager->PostEvent(m_EventName);
-  }
-
-#if BUILD_WINDOWS
-  if (m_Command != "") {
-    ConsoleManager::GetInstance()->PushCommands(m_Command);
-  }
-#endif
-
-  if (m_Callback.m_Callback) {
-    m_Callback.m_Callback(this, m_Callback.m_Void);
-  }
-
-  if (m_TriggerSound != "") {
-    m_UIManager->GetAudioSystem()->Play(m_TriggerSound, Vector());
-  }
-
-  FOR_EACH_ARRAY(ActionIter, m_Actions, WBAction*) {
-    WBAction* const pAction = ActionIter.GetValue();
-    ASSERT(pAction);
-
-    WBActionStack::Push(WBEvent());
-    pAction->Execute();
-    WBActionStack::Pop();
-  }
+void UIWidget::ClearActions()
+{
+	if( m_OwnsActions )
+	{
+		WBActionFactory::ClearActionArray( m_Actions );
+		WBActionFactory::ClearActionArray( m_FocusActions );
+	}
+	else
+	{
+		// Just clear the array but don't free the actions
+		m_Actions.Clear();
+		m_FocusActions.Clear();
+	}
 }
 
-/*virtual*/ void UIWidget::Released() {}
-
-/*virtual*/ void UIWidget::Drag(float X, float Y) {
-  Unused(X);
-  Unused(Y);
+void UIWidget::GetBounds( SRect& OutBounds )
+{
+	OutBounds = SRect( m_Location.x, m_Location.y, m_Location.x + m_Extents.x, m_Location.y + m_Extents.y );
 }
 
-/*virtual*/ bool UIWidget::HandleInput() {
-  IUIInputMap* const pInputMap = m_UIManager->GetUIInputMap();
+void UIWidget::OnTrigger()
+{
+	if( m_EventName != HashedString::NullString )
+	{
+		m_UIManager->PostEvent( m_EventName );
+	}
 
-  if (pInputMap) {
-    if (pInputMap->OnAccept()) {
-      OnTrigger();
-      return true;
-    }
-  }
+	if( m_Callback.m_Callback )
+	{
+		m_Callback.m_Callback( this, m_Callback.m_Void );
+	}
 
-  return false;
+	WBActionFactory::ExecuteActionArray( m_Actions, WBEvent(), NULL );
 }
 
-void UIWidget::GetFocus() {
-  if (m_FocusSound != "") {
-    m_UIManager->GetAudioSystem()->Play(m_FocusSound, Vector());
-  }
+/*virtual*/ void UIWidget::Released()
+{
 }
 
-bool UIWidget::HasFocus() const {
-  ASSERT(GetOwnerScreen());
-
-  return GetOwnerScreen()->GetFocusedWidget() == this;
+/*virtual*/ void UIWidget::Drag( float X, float Y )
+{
+	Unused( X );
+	Unused( Y );
 }
 
-int UIWidget::OverrideFocusUp(int FocusShift) {
-  return Pick(m_FocusShiftUp, FocusShift);
+/*virtual*/ bool UIWidget::HandleInput()
+{
+	IUIInputMap* const pInputMap = m_UIManager->GetUIInputMap();
+
+	if( pInputMap )
+	{
+		if( pInputMap->OnAccept() )
+		{
+			OnTrigger();
+			return true;
+		}
+	}
+
+	return false;
 }
 
-int UIWidget::OverrideFocusDown(int FocusShift) {
-  return Pick(m_FocusShiftDown, FocusShift);
+void UIWidget::GetFocus()
+{
+	WBActionFactory::ExecuteActionArray( m_FocusActions, WBEvent(), NULL );
 }
 
-int UIWidget::OverrideFocusLeft(int FocusShift) {
-  return Pick(m_FocusShiftLeft, FocusShift);
+bool UIWidget::HasFocus() const
+{
+	ASSERT( GetOwnerScreen() );
+
+	return GetOwnerScreen()->GetFocusedWidget() == this;
 }
 
-int UIWidget::OverrideFocusRight(int FocusShift) {
-  return Pick(m_FocusShiftRight, FocusShift);
+int UIWidget::OverrideFocusUp( int FocusShift )
+{
+	return Pick( m_FocusShiftUp, FocusShift );
 }
 
-void UIWidget::Reinitialize() {
-  PushState();
-  InitializeFromDefinition(m_Name);
-  PullState();
+int UIWidget::OverrideFocusDown( int FocusShift )
+{
+	return Pick( m_FocusShiftDown, FocusShift );
 }
 
-void UIWidget::Refresh() {}
-
-/*virtual*/ void UIWidget::Tick(const float DeltaTime) { Unused(DeltaTime); }
-
-void UIWidget::SetHidden(const bool Hidden) {
-  m_Hidden = Hidden;
-  Refresh();
+int UIWidget::OverrideFocusLeft( int FocusShift )
+{
+	return Pick( m_FocusShiftLeft, FocusShift );
 }
 
-void UIWidget::Show() {
-  m_Hidden = false;
-  Refresh();
+int UIWidget::OverrideFocusRight( int FocusShift )
+{
+	return Pick( m_FocusShiftRight, FocusShift );
 }
 
-void UIWidget::SetDisabled(const bool Disabled) {
-  m_IsDisabled = Disabled;
+void UIWidget::Reinitialize( const bool WithState )
+{
+	if( WithState )
+	{
+		PushState();
+	}
 
-  if (IsDisabled()) {
-    if (HasFocus()) {
-      GetOwnerScreen()->FocusNext();
-    }
-  }
+	InitializeFromDefinition( m_Name, m_LegacyName );
+
+	if( WithState )
+	{
+		PullState();
+	}
+}
+
+void UIWidget::Refresh()
+{
+}
+
+/*virtual*/ void UIWidget::Tick( const float DeltaTime )
+{
+	Unused( DeltaTime );
+}
+
+void UIWidget::SetHidden( const bool Hidden )
+{
+	m_Hidden = Hidden;
+	Refresh();
+
+	if( IsHidden() && HasFocus() )
+	{
+		GetOwnerScreen()->FocusNext();
+	}
+}
+
+void UIWidget::Show()
+{
+	m_Hidden = false;
+	Refresh();
+}
+
+void UIWidget::SetDisabled( const bool Disabled )
+{
+	m_IsDisabled = Disabled;
+
+	if( IsDisabled() && HasFocus() )
+	{
+		GetOwnerScreen()->FocusNext();
+	}
 }
 
 // This is really ugly. I should refactor UI system to support dynamic
 // positions uniformly for all widgets, and without rebuilding meshes.
-void UIWidget::SetLocation(const float X, const float Y) {
-  MAKEHASH(m_Name);
+void UIWidget::SetScreenLocation( const float X, const float Y )
+{
+	MAKEHASH( m_Name );
 
-  STATICHASH(ScreenX);
-  ConfigManager::SetFloat(sScreenX, X, sm_Name);
+	STATICHASH( ScreenWX );
+	ConfigManager::SetFloat( sScreenWX, X, sm_Name );
 
-  STATICHASH(ScreenY);
-  ConfigManager::SetFloat(sScreenY, Y, sm_Name);
+	STATICHASH( ScreenHY );
+	ConfigManager::SetFloat( sScreenHY, Y, sm_Name );
 
-  Reinitialize();
+	Reinitialize();
 }
 
-/*virtual*/ void UIWidget::PushState() { m_Hidden_SavedState = m_Hidden; }
+void UIWidget::SetParentLocation( const float X, const float Y )
+{
+	MAKEHASH( m_Name );
 
-/*virtual*/ void UIWidget::PullState() { m_Hidden = m_Hidden_SavedState; }
+	STATICHASH( ParentWX );
+	ConfigManager::SetFloat( sParentWX, X, sm_Name );
 
-void UIWidget::SetUIManager(UIManager* pManager) { m_UIManager = pManager; }
+	STATICHASH( ParentHY );
+	ConfigManager::SetFloat( sParentHY, Y, sm_Name );
 
-void UIWidget::GetOriginFromString(const SimpleString& Origin) {
-  if (Origin == "TopLeft") {
-    m_Origin = EWO_TopLeft;
-  } else if (Origin == "TopCenter") {
-    m_Origin = EWO_TopCenter;
-  } else if (Origin == "TopRight") {
-    m_Origin = EWO_TopRight;
-  } else if (Origin == "CenterLeft") {
-    m_Origin = EWO_CenterLeft;
-  } else if (Origin == "Center") {
-    m_Origin = EWO_Center;
-  } else if (Origin == "CenterRight") {
-    m_Origin = EWO_CenterRight;
-  } else if (Origin == "BottomLeft") {
-    m_Origin = EWO_BottomLeft;
-  } else if (Origin == "BottomCenter") {
-    m_Origin = EWO_BottomCenter;
-  } else if (Origin == "BottomRight") {
-    m_Origin = EWO_BottomRight;
-  } else {
-    // Unspecified origin defaults to top-left. That's fine. Some widgets don't
-    // need origins.
-  }
+	Reinitialize();
 }
 
-void UIWidget::AdjustDimensionsToParent(float& X, float& Y, float& Width,
-                                        float& Height, const float ParentX,
-                                        const float ParentY,
-                                        const float ParentWidth,
-                                        const float ParentHeight) {
-  // Use negative numbers as offsets from the right/bottom of the screen unless
-  // negative origin is allowed
-  X = (!m_AllowNegativeOrigin && X < 0.0f) ? (X + (ParentX + ParentWidth))
-                                           : ParentX + X;
-  Y = (!m_AllowNegativeOrigin && Y < 0.0f) ? (Y + (ParentY + ParentHeight))
-                                           : ParentY + Y;
-  Width = (Width < 0.0f) ? (Width + ParentWidth) : Width;
-  Height = (Height < 0.0f) ? (Height + ParentHeight) : Height;
+void UIWidget::SetExtentsScalar( const float W, const float H )
+{
+	MAKEHASH( m_Name );
+
+	STATICHASH( ExtentsScalarW );
+	ConfigManager::SetFloat( sExtentsScalarW, W, sm_Name );
+
+	STATICHASH( ExtentsScalarH );
+	ConfigManager::SetFloat( sExtentsScalarH, H, sm_Name );
+
+	Reinitialize();
 }
 
-void UIWidget::GetPositionFromOrigin(const float X, const float Y,
-                                     const float Width, const float Height) {
-  switch (m_Origin) {
-    case EWO_TopLeft:
-      m_TopLeft = Vector2(X, Y);
-      break;
-    case EWO_TopCenter:
-      m_TopLeft = Vector2(X - Width * 0.5f, Y);
-      break;
-    case EWO_TopRight:
-      m_TopLeft = Vector2(X - Width, Y);
-      break;
-    case EWO_CenterLeft:
-      m_TopLeft = Vector2(X, Y - Height * 0.5f);
-      break;
-    case EWO_Center:
-      m_TopLeft = Vector2(X - Width * 0.5f, Y - Height * 0.5f);
-      break;
-    case EWO_CenterRight:
-      m_TopLeft = Vector2(X - Width, Y - Height * 0.5f);
-      break;
-    case EWO_BottomLeft:
-      m_TopLeft = Vector2(X, Y - Height);
-      break;
-    case EWO_BottomCenter:
-      m_TopLeft = Vector2(X - Width * 0.5f, Y - Height);
-      break;
-    case EWO_BottomRight:
-      m_TopLeft = Vector2(X - Width, Y - Height);
-      break;
-    default:
-      WARNDESC("Bad origin for unknown reason");
-      break;
-  }
+/*virtual*/ void UIWidget::PushState()
+{
+	m_IsDisabled_SavedState	= m_IsDisabled;
+	m_Hidden_SavedState		= m_Hidden;
 }
 
-Vector4 UIWidget::GetHighlightColor() const {
-  if (m_UsePulsingHighlight) {
-    const float CurrentTime = m_UIManager->GetClock()->GetMachineCurrentTime();
-    const float TimePulse = Cos(CurrentTime * m_PulsingHighlightTimeScalar);
-    const float LerpT =
-        (TimePulse * m_PulsingHighlightMul) + m_PulsingHighlightAdd;
-    const Vector4 PulseHighlight = m_Color.LERP(LerpT, m_Highlight);
-
-    return PulseHighlight;
-  } else {
-    return m_Highlight;
-  }
+/*virtual*/ void UIWidget::PullState()
+{
+	m_IsDisabled	= m_IsDisabled_SavedState;
+	m_Hidden		= m_Hidden_SavedState;
 }
 
-float UIWidget::GetPixelGridOffset() const {
-  ASSERT(m_UIManager);
+void UIWidget::SetUIManager( UIManager* pManager )
+{
+	m_UIManager = pManager;
+}
 
-  IRenderer* const pRenderer = m_UIManager->GetRenderer();
-  ASSERT(pRenderer);
+void UIWidget::GetOrigin( const HashedString& Origin )
+{
+	STATIC_HASHED_STRING( TopLeft );
+	STATIC_HASHED_STRING( TopCenter );
+	STATIC_HASHED_STRING( Top );
+	STATIC_HASHED_STRING( TopRight );
+	STATIC_HASHED_STRING( CenterLeft );
+	STATIC_HASHED_STRING( Left );
+	STATIC_HASHED_STRING( Center );
+	STATIC_HASHED_STRING( CenterRight );
+	STATIC_HASHED_STRING( Right );
+	STATIC_HASHED_STRING( BottomLeft );
+	STATIC_HASHED_STRING( BottomCenter );
+	STATIC_HASHED_STRING( Bottom );
+	STATIC_HASHED_STRING( BottomRight );
 
-  return pRenderer->GetPixelGridOffset();
+	if( Origin == sTopLeft )
+	{
+		m_Origin = EWO_TopLeft;
+	}
+	else if( Origin == sTopCenter || Origin == sTop )
+	{
+		m_Origin = EWO_TopCenter;
+	}
+	else if( Origin == sTopRight )
+	{
+		m_Origin = EWO_TopRight;
+	}
+	else if( Origin == sCenterLeft || Origin == sLeft )
+	{
+		m_Origin = EWO_CenterLeft;
+	}
+	else if( Origin == sCenter )
+	{
+		m_Origin = EWO_Center;
+	}
+	else if( Origin == sCenterRight || Origin == sRight )
+	{
+		m_Origin = EWO_CenterRight;
+	}
+	else if( Origin == sBottomLeft )
+	{
+		m_Origin = EWO_BottomLeft;
+	}
+	else if( Origin == sBottomCenter || Origin == sBottom )
+	{
+		m_Origin = EWO_BottomCenter;
+	}
+	else if( Origin == sBottomRight )
+	{
+		m_Origin = EWO_BottomRight;
+	}
+	else
+	{
+		// Unspecified origin defaults to top-left. That's fine. Some widgets don't need origins.
+	}
+}
+
+void UIWidget::SetTransform( const Vector2& Location, const Vector2& Extents )
+{
+	SetPositionFromOrigin( Location, Extents );
+	ClampAlignForPixelGrid();
+
+	m_Extents = Extents;
+	if( m_ClampToPixelGrid )
+	{
+		m_Extents.x = Round( m_Extents.x );
+		m_Extents.y = Round( m_Extents.y );
+	}
+}
+
+void UIWidget::SetConfigTransform( const SimpleString& DefinitionName )
+{
+	Vector2 Location;
+	Vector2 Extents;
+
+	GetConfigTransform( DefinitionName, Location, Extents );
+	AdjustDimensionsToParent( Location, Extents );
+
+	SetTransform( Location, Extents );
+}
+
+void UIWidget::GetConfigTransform( const SimpleString& DefinitionName, Vector2& OutLocation, Vector2& OutExtents ) const
+{
+	MAKEHASH( DefinitionName );
+
+	STATICHASH( DisplayWidth );
+	const float DisplayWidth	= ConfigManager::GetFloat( sDisplayWidth );
+	const float ParentWidth		= m_ParentWidget ? m_ParentWidget->GetWidth() : DisplayWidth;
+
+	STATICHASH( DisplayHeight );
+	const float DisplayHeight	= ConfigManager::GetFloat( sDisplayHeight );
+	const float ParentHeight	= m_ParentWidget ? m_ParentWidget->GetHeight() : DisplayHeight;
+
+	STATICHASH( PixelOffsetX );
+	STATICHASH( PixelX );
+	STATICHASH( ScreenX );	// Legacy, is now ParentWX
+	STATICHASH( ScreenWX );
+	STATICHASH( ParentHX );
+	STATICHASH( ScreenHX );
+	OutLocation.x =
+		ConfigManager::GetInheritedFloat( sPixelOffsetX, 0.0f, sDefinitionName ) +
+		Pick(
+			ConfigManager::GetInheritedFloat( sPixelX, 0.0f, sDefinitionName ),
+			ParentWidth		* ConfigManager::GetInheritedFloat( sScreenX, 0.0f, sDefinitionName ),
+			DisplayWidth	* ConfigManager::GetInheritedFloat( sScreenWX, 0.0f, sDefinitionName ),
+			ParentHeight	* ConfigManager::GetInheritedFloat( sParentHX, 0.0f, sDefinitionName ),
+			DisplayHeight	* ConfigManager::GetInheritedFloat( sScreenHX, 0.0f, sDefinitionName ) );
+
+	STATICHASH( PixelOffsetY );
+	STATICHASH( PixelY );
+	STATICHASH( ScreenY );	// Legacy, is now ParentHY
+	STATICHASH( ScreenHY );
+	STATICHASH( ParentWY );
+	STATICHASH( ScreenWY );
+	OutLocation.y =
+		ConfigManager::GetInheritedFloat( sPixelOffsetY, 0.0f, sDefinitionName ) +
+		Pick(
+			ConfigManager::GetInheritedFloat( sPixelY, 0.0f, sDefinitionName ),
+			ParentHeight	* ConfigManager::GetInheritedFloat( sScreenY, 0.0f, sDefinitionName ),
+			DisplayHeight	* ConfigManager::GetInheritedFloat( sScreenHY, 0.0f, sDefinitionName ),
+			ParentWidth		* ConfigManager::GetInheritedFloat( sParentWY, 0.0f, sDefinitionName ),
+			DisplayWidth	* ConfigManager::GetInheritedFloat( sScreenWY, 0.0f, sDefinitionName ) );
+
+	if( m_UseVanishingPointY )
+	{
+		STATICHASH( VanishingPointY );
+		const float VanishingPointY = ConfigManager::GetFloat( sVanishingPointY );
+		OutLocation.y += DisplayHeight * VanishingPointY;
+	}
+
+	STATICHASH( PixelWidth );	// Legacy, is now PixelW
+	STATICHASH( ScreenWidth );	// Legacy, is now ParentWW
+	STATICHASH( ScreenWW );
+	STATICHASH( ParentHW );
+	STATICHASH( ScreenHW );
+	OutExtents.x =
+		Pick(
+			ConfigManager::GetInheritedFloat( sPixelWidth, 0.0f, sDefinitionName ),
+			ParentWidth		* ConfigManager::GetInheritedFloat( sScreenWidth, 0.0f, sDefinitionName ),
+			DisplayWidth	* ConfigManager::GetInheritedFloat( sScreenWW, 0.0f, sDefinitionName ),
+			ParentHeight	* ConfigManager::GetInheritedFloat( sParentHW, 0.0f, sDefinitionName ),
+			DisplayHeight	* ConfigManager::GetInheritedFloat( sScreenHW, 0.0f, sDefinitionName ) );
+
+	STATICHASH( PixelHeight );	// Legacy, is now PixelH
+	STATICHASH( ScreenHeight );	// Legacy, is now ParentHH
+	STATICHASH( ScreenHH );
+	STATICHASH( ParentWH );
+	STATICHASH( ScreenWH );
+	OutExtents.y =
+		Pick(
+			ConfigManager::GetInheritedFloat( sPixelHeight, 0.0f, sDefinitionName ),
+			ParentHeight	* ConfigManager::GetInheritedFloat( sScreenHeight, 0.0f, sDefinitionName ),
+			DisplayHeight	* ConfigManager::GetInheritedFloat( sScreenHH, 0.0f, sDefinitionName ),
+			ParentWidth		* ConfigManager::GetInheritedFloat( sParentWH, 0.0f, sDefinitionName ),
+			DisplayWidth	* ConfigManager::GetInheritedFloat( sScreenWH, 0.0f, sDefinitionName ) );
+
+	// Some things like spacers are allowed to user zero extents, everything else should adjust for aspect
+	STATICHASH( AllowZeroExtents );
+	const bool AllowZeroExtents = ConfigManager::GetInheritedBool( sAllowZeroExtents, false, sDefinitionName );
+	if( !AllowZeroExtents )
+	{
+		// Adjust for desired aspect ratio if one dimension is not given
+		// (This is used to size images using ScreenWidth or ScreenHeight
+		// properly regardless of screen aspect ratio.
+		STATICHASH( AspectRatio );
+		const float AspectRatio = ConfigManager::GetInheritedFloat( sAspectRatio, 1.0f, sDefinitionName );
+		if( OutExtents.x == 0.0f )
+		{
+			OutExtents.x = OutExtents.y * AspectRatio;
+		}
+		else if( OutExtents.y == 0.0f )
+		{
+			OutExtents.y = OutExtents.x / AspectRatio;
+		}
+	}
+
+	STATICHASH( ExtentsScalarW );
+	OutExtents.x *= ConfigManager::GetInheritedFloat( sExtentsScalarW, 1.0f, sDefinitionName );
+
+	STATICHASH( ExtentsScalarH );
+	OutExtents.y *= ConfigManager::GetInheritedFloat( sExtentsScalarH, 1.0f, sDefinitionName );
+}
+
+void UIWidget::AdjustDimensionsToParent( Vector2& Location, Vector2& Extents )
+{
+	STATICHASH( DisplayWidth );
+	const float DisplayWidth	= ConfigManager::GetFloat( sDisplayWidth );
+	const float ParentWidth		= m_ParentWidget ? m_ParentWidget->GetWidth() : DisplayWidth;
+	const float ParentX			= m_ParentWidget ? Ceiling( m_ParentWidget->GetX() ) : 0.0f;
+
+	STATICHASH( DisplayHeight );
+	const float DisplayHeight	= ConfigManager::GetFloat( sDisplayHeight );
+	const float ParentHeight	= m_ParentWidget ? m_ParentWidget->GetHeight() : DisplayHeight;
+	const float ParentY			= m_ParentWidget ? Ceiling( m_ParentWidget->GetY() ) : 0.0f;
+
+	// Use negative numbers as offsets from the right/bottom of the screen unless negative origin is allowed
+	Location.x	= ( !m_AllowNegativeOrigin && Location.x < 0.0f )	? ( Location.x	+ ( ParentX + ParentWidth ) )	: ParentX + Location.x;
+	Location.y	= ( !m_AllowNegativeOrigin && Location.y < 0.0f )	? ( Location.y	+ ( ParentY + ParentHeight ) )	: ParentY + Location.y;
+	Extents.x	= ( Extents.x < 0.0f )								? ( Extents.x	+ ParentWidth )					: Extents.x;
+	Extents.y	= ( Extents.y < 0.0f )								? ( Extents.y	+ ParentHeight )				: Extents.y;
+}
+
+void UIWidget::SetPositionFromOrigin( const Vector2& Location, const Vector2& Extents )
+{
+	switch( m_Origin )
+	{
+	case EWO_TopLeft:
+		m_Location = Location;
+		break;
+	case EWO_TopCenter:
+		m_Location = Vector2( Location.x - Extents.x * 0.5f,	Location.y );
+		break;
+	case EWO_TopRight:
+		m_Location = Vector2( Location.x - Extents.x,			Location.y );
+		break;
+	case EWO_CenterLeft:
+		m_Location = Vector2( Location.x,						Location.y - Extents.y * 0.5f );
+		break;
+	case EWO_Center:
+		m_Location = Vector2( Location.x - Extents.x * 0.5f,	Location.y - Extents.y * 0.5f );
+		break;
+	case EWO_CenterRight:
+		m_Location = Vector2( Location.x - Extents.x,			Location.y - Extents.y * 0.5f );
+		break;
+	case EWO_BottomLeft:
+		m_Location = Vector2( Location.x,						Location.y - Extents.y );
+		break;
+	case EWO_BottomCenter:
+		m_Location = Vector2( Location.x - Extents.x * 0.5f,	Location.y - Extents.y );
+		break;
+	case EWO_BottomRight:
+		m_Location = Vector2( Location.x - Extents.x,			Location.y - Extents.y );
+		break;
+	default:
+		WARNDESC( "Bad origin for unknown reason" );
+		break;
+	}
+}
+
+Vector4 UIWidget::GetHighlightColor() const
+{
+	if( m_UsePulsingHighlight )
+	{
+		const float		CurrentTime		= m_UIManager->GetClock()->GetMachineCurrentTime();
+		const float		TimePulse		= Cos( CurrentTime * m_PulsingHighlightTimeScalar );
+		const float		LerpT			= ( TimePulse * m_PulsingHighlightMul ) + m_PulsingHighlightAdd;
+		const Vector4	PulseHighlight	= m_Color.LERP( LerpT, m_Highlight );
+
+		return PulseHighlight;
+	}
+	else
+	{
+		return m_Highlight;
+	}
+}
+
+void UIWidget::ClampAlignForPixelGrid()
+{
+	if( m_ClampToPixelGrid )
+	{
+		m_Location.x = Round( m_Location.x );
+		m_Location.y = Round( m_Location.y );
+	}
 }

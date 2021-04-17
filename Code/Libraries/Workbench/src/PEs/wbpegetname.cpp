@@ -1,27 +1,44 @@
 #include "core.h"
 #include "wbpegetname.h"
+#include "configmanager.h"
 
-WBPEGetName::WBPEGetName() {}
+WBPEGetName::WBPEGetName()
+:	m_UniqueName( false )
+{
+}
 
-WBPEGetName::~WBPEGetName() {}
+WBPEGetName::~WBPEGetName()
+{
+}
 
-void WBPEGetName::Evaluate(
-    const WBParamEvaluator::SPEContext& Context,
-    WBParamEvaluator::SEvaluatedParam& EvaluatedParam) const {
-  WBParamEvaluator::SEvaluatedParam Value;
-  m_Input->Evaluate(Context, Value);
+/*virtual*/ void WBPEGetName::InitializeFromDefinition( const SimpleString& DefinitionName )
+{
+	WBPEUnaryOp::InitializeFromDefinition( DefinitionName );
 
-  ASSERT(Value.m_Type == WBParamEvaluator::EPT_Entity);
+	MAKEHASH( DefinitionName );
 
-  if (Value.m_Type != WBParamEvaluator::EPT_Entity) {
-    return;
-  }
+	STATICHASH( UniqueName );
+	m_UniqueName = ConfigManager::GetBool( sUniqueName, false, sDefinitionName );
+}
 
-  WBEntity* const pEntity = Value.m_Entity.Get();
-  if (!pEntity) {
-    return;
-  }
+void WBPEGetName::Evaluate( const WBParamEvaluator::SPEContext& Context, WBParamEvaluator::SEvaluatedParam& EvaluatedParam ) const
+{
+	WBParamEvaluator::SEvaluatedParam Value;
+	m_Input->Evaluate( Context, Value );
 
-  EvaluatedParam.m_Type = WBParamEvaluator::EPT_String;
-  EvaluatedParam.m_String = pEntity->GetName();
+	ASSERT( Value.m_Type == WBParamEvaluator::EPT_Entity );
+
+	if( Value.m_Type != WBParamEvaluator::EPT_Entity )
+	{
+		return;
+	}
+
+	WBEntity* const pEntity = Value.m_Entity.Get();
+	if( !pEntity )
+	{
+		return;
+	}
+
+	EvaluatedParam.m_Type	= WBParamEvaluator::EPT_String;
+	EvaluatedParam.m_String	= m_UniqueName ? pEntity->GetUniqueName() : pEntity->GetName();
 }

@@ -4,29 +4,34 @@
 #include "configmanager.h"
 #include "rodinbtnodefactory.h"
 
-RodinBTNodeComposite::RodinBTNodeComposite() : m_Children() {}
-
-RodinBTNodeComposite::~RodinBTNodeComposite() {
-  for (uint ChildIndex = 0; ChildIndex < m_Children.Size(); ++ChildIndex) {
-    SafeDelete(m_Children[ChildIndex]);
-  }
-  m_Children.Clear();
+RodinBTNodeComposite::RodinBTNodeComposite()
+:	m_Children()
+{
 }
 
-void RodinBTNodeComposite::InitializeFromDefinition(
-    const SimpleString& DefinitionName) {
-  STATICHASH(NumChildren);
-  MAKEHASH(DefinitionName);
+RodinBTNodeComposite::~RodinBTNodeComposite()
+{
+	for( uint ChildIndex = 0; ChildIndex < m_Children.Size(); ++ChildIndex )
+	{
+		SafeDelete( m_Children[ ChildIndex ] );
+	}
+	m_Children.Clear();
+}
 
-  uint NumChildren = ConfigManager::GetInt(sNumChildren, 0, sDefinitionName);
+void RodinBTNodeComposite::InitializeFromDefinition( const SimpleString& DefinitionName )
+{
+	STATICHASH( NumChildren );
+	MAKEHASH( DefinitionName );
 
-  for (uint ChildIndex = 0; ChildIndex < NumChildren; ++ChildIndex) {
-    const SimpleString ChildDef = ConfigManager::GetSequenceString(
-        "Child%d", ChildIndex, "", sDefinitionName);
-    RodinBTNode* pChildNode =
-        RodinBTNodeFactory::Create(ChildDef, m_BehaviorTree);
-    if (pChildNode) {
-      m_Children.PushBack(pChildNode);
-    }
-  }
+	uint NumChildren = ConfigManager::GetInt( sNumChildren, 0, sDefinitionName );
+
+	for( uint ChildIndex = 0; ChildIndex < NumChildren; ++ChildIndex )
+	{
+		const SimpleString ChildDef = ConfigManager::GetSequenceString( "Child%d", ChildIndex, "", sDefinitionName );
+		RodinBTNode* pChildNode = RodinBTNodeFactory::Create( ChildDef, m_BehaviorTree );
+		if( pChildNode )
+		{
+			m_Children.PushBack( pChildNode );
+		}
+	}
 }

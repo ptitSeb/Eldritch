@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.0)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -7,151 +7,86 @@ include_directories(../Core/src)
 include_directories(src)
 
 set(workbench_src
-src/Actions/wbactioncomposite.cpp
-src/Actions/wbactioncomposite.h
-src/Actions/wbactiondestroy.cpp
-src/Actions/wbactiondestroy.h
-src/Actions/wbactionlog.cpp
-src/Actions/wbactionlog.h
-src/Actions/wbactionselector.cpp
-src/Actions/wbactionselector.h
-src/Actions/wbactionsendevent.cpp
-src/Actions/wbactionsendevent.h
-src/Actions/wbactionsetconfigvar.cpp
-src/Actions/wbactionsetconfigvar.h
-src/Actions/wbactionsetvariable.cpp
-src/Actions/wbactionsetvariable.h
-src/Actions/wbactiontriggerstatmod.cpp
-src/Actions/wbactiontriggerstatmod.h
-src/Actions/wbactionunqueueevent.cpp
-src/Actions/wbactionunqueueevent.h
-src/Components/wbcomplabel.cpp
-src/Components/wbcomplabel.h
-src/Components/wbcompowner.cpp
-src/Components/wbcompowner.h
-src/Components/wbcomppemap.cpp
-src/Components/wbcomppemap.h
-src/Components/wbcompreactions.cpp
-src/Components/wbcompreactions.h
-src/Components/wbcompstate.cpp
-src/Components/wbcompstate.h
-src/Components/wbcompstatmod.cpp
-src/Components/wbcompstatmod.h
-src/Components/wbcomptransform.cpp
-src/Components/wbcomptransform.h
-src/Components/wbcompvariablemap.cpp
-src/Components/wbcompvariablemap.h
-src/PEs/wbpeabs.cpp
-src/PEs/wbpeabs.h
-src/PEs/wbpeadd.cpp
-src/PEs/wbpeadd.h
-src/PEs/wbpeand.cpp
-src/PEs/wbpeand.h
-src/PEs/wbpebinaryop.cpp
-src/PEs/wbpebinaryop.h
-src/PEs/wbpeconditional.cpp
-src/PEs/wbpeconditional.h
-src/PEs/wbpeconstantbool.cpp
-src/PEs/wbpeconstantbool.h
-src/PEs/wbpeconstantfloat.cpp
-src/PEs/wbpeconstantfloat.h
-src/PEs/wbpeconstantint.cpp
-src/PEs/wbpeconstantint.h
-src/PEs/wbpeconstantstring.cpp
-src/PEs/wbpeconstantstring.h
-src/PEs/wbpeconstantvector.cpp
-src/PEs/wbpeconstantvector.h
-src/PEs/wbpediv.cpp
-src/PEs/wbpediv.h
-src/PEs/wbpedot.cpp
-src/PEs/wbpedot.h
-src/PEs/wbpegetentitybylabel.cpp
-src/PEs/wbpegetentitybylabel.h
-src/PEs/wbpegetname.cpp
-src/PEs/wbpegetname.h
-src/PEs/wbpegetstate.cpp
-src/PEs/wbpegetstate.h
-src/PEs/wbpegetvariable.cpp
-src/PEs/wbpegetvariable.h
-src/PEs/wbpelookup.cpp
-src/PEs/wbpelookup.h
-src/PEs/wbpemax.cpp
-src/PEs/wbpemax.h
-src/PEs/wbpemin.cpp
-src/PEs/wbpemin.h
-src/PEs/wbpemul.cpp
-src/PEs/wbpemul.h
-src/PEs/wbpenormal.cpp
-src/PEs/wbpenormal.h
-src/PEs/wbpenot.cpp
-src/PEs/wbpenot.h
-src/PEs/wbpenull.cpp
-src/PEs/wbpenull.h
-src/PEs/wbpeor.cpp
-src/PEs/wbpeor.h
-src/PEs/wbpeowner.cpp
-src/PEs/wbpeowner.h
-src/PEs/wbpepow.cpp
-src/PEs/wbpepow.h
-src/PEs/wbpepushcontext.cpp
-src/PEs/wbpepushcontext.h
-src/PEs/wbpequeryactionstack.cpp
-src/PEs/wbpequeryactionstack.h
-src/PEs/wbperandombool.cpp
-src/PEs/wbperandombool.h
-src/PEs/wbperandomfloat.cpp
-src/PEs/wbperandomfloat.h
-src/PEs/wbperandomint.cpp
-src/PEs/wbperandomint.h
-src/PEs/wbpeselector.cpp
-src/PEs/wbpeselector.h
-src/PEs/wbpeself.cpp
-src/PEs/wbpeself.h
-src/PEs/wbpesquare.cpp
-src/PEs/wbpesquare.h
-src/PEs/wbpestatmod.cpp
-src/PEs/wbpestatmod.h
-src/PEs/wbpesub.cpp
-src/PEs/wbpesub.h
-src/PEs/wbpeunaryop.cpp
-src/PEs/wbpeunaryop.h
-src/PEs/wbpexor.cpp
-src/PEs/wbpexor.h
-src/iwbeventobserver.h
-src/wbaction.cpp
-src/wbaction.h
-src/wbactionfactory.cpp
-src/wbactionfactory.h
-src/wbactions.h
-src/wbactionstack.cpp
-src/wbactionstack.h
-src/wbcomponent.cpp
-src/wbcomponent.h
-src/wbcomponentarrays.cpp
-src/wbcomponentarrays.h
-src/wbcomponents.h
-src/wbentity.cpp
-src/wbentity.h
-src/wbentityref.h
-src/wbevent.cpp
-src/wbevent.h
-src/wbeventmanager.cpp
-src/wbeventmanager.h
-src/wbparamevaluator.cpp
-src/wbparamevaluator.h
-src/wbparamevaluatorfactory.cpp
-src/wbparamevaluatorfactory.h
-src/wbpatternmatching.cpp
-src/wbpatternmatching.h
-src/wbpe.cpp
-src/wbpe.h
-src/wbpes.h
-src/wbrule.cpp
-src/wbrule.h
-src/wbscene.cpp
-src/wbscene.h
-src/wbworld.cpp
-src/wbworld.h
+	src/Actions/wbactioncomposite.cpp
+	src/Actions/wbactiondestroy.cpp
+	src/Actions/wbactionlog.cpp
+	src/Actions/wbactionselector.cpp
+	src/Actions/wbactionsendevent.cpp
+	src/Actions/wbactionsetconfigvar.cpp
+	src/Actions/wbactionsetstate.cpp
+	src/Actions/wbactionsetvariable.cpp
+	src/Actions/wbactiontriggerstatmod.cpp
+	src/Actions/wbactionunqueueevent.cpp
+	src/Components/wbcomplabel.cpp
+	src/Components/wbcompowner.cpp
+	src/Components/wbcomppemap.cpp
+	src/Components/wbcompreactions.cpp
+	src/Components/wbcompstate.cpp
+	src/Components/wbcompstatmod.cpp
+	src/Components/wbcomptransform.cpp
+	src/Components/wbcompvariablemap.cpp
+	src/PEs/wbpeabs.cpp
+	src/PEs/wbpeadd.cpp
+	src/PEs/wbpeand.cpp
+	src/PEs/wbpebinaryop.cpp
+	src/PEs/wbpeconditional.cpp
+	src/PEs/wbpeconstantangles.cpp
+	src/PEs/wbpeconstantbool.cpp
+	src/PEs/wbpeconstantfloat.cpp
+	src/PEs/wbpeconstantint.cpp
+	src/PEs/wbpeconstantstring.cpp
+	src/PEs/wbpeconstantvector.cpp
+	src/PEs/wbpecross.cpp
+	src/PEs/wbpediv.cpp
+	src/PEs/wbpedot.cpp
+	src/PEs/wbpegetconfigvar.cpp
+	src/PEs/wbpegetentitybylabel.cpp
+	src/PEs/wbpegetname.cpp
+	src/PEs/wbpegetstate.cpp
+	src/PEs/wbpegetvariable.cpp
+	src/PEs/wbpeisstate.cpp
+	src/PEs/wbpelength.cpp
+	src/PEs/wbpelookup.cpp
+	src/PEs/wbpemax.cpp
+	src/PEs/wbpemin.cpp
+	src/PEs/wbpemul.cpp
+	src/PEs/wbpeneg.cpp
+	src/PEs/wbpenormal.cpp
+	src/PEs/wbpenot.cpp
+	src/PEs/wbpenull.cpp
+	src/PEs/wbpeor.cpp
+	src/PEs/wbpeowner.cpp
+	src/PEs/wbpepow.cpp
+	src/PEs/wbpepushcontext.cpp
+	src/PEs/wbpequeryactionstack.cpp
+	src/PEs/wbperandombool.cpp
+	src/PEs/wbperandomfloat.cpp
+	src/PEs/wbperandomint.cpp
+	src/PEs/wbperandomvector.cpp
+	src/PEs/wbpereactionsself.cpp
+	src/PEs/wbpesaturate.cpp
+	src/PEs/wbpeselector.cpp
+	src/PEs/wbpeself.cpp
+	src/PEs/wbpesquare.cpp
+	src/PEs/wbpestatmod.cpp
+	src/PEs/wbpesub.cpp
+	src/PEs/wbpeunaryop.cpp
+	src/PEs/wbpexor.cpp
+	src/wbaction.cpp
+	src/wbactionfactory.cpp
+	src/wbactionstack.cpp
+	src/wbcomponent.cpp
+	src/wbcomponentarrays.cpp
+	src/wbentity.cpp
+	src/wbevent.cpp
+	src/wbeventmanager.cpp
+	src/wbparamevaluator.cpp
+	src/wbparamevaluatorfactory.cpp
+	src/wbpatternmatching.cpp
+	src/wbpe.cpp
+	src/wbrule.cpp
+	src/wbscene.cpp
+	src/wbworld.cpp
 )
  
 add_library(Workbench ${workbench_src})

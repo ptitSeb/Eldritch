@@ -3,12 +3,13 @@
 
 #include "uiscreen.h"
 
-class UIScreenBase : public UIScreen {
- public:
-  UIScreenBase();
-  virtual ~UIScreenBase();
+class UIScreenBase : public UIScreen
+{
+public:
+	UIScreenBase();
+	virtual ~UIScreenBase();
 
-  DEFINE_UISCREEN_FACTORY(Base);
+	DEFINE_UISCREEN_FACTORY( Base );
 };
 
-#endif  // UISCREENBASE_H
+#endif // UISCREENBASE_H

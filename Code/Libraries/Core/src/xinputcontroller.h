@@ -3,6 +3,20 @@
 
 #include "icontroller.h"
 
+// Because of legacy reasons, this "XInput" class is actually just the
+// controller class, with support for DirectInput and SDL controllers.
+
+#define USE_DIRECTINPUT	( 1 && BUILD_WINDOWS_NO_SDL )
+
+#if USE_DIRECTINPUT
+#ifndef DIRECTINPUT_VERSION
+	#define DIRECTINPUT_VERSION 0x0800
+#endif
+
+#include <Windows.h>
+#include <dinput.h>
+#endif
+
 #if BUILD_SDL
 #ifdef PANDORA
 #include <SDL2/SDL.h>
@@ -11,102 +25,115 @@
 #endif
 #endif
 
-class XInputController : public IController {
- public:
-  enum EAxes {
-    EA_None,
-    EA_LeftThumbX,    // [-1.0, 1.0]
-    EA_LeftThumbY,    // [-1.0, 1.0]
-    EA_RightThumbX,   // [-1.0, 1.0]
-    EA_RightThumbY,   // [-1.0, 1.0]
-    EA_LeftTrigger,   // [0.0, 1.0]
-    EA_RightTrigger,  // [0.0, 1.0]
-    EA_Max,
-  };
+class XInputController : public IController
+{
+public:
+	enum EAxes
+	{
+		EA_None,
+		EA_LeftThumbX,		// [-1.0, 1.0]
+		EA_LeftThumbY,		// [-1.0, 1.0]
+		EA_RightThumbX,		// [-1.0, 1.0]
+		EA_RightThumbY,		// [-1.0, 1.0]
+		EA_LeftTrigger,		// [0.0, 1.0]
+		EA_RightTrigger,	// [0.0, 1.0]
+		EA_Max,
+	};
 
-  enum EButtons {
-    EB_None,
-    EB_Up,
-    EB_Down,
-    EB_Left,
-    EB_Right,
-    EB_Start,
-    EB_Back,
-    EB_LeftThumb,
-    EB_RightThumb,
-    EB_LeftBumper,
-    EB_RightBumper,
-    EB_A,
-    EB_B,
-    EB_X,
-    EB_Y,
+	enum EButtons
+	{
+		EB_None,
+		EB_Up,
+		EB_Down,
+		EB_Left,
+		EB_Right,
+		EB_Start,
+		EB_Back,
+		EB_LeftThumb,
+		EB_RightThumb,
+		EB_LeftBumper,
+		EB_RightBumper,
+		EB_A,
+		EB_B,
+		EB_X,
+		EB_Y,
 
-    // Float signals as bools according to configurable thresholds
-    EB_LeftThumbUp,
-    EB_LeftThumbDown,
-    EB_LeftThumbLeft,
-    EB_LeftThumbRight,
-    EB_RightThumbUp,
-    EB_RightThumbDown,
-    EB_RightThumbLeft,
-    EB_RightThumbRight,
-    EB_LeftTrigger,
-    EB_RightTrigger,
+		// Float signals as bools according to configurable thresholds
+		EB_LeftThumbUp,
+		EB_LeftThumbDown,
+		EB_LeftThumbLeft,
+		EB_LeftThumbRight,
+		EB_RightThumbUp,
+		EB_RightThumbDown,
+		EB_RightThumbLeft,
+		EB_RightThumbRight,
+		EB_LeftTrigger,
+		EB_RightTrigger,
 
-    EB_Max,
-  };
+		EB_Max,
+	};
 
-  struct SXInputState {
-    float m_Axes[EA_Max];
-    bool m_Buttons[EB_Max];
-  };
+	struct SXInputState
+	{
+		float	m_Axes[ EA_Max ];
+		bool	m_Buttons[ EB_Max ];
+	};
 
-  XInputController(uint Port = 0);
-  ~XInputController();
+#if USE_DIRECTINPUT
+	XInputController( HWND hWnd, uint Port = 0 );
+#else
+	XInputController( uint Port = 0 );
+#endif
+	virtual ~XInputController();
 
-  virtual void Tick(float DeltaTime);
+	virtual void	Tick( const float DeltaTime );
 
-  virtual bool IsHigh(uint Signal);
-  virtual bool IsLow(uint Signal);
-  virtual bool OnRise(uint Signal);
-  virtual bool OnFall(uint Signal);
+	virtual bool	IsHigh( uint Signal );
+	virtual bool	IsLow( uint Signal );
+	virtual bool	OnRise( uint Signal );
+	virtual bool	OnFall( uint Signal );
 
-  virtual float GetPosition(uint Axis);
-  virtual float GetVelocity(uint Axis);
+	virtual float	GetPosition( uint Axis );
+	virtual float	GetVelocity( uint Axis );
 
-  // Left is low, right is high
-  virtual void SetFeedback(float Low, float High);
+	// Left is low, right is high
+	virtual void	SetFeedback( float Low, float High );
 
-  bool ReceivedInputThisTick() const { return m_ReceivedInputThisTick; }
+	bool			ReceivedInputThisTick() const { return m_ReceivedInputThisTick; }
 
-  SXInputState m_CurrentState;
-  SXInputState m_LastState;
+	SXInputState	m_CurrentState;
+	SXInputState	m_LastState;
 
-  uint m_Port;
-#if BUILD_SDL
-  SDL_GameController* m_Controller;
+	uint			m_Port;
+
+#if USE_DIRECTINPUT
+	HWND					m_hWnd;
+	LPDIRECTINPUTDEVICE8	m_DI_Controller;
 #endif
 
-  float m_LeftThumbDeadZone;
-  float m_RightThumbDeadZone;
-  float m_LeftThumbSaturationPoint;
-  float m_RightThumbSaturationPoint;
-  float m_TriggerDeadZone;
-  float m_TriggerSaturationPoint;
+#if BUILD_SDL
+	SDL_GameController*	m_Controller;
+#endif
 
-  float m_LeftThumbBoolThreshold;
-  float m_RightThumbBoolThreshold;
-  float m_LeftTriggerBoolThreshold;
-  float m_RightTriggerBoolThreshold;
+	float			m_LeftThumbDeadZone;
+	float			m_RightThumbDeadZone;
+	float			m_LeftThumbSaturationPoint;
+	float			m_RightThumbSaturationPoint;
+	float			m_TriggerDeadZone;
+	float			m_TriggerSaturationPoint;
 
-  // Used in conjunction with mouse to determine if cursor should be visible.
-  // TODO LATER: Use to drive which inputs are shown on screen.
-  bool m_ReceivedInputThisTick;
+	float			m_LeftThumbBoolThreshold;
+	float			m_RightThumbBoolThreshold;
+	float			m_LeftTriggerBoolThreshold;
+	float			m_RightTriggerBoolThreshold;
 
- private:
-  void ApplyDeadZones();
-  void ApplyDeadZone(EAxes Axis, float DeadZone, float SaturationPoint);
-  void SetVibration(uint16 Left, uint16 Right);
+	// Used in conjunction with mouse to determine if cursor should be visible.
+	bool			m_ReceivedInputThisTick;
+
+private:
+	void			ApplyDeadZones();
+	void			ApplyDeadZone( EAxes Axis, float DeadZone, float SaturationPoint );
+	void			SetVibration( c_uint16 Left, c_uint16 Right );
 };
 
-#endif  // XINPUTCONTROLLER_H
+#endif // XINPUTCONTROLLER_H

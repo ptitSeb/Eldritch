@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.0)
 
 include_directories(../../Libraries/Core/src)
 include_directories(../../Libraries/Math/src)
@@ -9,8 +9,8 @@ link_directories(${CMAKE_SOURCE_DIR}/Libraries/Math/)
 link_directories(${CMAKE_SOURCE_DIR}/Libraries/3D/)
 
 set(MeshCompiler_src
-src/meshcompiler.cpp
-src/main.cpp
+	src/meshcompiler.cpp
+	src/main.cpp
 )
 
 add_executable(MeshCompiler ${MeshCompiler_src})

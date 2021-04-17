@@ -4,15 +4,16 @@
 #include "rodinbtnode.h"
 #include "array.h"
 
-class RodinBTNodeComposite : public RodinBTNode {
- public:
-  RodinBTNodeComposite();
-  virtual ~RodinBTNodeComposite();
+class RodinBTNodeComposite : public RodinBTNode
+{
+public:
+	RodinBTNodeComposite();
+	virtual ~RodinBTNodeComposite();
 
-  virtual void InitializeFromDefinition(const SimpleString& DefinitionName);
+	virtual void InitializeFromDefinition( const SimpleString& DefinitionName );
 
- protected:
-  Array<RodinBTNode*> m_Children;
+protected:
+	Array<RodinBTNode*>	m_Children;
 };
 
-#endif  // RODINBTNODECOMPOSITE_H
+#endif // RODINBTNODECOMPOSITE_H

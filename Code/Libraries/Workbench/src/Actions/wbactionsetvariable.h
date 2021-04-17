@@ -4,21 +4,22 @@
 #include "wbaction.h"
 #include "wbparamevaluator.h"
 
-class WBActionSetVariable : public WBAction {
- public:
-  WBActionSetVariable();
-  virtual ~WBActionSetVariable();
+class WBActionSetVariable : public WBAction
+{
+public:
+	WBActionSetVariable();
+	virtual ~WBActionSetVariable();
 
-  DEFINE_WBACTION_FACTORY(SetVariable);
+	DEFINE_WBACTION_FACTORY( SetVariable );
 
-  virtual void InitializeFromDefinition(const SimpleString& DefinitionName);
+	virtual void	InitializeFromDefinition( const SimpleString& DefinitionName );
 
-  virtual void Execute();
+	virtual void	Execute();
 
- private:
-  WBParamEvaluator m_EntityPE;
-  HashedString m_VariableName;
-  WBParamEvaluator m_ValuePE;
+private:
+	WBParamEvaluator	m_EntityPE;
+	HashedString		m_VariableName;
+	WBParamEvaluator	m_ValuePE;
 };
 
-#endif  // WBACTIONSETVARIABLE_H
+#endif // WBACTIONSETVARIABLE_H

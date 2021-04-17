@@ -3,16 +3,15 @@
 
 #include "wbpebinaryop.h"
 
-class WBPEMax : public WBPEBinaryOp {
- public:
-  WBPEMax();
-  virtual ~WBPEMax();
+class WBPEMax : public WBPEBinaryOp
+{
+public:
+	WBPEMax();
+	virtual ~WBPEMax();
 
-  DEFINE_WBPE_FACTORY(Max);
+	DEFINE_WBPE_FACTORY( Max );
 
-  virtual void Evaluate(
-      const WBParamEvaluator::SPEContext& Context,
-      WBParamEvaluator::SEvaluatedParam& EvaluatedParam) const;
+	virtual void	Evaluate( const WBParamEvaluator::SPEContext& Context, WBParamEvaluator::SEvaluatedParam& EvaluatedParam ) const;
 };
 
-#endif  // WBPEMAX_H
+#endif // WBPEMAX_H

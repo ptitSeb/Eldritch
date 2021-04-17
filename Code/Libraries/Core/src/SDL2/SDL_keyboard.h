@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2018 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -25,8 +25,8 @@
  *  Include file for SDL keyboard event handling
  */
 
-#ifndef _SDL_keyboard_h
-#define _SDL_keyboard_h
+#ifndef SDL_keyboard_h_
+#define SDL_keyboard_h_
 
 #include "SDL_stdinc.h"
 #include "SDL_error.h"
@@ -42,15 +42,14 @@ extern "C" {
 /**
  *  \brief The SDL keysym structure, used in key events.
  *
- *  \note  If you are looking for translated character input, see the
- *::SDL_TEXTINPUT event.
+ *  \note  If you are looking for translated character input, see the ::SDL_TEXTINPUT event.
  */
-typedef struct SDL_Keysym {
-  SDL_Scancode
-      scancode; /**< SDL physical key code - see ::SDL_Scancode for details */
-  SDL_Keycode sym; /**< SDL virtual key code - see ::SDL_Keycode for details */
-  Uint16 mod;      /**< current key modifiers */
-  Uint32 unused;
+typedef struct SDL_Keysym
+{
+    SDL_Scancode scancode;      /**< SDL physical key code - see ::SDL_Scancode for details */
+    SDL_Keycode sym;            /**< SDL virtual key code - see ::SDL_Keycode for details */
+    Uint16 mod;                 /**< current key modifiers */
+    Uint32 unused;
 } SDL_Keysym;
 
 /* Function prototypes */
@@ -58,15 +57,14 @@ typedef struct SDL_Keysym {
 /**
  *  \brief Get the window which currently has keyboard focus.
  */
-extern DECLSPEC SDL_Window *SDLCALL SDL_GetKeyboardFocus(void);
+extern DECLSPEC SDL_Window * SDLCALL SDL_GetKeyboardFocus(void);
 
 /**
  *  \brief Get a snapshot of the current state of the keyboard.
  *
  *  \param numkeys if non-NULL, receives the length of the returned array.
  *
- *  \return An array of key states. Indexes into this array are obtained by
- *using ::SDL_Scancode values.
+ *  \return An array of key states. Indexes into this array are obtained by using ::SDL_Scancode values.
  *
  *  \b Example:
  *  \code
@@ -98,8 +96,7 @@ extern DECLSPEC void SDLCALL SDL_SetModState(SDL_Keymod modstate);
  *
  *  \sa SDL_GetKeyName()
  */
-extern DECLSPEC SDL_Keycode SDLCALL
-    SDL_GetKeyFromScancode(SDL_Scancode scancode);
+extern DECLSPEC SDL_Keycode SDLCALL SDL_GetKeyFromScancode(SDL_Scancode scancode);
 
 /**
  *  \brief Get the scancode corresponding to the given key code according to the
@@ -139,7 +136,7 @@ extern DECLSPEC SDL_Scancode SDLCALL SDL_GetScancodeFromName(const char *name);
  *          copy it.  If the key doesn't have a name, this function returns an
  *          empty string ("").
  *
- *  \sa SDL_Key
+ *  \sa SDL_Keycode
  */
 extern DECLSPEC const char *SDLCALL SDL_GetKeyName(SDL_Keycode key);
 
@@ -215,6 +212,6 @@ extern DECLSPEC SDL_bool SDLCALL SDL_IsScreenKeyboardShown(SDL_Window *window);
 #endif
 #include "close_code.h"
 
-#endif /* _SDL_keyboard_h */
+#endif /* SDL_keyboard_h_ */
 
 /* vi: set ts=4 sw=4 expandtab: */
