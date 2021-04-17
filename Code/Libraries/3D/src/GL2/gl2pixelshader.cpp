@@ -33,7 +33,7 @@ void GL2PixelShader::Initialize( const IDataStream& Stream )
 	byte* Tmp	= ConvertShader( pBuffer );
 	SafeDeleteArray(pBuffer);
 	pBuffer		= Tmp;
-	Length		= strlen(static_cast<const char*>(pBuffer));
+	Length		= strlen((const char*)pBuffer);
 #else
 	const int Length	= Stream.Size();
 	byte* pBuffer		= new byte[ Length ];
