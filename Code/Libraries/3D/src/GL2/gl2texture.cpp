@@ -30,32 +30,18 @@ GL2Texture::~GL2Texture()
 	return &m_Texture;
 }
 
-#ifdef __amigaos4__
-void BigEndian_ConvertRGBA( int Width, int Height, byte* texture )
-{
-	GLuint* dest = static_cast<GLuint*>( texture );
-	for( int i = 0; i < Height; i++ )
-	{
-		for( int j = 0; j < Width; j++ )
-		{
-			littleBigEndian( dest );
-			++dest;
-		}
-	}
-}
-#endif
 #ifdef HAVE_GLES
 // I don't trust the BGRA extensions on GLES
 byte* GLES_ConvertBGRA2RGBA( int Width, int Height, const byte* texture )
 {
-	byte*	ret = static_cast<byte*>( malloc( Width * Height * 4 ) );
+	byte*	ret = (byte*)malloc( Width * Height * 4 );
 	GLuint	tmp;
-	GLuint*	dest = static_cast<GLuint*>( ret );
+	GLuint*	dest = (GLuint*)ret;
 	for( int i = 0; i < Height; i++ )
 	{
 		for( int j = 0; j < Width; j++ )
 		{
-			tmp = *static_cast<const GLuint*>( texture );
+			tmp = *(const GLuint*)texture;
 #ifdef __amigaos4__
 			*dest = ( tmp & 0x00ff00ff ) | ( ( tmp & 0xff000000 ) >> 16 ) | ( ( tmp & 0x0000ff00 ) << 16 );
 #else
@@ -66,6 +52,51 @@ byte* GLES_ConvertBGRA2RGBA( int Width, int Height, const byte* texture )
 		}
 	}
 	return ret;
+}
+void *uncompressDXTc( GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, const void *data )
+{
+	// uncompress a DXTc image
+	// get pixel size of uncompressed image => fixed RGBA
+	int pixelsize = 4;
+	// alloc memory
+	void *pixels = malloc( ( ( width + 3 ) & ~3 ) * ( ( height + 3 ) & ~3 ) * pixelsize );
+	// uncompress loop
+	int blocksize;
+	switch( format )
+	{
+		case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
+		case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
+			blocksize = 8;
+			break;
+		case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
+		case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
+			blocksize = 16;
+			break;
+	}
+	uintptr_t src = (uintptr_t)data;
+	for( int y = 0; y < height; y += 4 )
+	{
+		for ( int x = 0; x < width; x += 4 )
+		{
+			uint8_t*	pSrc = (uint8_t*)src;
+			uint32_t*	pPix = (uint32_t*)pixels;
+			switch( format )
+			{
+				case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
+				case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
+				DecompressBlockDXT1( x, y, width, ( format==GL_COMPRESSED_RGBA_S3TC_DXT1_EXT )?1:0, pSrc, pPix );
+				break;
+				case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
+				DecompressBlockDXT3( x, y, width, pSrc, pPix );
+				break;
+				case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
+				DecompressBlockDXT5( x, y, width, pSrc, pPix );
+				break;
+			}
+			src += blocksize;
+		}
+	}
+	return pixels;
 }
 #endif
 
@@ -105,8 +136,10 @@ static GLenum GLImageFormat[] =
 
 	glActiveTexture( GL_TEXTURE0 );
 	glBindTexture( GL_TEXTURE_2D, m_Texture );
+#ifndef HAVE_GLES
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0 );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, MipLevels - 1 );
+#endif
 
 	// Now fill the texture (and mipmaps)
 	for( uint MipLevel = 0; MipLevel < MipLevels; ++MipLevel )
@@ -121,8 +154,8 @@ static GLenum GLImageFormat[] =
 #ifdef HAVE_GLES
 			if( Format == GL_RGBA8 )
 			{
-				void* Temp = uncompressDXTc( Width, Height, GLFormat, ReadBytes, ReadArray.GetData() );
-				glTexImage2D( GL_TEXTURE_2D, MipLevel, GL_RGBA, Width, Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, Temp );
+				void* Temp = uncompressDXTc( Width, Height, Format, Mip.Size(), Mip.GetData() );
+				glTexImage2D( GL_TEXTURE_2D, MipLevel, GL_RGBA8, Width, Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, Temp );
 				free( Temp );
 			}
 			else
@@ -221,54 +254,6 @@ struct SDDSurfaceFormat
 #define DDPF_FOURCC                 0x00000004 
 #define DDPF_INDEXED                0x00000020 
 #define DDPF_RGB                    0x00000040 
-
-#ifdef HAVE_GLES
-void *uncompressDXTc( GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, const void *data )
-{
-	// uncompress a DXTc image
-	// get pixel size of uncompressed image => fixed RGBA
-	int pixelsize = 4;
-	// alloc memory
-	void *pixels = malloc( ( ( width + 3 ) & ~3 ) * ( ( height + 3 ) & ~3 ) * pixelsize );
-	// uncompress loop
-	int blocksize;
-	switch( format )
-	{
-		case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
-		case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
-			blocksize = 8;
-			break;
-		case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
-		case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
-			blocksize = 16;
-			break;
-	}
-	uintptr_t src = static_cast<uintptr_t>( data );
-	for( int y = 0; y < height; y += 4 )
-	{
-		for ( int x = 0; x < width; x += 4 )
-		{
-			uint8_t*	pSrc = static_cast<uint8_t*>( src );
-			uint32_t*	pPix = static_cast<uint32_t*>( pixels );
-			switch( format )
-			{
-				case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
-				case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
-				DecompressBlockDXT1( x, y, width, ( format==GL_COMPRESSED_RGBA_S3TC_DXT1_EXT )?1:0, pSrc, pPix );
-				break;
-				case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
-				DecompressBlockDXT3( x, y, width, pSrc, pPix );
-				break;
-				case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
-				DecompressBlockDXT5( x, y, width, pSrc, pPix );
-				break;
-			}
-			src += blocksize;
-		}
-	}
-	return pixels;
-}
-#endif //HAVE_GLES
 
 // NOTE: This is functionally identical to D3D9Texture::StaticLoadDDS, just without using DX headers and with GL-specific asserts.
 /*static*/ void GL2Texture::StaticLoadDDS( const IDataStream& Stream, STextureData& OutTextureData )

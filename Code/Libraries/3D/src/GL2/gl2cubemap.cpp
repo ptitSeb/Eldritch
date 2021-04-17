@@ -3,6 +3,9 @@
 #include "idatastream.h"
 #include "configmanager.h"
 #include "mathcore.h"
+#ifdef HAVE_GLES
+#include "decompress.h"
+#endif
 
 GL2Cubemap::GL2Cubemap()
 :	m_CubeTexture( 0 )
@@ -26,6 +29,76 @@ GL2Cubemap::~GL2Cubemap()
 {
 	return &m_CubeTexture;
 }
+
+#ifdef HAVE_GLES
+// I don't trust the BGRA extensions on GLES
+byte* GLES_ConvertBGRA2RGBA( int Width, int Height, const byte* texture )
+{
+	byte*	ret = (byte*)malloc( Width * Height * 4 );
+	GLuint	tmp;
+	GLuint*	dest = (GLuint*)ret;
+	for( int i = 0; i < Height; i++ )
+	{
+		for( int j = 0; j < Width; j++ )
+		{
+			tmp = *(const GLuint*)texture;
+#ifdef __amigaos4__
+			*dest = ( tmp & 0x00ff00ff ) | ( ( tmp & 0xff000000 ) >> 16 ) | ( ( tmp & 0x0000ff00 ) << 16 );
+#else
+			*dest = ( tmp & 0xff00ff00 ) | ( ( tmp & 0x00ff0000 ) >> 16 ) | ( ( tmp & 0x000000ff ) << 16 );
+#endif
+			texture += 4;
+			dest++;
+		}
+	}
+	return ret;
+}
+void *uncompressDXTc( GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, const void *data )
+{
+	// uncompress a DXTc image
+	// get pixel size of uncompressed image => fixed RGBA
+	int pixelsize = 4;
+	// alloc memory
+	void *pixels = malloc( ( ( width + 3 ) & ~3 ) * ( ( height + 3 ) & ~3 ) * pixelsize );
+	// uncompress loop
+	int blocksize;
+	switch( format )
+	{
+		case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
+		case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
+			blocksize = 8;
+			break;
+		case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
+		case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
+			blocksize = 16;
+			break;
+	}
+	uintptr_t src = (uintptr_t)data;
+	for( int y = 0; y < height; y += 4 )
+	{
+		for ( int x = 0; x < width; x += 4 )
+		{
+			uint8_t*	pSrc = (uint8_t*)src;
+			uint32_t*	pPix = (uint32_t*)pixels;
+			switch( format )
+			{
+				case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
+				case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
+				DecompressBlockDXT1( x, y, width, ( format==GL_COMPRESSED_RGBA_S3TC_DXT1_EXT )?1:0, pSrc, pPix );
+				break;
+				case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
+				DecompressBlockDXT3( x, y, width, pSrc, pPix );
+				break;
+				case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
+				DecompressBlockDXT5( x, y, width, pSrc, pPix );
+				break;
+			}
+			src += blocksize;
+		}
+	}
+	return pixels;
+}
+#endif //HAVE_GLES
 
 // Maps to EImageFormat
 static GLenum GLImageFormat[] =
@@ -65,20 +138,22 @@ static GLenum GLCubemapTarget[] =
 #ifdef HAVE_GLES
 	CHECKDESC( FirstTextureData.m_Format == 2, "Invalid GLES format GL_RGBA32F" );
 #endif
-	const uint			MipLevels			= FirstTextureData.m_MipChain.Size();
-	const GLenum		Format				= GLImageFormat[ FirstTextureData.m_Format ];
-	const GLint			Border				= 0;
-	const bool			Compressed			= FirstTextureData.m_Format == EIF_DXT1 ||
-											  FirstTextureData.m_Format == EIF_DXT3 ||
-											  FirstTextureData.m_Format == EIF_DXT5;
+	const uint		MipLevels			= FirstTextureData.m_MipChain.Size();
+	const GLenum	Format				= GLImageFormat[ FirstTextureData.m_Format ];
+	const GLint		Border				= 0;
+	const bool		Compressed			= FirstTextureData.m_Format == EIF_DXT1 ||
+										  FirstTextureData.m_Format == EIF_DXT3 ||
+										  FirstTextureData.m_Format == EIF_DXT5;
 
 	glGenTextures( 1, &m_CubeTexture );
 	ASSERT( m_CubeTexture != 0 );
 
 	glActiveTexture( GL_TEXTURE0 );
 	glBindTexture( GL_TEXTURE_CUBE_MAP, m_CubeTexture );
+#ifndef HAVE_GLES
 	glTexParameteri( GL_TEXTURE_CUBE_MAP, GL_TEXTURE_BASE_LEVEL, 0 );
 	glTexParameteri( GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_LEVEL, MipLevels - 1 );
+#endif
 
 	for( uint Side = 0; Side < 6; ++Side )
 	{
@@ -97,7 +172,7 @@ static GLenum GLCubemapTarget[] =
 #ifdef HAVE_GLES
 				if( Format == GL_RGBA8 )
 				{
-					void* Temp = uncompressDXTc( Width, Height, GLFormat, ReadBytes, ReadArray.GetData() );
+					void* Temp = uncompressDXTc( Width, Height, Format, Mip.Size(), Mip.GetData() );
 					glTexImage2D( GL_TEXTURE_2D, MipLevel, GL_RGBA, Width, Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, Temp );
 					free( Temp );
 				}
