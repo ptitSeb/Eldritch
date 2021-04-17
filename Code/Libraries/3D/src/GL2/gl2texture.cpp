@@ -73,7 +73,11 @@ static GLenum GLImageFormat[] =
 {
 	0,
 	GL_RGBA8,
+#ifdef HAVE_GLES
+	0,
+#else
 	GL_RGBA32F,
+#endif
 	GL_COMPRESSED_RGBA_S3TC_DXT1_EXT,
 	GL_COMPRESSED_RGBA_S3TC_DXT3_EXT,
 	GL_COMPRESSED_RGBA_S3TC_DXT5_EXT,
@@ -86,6 +90,9 @@ static GLenum GLImageFormat[] =
 	GLGUARD_ACTIVETEXTURE;
 	GLGUARD_BINDTEXTURE;
 
+#ifdef HAVE_GLES
+	CHECKDESC( TextureData.m_Format == 2, "Invalid GLES format GL_RGBA32F" );
+#endif
 	const uint		MipLevels	= TextureData.m_MipChain.Size();
 	const GLenum	Format		= GLImageFormat[ TextureData.m_Format ];
 	const GLint		Border		= 0;
@@ -118,10 +125,6 @@ static GLenum GLImageFormat[] =
 				glTexImage2D( GL_TEXTURE_2D, MipLevel, GL_RGBA, Width, Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, Temp );
 				free( Temp );
 			}
-			else if( Format == GL_RGBA32F)
-			{
-				WARNDESC("Invalid GLES format: RGBA32F");
-			}
 			else
 			{
 				WARN;
@@ -138,10 +141,6 @@ static GLenum GLImageFormat[] =
 				byte* Temp = GLES_ConvertBGRA2RGBA( Width, Height, Mip.GetData() );
 				glTexImage2D( GL_TEXTURE_2D, MipLevel, Format, Width, Height, Border, GL_RGBA, GL_UNSIGNED_BYTE, Temp );
 				free( Temp );
-			}
-			else if( Format == GL_RGBA32F)
-			{
-				WARNDESC("Invalid GLES format: RGBA32F");
 			}
 			else
 			{
