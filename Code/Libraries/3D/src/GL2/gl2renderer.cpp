@@ -20,6 +20,10 @@
 #include "mathcore.h"
 #include <cstdio>
 
+#ifdef HAVE_GLES
+#define glDepthRange glDepthRangef
+#endif
+
 // I'm making this easy to compile out because GL, with its global state,
 // might be causing problems if I create new objects after setting render state.
 #define IGNORE_REDUNDANT_STATE			1
@@ -286,7 +290,11 @@ void GL2Renderer::Tick()
 #endif
 
 	SETSTREAM( Positions,	VD_POSITIONS,	3,			GL_FLOAT,			GL_FALSE );
+#ifdef HAVE_GLES
+	SETSTREAM( Colors,		VD_COLORS,		GL_RGBA,	GL_UNSIGNED_BYTE,	GL_TRUE );
+#else
 	SETSTREAM( Colors,		VD_COLORS,		GL_BGRA,	GL_UNSIGNED_BYTE,	GL_TRUE );	// GL_BGRA as glVertexAttribPointer size parameter is a hack for swizzling (GL_EXT_vertex_array_bgra/GL_ARB_vertex_array_bgra)
+#endif
 	SETSTREAM( FloatColors,	VD_FLOATCOLORS,	4,			GL_FLOAT,			GL_FALSE );
 	SETSTREAM( UVs,			VD_UVS,			2,			GL_FLOAT,			GL_FALSE );
 	SETSTREAM( Normals,		VD_NORMALS,		3,			GL_FLOAT,			GL_FALSE );
@@ -555,6 +563,10 @@ void GL2Renderer::SetCubeRenderTarget( IRenderTarget* const pRenderTarget, const
 
 	const GLuint CubemapTextureObject = *static_cast<GLuint*>( m_CurrentRenderTarget->GetColorRenderTargetHandle( Face ) );
 
+#ifdef HAVE_GLES
+	glBindFramebuffer( GL_FRAMEBUFFER, FrameBufferObject );
+	glFramebufferTexture2D( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GLCubemapTarget[ Face ], CubemapTextureObject, 0 );
+#else
 	ASSERT( GLEW_ARB_framebuffer_object || GLEW_EXT_framebuffer_object );
 	if( GLEW_ARB_framebuffer_object )
 	{
@@ -578,6 +590,7 @@ void GL2Renderer::SetCubeRenderTarget( IRenderTarget* const pRenderTarget, const
 		const GLenum pDrawBuffers[] = { GL_COLOR_ATTACHMENT0_EXT };
 		glDrawBuffers( 1, pDrawBuffers );
 	}
+#endif
 
 	// GL also requires manually setting the viewport for RTs.
 	{
@@ -986,7 +999,11 @@ static GLenum GLTextureAddress[] =
 	GL_REPEAT,
 	GL_MIRRORED_REPEAT,
 	GL_CLAMP_TO_EDGE,
+#ifdef HAVE_GLES
+	GL_CLAMP_TO_EDGE,
+#else
 	GL_CLAMP_TO_BORDER,
+#endif
 };
 
 /*virtual*/ void GL2Renderer::SetAddressing( const uint SamplerStage, const ETextureAddress AddressU, const ETextureAddress AddressV )
@@ -1158,7 +1175,9 @@ static GLenum GLMagFilters[] =
 
 	glTexParameteri( GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GLTextureAddress[ AddressU ] );
 	glTexParameteri( GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GLTextureAddress[ AddressV ] );
+#ifndef HAVE_GLES
 	glTexParameteri( GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GLTextureAddress[ AddressW ] );
+#endif
 }
 
 /*virtual*/ void GL2Renderer::SetCubemapMinMipFilters( const uint SamplerStage, const ETextureFilter MinFilter, const ETextureFilter MipFilter )
