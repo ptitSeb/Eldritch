@@ -25,10 +25,8 @@ void EldTargetManager::CreateTargets( const uint DisplayWidth, const uint Displa
 	// Original RT, i.e. the backbuffer (possibly sized different from DisplayWidth, if upscaling to fullscreen)
 	m_RenderTargets.Insert( "Original", m_Renderer->GetDefaultRenderTarget() );
 
-#ifndef NO_POST
 	m_RenderTargets.Insert( "Primary", m_Renderer->CreateRenderTarget(
 		SRenderTargetParams( DisplayWidth, DisplayHeight, ERTF_A16B16G16R16F, ERTF_D24S8 ) ) );		// NOTE: This used to be ERTF_UseDefault, but I think some platform didn't support that?
-#endif
 
 	// We need another buffer for bouncing FXAA
 	m_RenderTargets.Insert( "Post", m_Renderer->CreateRenderTarget(
