@@ -1031,8 +1031,13 @@ static GLenum GLTextureAddress[] =
 	SamplerState.m_AddressU = AddressU;
 	SamplerState.m_AddressV = AddressV;
 
+#ifdef HAVE_GLES
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+#else
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GLTextureAddress[ AddressU ] );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GLTextureAddress[ AddressV ] );
+#endif
 }
 
 static GLenum GLMinMipFilters[][ ETF_SIZE ] =
@@ -1179,9 +1184,12 @@ static GLenum GLMagFilters[] =
 	SamplerState.m_AddressV = AddressV;
 	SamplerState.m_AddressW = AddressW;
 
+#ifdef HAVE_GLES
+	glTexParameteri( GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+	glTexParameteri( GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+#else
 	glTexParameteri( GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GLTextureAddress[ AddressU ] );
 	glTexParameteri( GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GLTextureAddress[ AddressV ] );
-#ifndef HAVE_GLES
 	glTexParameteri( GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GLTextureAddress[ AddressW ] );
 #endif
 }
