@@ -32,7 +32,7 @@ GL2Cubemap::~GL2Cubemap()
 
 #ifdef HAVE_GLES
 // I don't trust the BGRA extensions on GLES
-byte* GLES_ConvertBGRA2RGBA( int Width, int Height, const byte* texture )
+static inline byte* GLES_ConvertBGRA2RGBA( int Width, int Height, const byte* texture )
 {
 	byte*	ret = (byte*)malloc( Width * Height * 4 );
 	GLuint	tmp;
@@ -53,7 +53,7 @@ byte* GLES_ConvertBGRA2RGBA( int Width, int Height, const byte* texture )
 	}
 	return ret;
 }
-void *uncompressDXTc( GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, const void *data )
+static inline void *uncompressDXTc( GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, const void *data )
 {
 	// uncompress a DXTc image
 	// get pixel size of uncompressed image => fixed RGBA
