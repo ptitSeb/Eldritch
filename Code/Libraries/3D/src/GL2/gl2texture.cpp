@@ -31,6 +31,29 @@ GL2Texture::~GL2Texture()
 }
 
 #ifdef HAVE_GLES
+static inline byte* GLES_ConvertBGRA2RGBA( int Width, int Height, const byte* texture )
+{
+	if( !texture ) return NULL;
+
+	byte*	ret = (byte*)malloc( Width * Height * 4 );
+	GLuint	tmp;
+	GLuint*	dest = (GLuint*)ret;
+	for( int i = 0; i < Height; i++ )
+	{
+		for( int j = 0; j < Width; j++ )
+		{
+			tmp = *(const GLuint*)texture;
+#ifdef __amigaos4__
+			*dest = ( tmp & 0x00ff00ff ) | ( ( tmp & 0xff000000 ) >> 16 ) | ( ( tmp & 0x0000ff00 ) << 16 );
+#else
+			*dest = ( tmp & 0xff00ff00 ) | ( ( tmp & 0x00ff0000 ) >> 16 ) | ( ( tmp & 0x000000ff ) << 16 );
+#endif
+			texture += 4;
+			dest++;
+		}
+	}
+	return ret;
+}
 static inline byte* GLES_ConvertRGBA32F2RGBA( int Width, int Height, const byte* texture )
 {
 	if( !texture ) return NULL;
@@ -161,7 +184,9 @@ static GLenum GLImageFormat[] =
 #ifdef HAVE_GLES
 			if( Format == GL_RGBA8 )
 			{
-				glTexImage2D( GL_TEXTURE_2D, MipLevel, GL_RGBA, Width, Height, Border, GL_RGBA, GL_UNSIGNED_BYTE, Mip.GetData() );
+				byte* Temp = GLES_ConvertBGRA2RGBA( Width, Height, Mip.GetData() );
+				glTexImage2D( GL_TEXTURE_2D, MipLevel, GL_RGBA, Width, Height, Border, GL_RGBA, GL_UNSIGNED_BYTE, Temp );
+				free( Temp );
 			}
 			else if( Format == 0x8814 )
 			{
