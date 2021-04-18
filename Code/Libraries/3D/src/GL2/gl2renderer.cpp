@@ -145,7 +145,11 @@ void GL2Renderer::Initialize()
 	GLint MaxVertexAttribs;
 	glGetIntegerv( GL_MAX_VERTEX_ATTRIBS, &MaxVertexAttribs );
 	m_MaxVertexAttribs = MaxVertexAttribs;
+#ifdef HAVE_GLES
+	m_MaxAnisotropy = 0;
+#else
 	glGetFloatv( GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &m_MaxAnisotropy );
+#endif
 
 	ASSERT( m_Display );
 	SetVSync( m_Display->m_VSync );

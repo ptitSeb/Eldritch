@@ -55,7 +55,7 @@ static inline byte* GLES_ConvertBGRA2RGBA( int Width, int Height, const byte* te
 	}
 	return ret;
 }
-static inline byte* GLES_ConvertRGBA32F2RGBA8( int Width, int Height, const byte* texture )
+static inline byte* GLES_ConvertRGBA32F2RGBA( int Width, int Height, const byte* texture )
 {
 	if( !texture ) return NULL;
 
@@ -205,13 +205,11 @@ static GLenum GLCubemapTarget[] =
 #ifdef HAVE_GLES
 				if( Format == GL_RGBA8 )
 				{
-					byte* Temp = GLES_ConvertBGRA2RGBA( Width, Height, Mip.GetData() );
-					glTexImage2D( GL_TEXTURE_2D, MipLevel, GL_RGBA, Width, Height, Border, GL_RGBA, GL_UNSIGNED_BYTE, Temp );
-					free( Temp );
+					glTexImage2D( GL_TEXTURE_2D, MipLevel, GL_RGBA, Width, Height, Border, GL_RGBA, GL_UNSIGNED_BYTE, Mip.GetData() );
 				}
 				else if( Format == 0x8814 )
 				{
-					byte* Temp = GLES_ConvertRGBA32F2RGBA8( Width, Height, Mip.GetData() );
+					byte* Temp = GLES_ConvertRGBA32F2RGBA( Width, Height, Mip.GetData() );
 					glTexImage2D( GL_TEXTURE_2D, MipLevel, GL_RGBA, Width, Height, Border, GL_RGBA, GL_UNSIGNED_BYTE, Temp );
 					free( Temp );
 				}
