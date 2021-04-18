@@ -1119,8 +1119,10 @@ static GLenum GLMagFilters[] =
 #endif
 	SamplerState.m_MaxAnisotropy = MaxAnisotropy;
 
+#ifndef HAVE_GLES
 	const GLfloat MinMaxAnisotropy = Min( m_MaxAnisotropy, static_cast<float>( MaxAnisotropy ) );
 	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, MinMaxAnisotropy );
+#endif
 }
 
 /*virtual*/ void GL2Renderer::SetCubemap( const uint SamplerStage, ITexture* const pCubemap )
