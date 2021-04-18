@@ -295,7 +295,7 @@ void GL2Renderer::Tick()
 
 	SETSTREAM( Positions,	VD_POSITIONS,	3,			GL_FLOAT,			GL_FALSE );
 #ifdef HAVE_GLES
-	SETSTREAM( Colors,		VD_COLORS,		GL_RGBA,	GL_UNSIGNED_BYTE,	GL_TRUE );
+	SETSTREAM( Colors,		VD_COLORS,		4,			GL_UNSIGNED_BYTE,	GL_TRUE );
 #else
 	SETSTREAM( Colors,		VD_COLORS,		GL_BGRA,	GL_UNSIGNED_BYTE,	GL_TRUE );	// GL_BGRA as glVertexAttribPointer size parameter is a hack for swizzling (GL_EXT_vertex_array_bgra/GL_ARB_vertex_array_bgra)
 #endif
