@@ -30,7 +30,7 @@ byte* ConvertShader( byte* pBuffer )
 	// printf( "Shader source:\n%s\n", pBuffer );
 	// first change the version header, and add default precision
 	byte* newptr;
-	newptr = static_cast<byte*>( strstr( (char*)pBuffer, "#version" ) );
+	newptr = (byte*)strstr( (char*)pBuffer, "#version" );
 	if( !newptr )
 	{
 		newptr = pBuffer;
@@ -113,11 +113,11 @@ byte* ConvertShader( byte* pBuffer )
 			printf( "Pandora Model detected = %d\n", revision );
 		}
 	}
-	if ( ( revision == 2 ) && ( strstr( Tmp, "gl_FragColor = Calibrate( ColorGrade( texture2D( Texture0" ) ) )
+	if ( ( revision == 2 ) && ( strstr( (const char*)Tmp, "gl_FragColor = Calibrate( ColorGrade( texture2D( Texture0" ) ) )
 	{
 		// only for CC model
 		//printf("Switched !!!\n");
-		strcpy(Tmp, SimplePixelShader);
+		strcpy( (char*)Tmp, SimplePixelShader );
 	}
 	#endif
 	return Tmp;
@@ -150,7 +150,7 @@ void GL2VertexShader::Initialize( const IDataStream& Stream )
 	byte* Tmp	= ConvertShader( pBuffer );
 	SafeDeleteArray(pBuffer);
 	pBuffer		= Tmp;
-	Length		= strlen(static_cast<const char*>(pBuffer));
+	Length		= strlen((const char*)pBuffer);
 #else
 	const int Length	= Stream.Size();
 	byte* pBuffer		= new byte[ Length ];
