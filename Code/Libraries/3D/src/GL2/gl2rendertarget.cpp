@@ -45,15 +45,6 @@
 	}
 }
 
-#ifdef HAVE_GLES
-void NPOT2POT( uint& a )
-{
-	int x = 1;
-	while( x < a ) x *= 2;
-	a = x;
-}
-#endif
-
 GL2RenderTarget::GL2RenderTarget()
 :	m_FrameBufferObject( 0 )
 ,	m_ColorTextureObjects()
@@ -137,18 +128,8 @@ GL2RenderTarget::~GL2RenderTarget()
 
 	m_Width		= Params.Width;
 	m_Height	= Params.Height;
-#ifdef PANDORA
-	if ( ( m_Height == 480 ) && ( m_Width = 800 ) )
-	{
-		m_Width = 512;
-		m_Height = 256;
-	}
-#endif
 
 #ifdef HAVE_GLES
-	NPOT2POT( m_Width );
-	NPOT2POT( m_Height );
-
 	if( Params.ColorFormat != ERTF_None )
 	{
 		GLGUARD_ACTIVETEXTURE;
