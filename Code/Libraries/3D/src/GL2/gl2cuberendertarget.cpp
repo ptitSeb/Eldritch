@@ -101,7 +101,11 @@ static GLenum GLCubemapTarget[] =
 
 			// The image format parameters don't necessarily match the color format,
 			// but it doesn't matter because we're not providing image data here.
+#ifdef HAVE_GLES
 			glTexImage2D( Target, MipLevel, ColorFormat, Params.Width, Params.Width, Border, GL_RGBA, GL_UNSIGNED_BYTE, pNullPixels );
+#else
+			glTexImage2D( Target, MipLevel, ColorFormat, Params.Width, Params.Width, Border, GL_BGRA, GL_UNSIGNED_BYTE, pNullPixels );
+#endif
 			GLERRORCHECK;
 		}
 

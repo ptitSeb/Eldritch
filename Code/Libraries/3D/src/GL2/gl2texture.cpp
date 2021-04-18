@@ -31,28 +31,6 @@ GL2Texture::~GL2Texture()
 }
 
 #ifdef HAVE_GLES
-// I don't trust the BGRA extensions on GLES
-static inline byte* GLES_ConvertBGRA2RGBA( int Width, int Height, const byte* texture )
-{
-	byte*	ret = (byte*)malloc( Width * Height * 4 );
-	GLuint	tmp;
-	GLuint*	dest = (GLuint*)ret;
-	for( int i = 0; i < Height; i++ )
-	{
-		for( int j = 0; j < Width; j++ )
-		{
-			tmp = *(const GLuint*)texture;
-#ifdef __amigaos4__
-			*dest = ( tmp & 0x00ff00ff ) | ( ( tmp & 0xff000000 ) >> 16 ) | ( ( tmp & 0x0000ff00 ) << 16 );
-#else
-			*dest = ( tmp & 0xff00ff00 ) | ( ( tmp & 0x00ff0000 ) >> 16 ) | ( ( tmp & 0x000000ff ) << 16 );
-#endif
-			texture += 4;
-			dest++;
-		}
-	}
-	return ret;
-}
 static inline byte* GLES_ConvertRGBA32F2RGBA( int Width, int Height, const byte* texture )
 {
 	if( !texture ) return NULL;
