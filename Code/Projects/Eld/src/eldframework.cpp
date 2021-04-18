@@ -1879,9 +1879,7 @@ void EldFramework::CreateBuckets()
 	STATICHASH( FXAA );
 	const bool FXAA = ConfigManager::GetBool( sFXAA );
 
-#ifndef NO_POST
 	IRenderTarget* const pMainRT = m_TargetManager->GetRenderTarget( "Primary" );
-#endif
 	IRenderTarget* const pScrnRT = m_TargetManager->GetRenderTarget( "Original" );
 	IRenderTarget* const pMirrRT = m_TargetManager->GetRenderTarget( "Mirror" );
 	IRenderTarget* const pMrAART = m_TargetManager->GetRenderTarget( "MirrorFXAA" );
@@ -1908,7 +1906,11 @@ void EldFramework::CreateBuckets()
 #endif
 								// View			// RT		// Flags					// Filter				// Tag	// Frus	// Excl	// Clear
 #ifdef NO_POST
+#ifdef HAVE_GLES
 	ADDBK( "Main",			BK( m_MainView,		pScrnRT,	MAT_WORLD,					MAT_ALPHA|MAT_DYNAMIC,	sMain,	true,	true,	CLEAR_DEPTH|CLEAR_COLOR ) );
+#else
+	ADDBK( "Main",			BK( m_MainView,		pMainRT,	MAT_WORLD,					MAT_ALPHA|MAT_DYNAMIC,	sMain,	true,	true,	CLEAR_DEPTH|CLEAR_COLOR ) );
+#endif
 	ADDBK( "MainDynamic",	BK( NULL,			NULL,		MAT_WORLD|MAT_DYNAMIC,		MAT_ALPHA,				sMain,	true,	true ) );
 	DEVBK( "MainDebug",		BK( NULL,			NULL,		MAT_DEBUG_WORLD,			MAT_NONE,				sMain,	true,	true ) );
 	ADDBK( "MainAlpha",		BK( NULL,			NULL,		MAT_WORLD|MAT_ALPHA,		MAT_NONE,				sMain,	true,	true ) );

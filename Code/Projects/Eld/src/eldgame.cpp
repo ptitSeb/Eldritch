@@ -555,12 +555,7 @@ void EldGame::CreatePostQuad()
 	ASSERT( pTargetManager );
 
 	m_PostQuad = CreateFullscreenQuad( pDisplay->m_Width, pDisplay->m_Height, "Post", "Material_Post" );
-#ifdef NO_POST
-	// just a dummy, it will not be used
-	m_PostQuad->SetTexture( 0, pRenderer->GetTextureManager()->GetTexture( m_ColorGradingTexture.CStr() ) );
-#else
 	m_PostQuad->SetTexture( 0, pTargetManager->GetRenderTarget( "Primary" )->GetColorTextureHandle( 0 ) );
-#endif
 	m_PostQuad->SetTexture( 1, pRenderer->GetTextureManager()->GetTextureNoMips( m_ColorGradingTexture.CStr() ) );
 }
 
