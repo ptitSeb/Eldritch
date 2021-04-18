@@ -1908,8 +1908,9 @@ void EldFramework::CreateBuckets()
 #endif
 								// View			// RT		// Flags					// Filter				// Tag	// Frus	// Excl	// Clear
 #ifdef NO_POST
-	ADDBK( "Main",			BK( m_MainView,		pMainRT,	MAT_WORLD,					MAT_ALPHA|MAT_DYNAMIC,	sMain,	true,	true,	CLEAR_DEPTH|CLEAR_COLOR ) );
+	ADDBK( "Main",			BK( m_MainView,		pScrnRT,	MAT_WORLD,					MAT_ALPHA|MAT_DYNAMIC,	sMain,	true,	true,	CLEAR_DEPTH|CLEAR_COLOR ) );
 	ADDBK( "MainDynamic",	BK( NULL,			NULL,		MAT_WORLD|MAT_DYNAMIC,		MAT_ALPHA,				sMain,	true,	true ) );
+	DEVBK( "MainDebug",		BK( NULL,			NULL,		MAT_DEBUG_WORLD,			MAT_NONE,				sMain,	true,	true ) );
 	ADDBK( "MainAlpha",		BK( NULL,			NULL,		MAT_WORLD|MAT_ALPHA,		MAT_NONE,				sMain,	true,	true ) );
 	ADDBK( "MainFG",		BK( m_FGView,		NULL,		MAT_FOREGROUND,				MAT_ALPHA,				sMain,	true,	true,	CLEAR_DEPTH ) );
 	ADDBK( "MainFGAlpha",	BK( NULL,			NULL,		MAT_FOREGROUND|MAT_ALPHA,	MAT_NONE,				sMain,	true,	true,	CLEAR_DEPTH ) );
@@ -1920,6 +1921,7 @@ void EldFramework::CreateBuckets()
 	ADDBK( "Post",			BK( m_HUDView,		pPostRT,	MAT_PRESCRIBED,				MAT_NONE,				sPost,	false,	true,	CLEAR_DEPTH ) );
 	ADDBK( "FXAA",			BK( NULL,			p_UI_RT,	MAT_PRESCRIBED,				MAT_NONE,				sPost,	false,	true ) );
 	ADDBK( "HUD",			BK( NULL,			NULL,		MAT_HUD,					MAT_NONE,				sUI,	false,	true,	CLEAR_DEPTH ) );
+	DEVBK( "HUDDebug",		BK( NULL,			NULL,		MAT_DEBUG_HUD,				MAT_NONE,				sUI,	false,	true ) );
 	ADDBK( "Upscale",		BK( m_UpscaleView,	pScrnRT,	MAT_PRESCRIBED,				MAT_NONE,				sUI,	false,	true,	CLEAR_COLOR ) );	// Clear color so we get black bars when aspect doesn't match
 #else
 	ADDBK( "Main",			BK( m_MainView,		pMainRT,	MAT_WORLD,					MAT_ALPHA|MAT_DYNAMIC,	sMain,	true,	true,	CLEAR_DEPTH ) );
