@@ -4,33 +4,31 @@
 #include "uiwidget.h"
 #include "vector2.h"
 #include "simplestring.h"
+#include "array.h"
 
 class ITexture;
 class Mesh;
 
-class UIWidgetImage : public UIWidget {
- public:
-  UIWidgetImage();
-  UIWidgetImage(const SimpleString& DefinitionName);
-  virtual ~UIWidgetImage();
+class UIWidgetImage : public UIWidget
+{
+public:
+	UIWidgetImage();
+	UIWidgetImage( const SimpleString& DefinitionName );
+	virtual ~UIWidgetImage();
 
-  DEFINE_UIWIDGET_FACTORY(Image);
+	DEFINE_UIWIDGET_FACTORY( Image );
 
-  virtual void Render(bool HasFocus);
-  virtual void UpdateRender();
-  virtual void InitializeFromDefinition(const SimpleString& DefinitionName);
-  virtual void GetBounds(SRect& OutBounds);
-  virtual float GetWidth() { return m_Dimensions.x; }
-  virtual float GetHeight() { return m_Dimensions.y; }
+	virtual void	Tick( const float DeltaTime );
+	virtual void	Render( bool HasFocus );
+	virtual void	UpdateRender();
+	virtual void	InitializeFromDefinition( const SimpleString& DefinitionName, const SimpleString& LegacyName );
 
-  void SetTexture(const char* Filename);
-  void SetTexture(ITexture* const pTexture);
+	void			SetTexture( const char* Filename, const uint Index );
+	void			SetTexture( ITexture* const pTexture, const uint Index );
 
-  ITexture* m_Texture;
-  Vector2 m_Dimensions;
-  Mesh* m_Mesh;
-  bool m_Calibration;  // TODO: Replace with shader override
-  SimpleString m_Material;
+	Array<ITexture*>	m_Textures;
+	Mesh*				m_Mesh;
+	SimpleString		m_Material;
 };
 
-#endif  // UIWIDGETIMAGE_H
+#endif // UIWIDGETIMAGE_H

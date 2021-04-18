@@ -6,9 +6,9 @@
 
 class IDataStream;
 
-namespace D3D9ConstantTable {
-void ParseConstantTable(const IDataStream& Stream,
-                        Map<HashedString, uint>& OutTable);
+namespace D3D9ConstantTable
+{
+	void ParseConstantTable( const IDataStream& Stream, Map<HashedString, uint>& OutTable );
 }
 
 #endif

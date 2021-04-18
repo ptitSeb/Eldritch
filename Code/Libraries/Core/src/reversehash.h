@@ -7,16 +7,23 @@
 class HashedString;
 class SimpleString;
 
-namespace ReverseHash {
-void Initialize();
-void ShutDown();
+namespace ReverseHash
+{
+	void			Initialize();
+	void			ShutDown();
 
-bool IsEnabled();
+	bool			IsEnabled();
 
-void RegisterHash(const HashedString& Hash, const SimpleString& String);
-SimpleString ReversedHash(const HashedString& Hash);
+	void			RegisterHash( const HashedString& Hash, const SimpleString& String );
+	SimpleString	ReversedHash( const HashedString& Hash );
 
-void ReportSize();
+	void			ReportSize();
 }
+
+#if BUILD_DEV
+// For viewing in watch window
+const char* ReversedHash( HashedString& Hash );
+const char* ReversedHash( uint Hash );
+#endif
 
 #endif

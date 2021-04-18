@@ -6,17 +6,18 @@
 class IVertexDeclaration;
 class IRenderer;
 
-class VertexDeclarationManager {
- public:
-  VertexDeclarationManager(IRenderer* pRenderer);
-  ~VertexDeclarationManager();
+class VertexDeclarationManager
+{
+public:
+	VertexDeclarationManager( IRenderer* pRenderer );
+	~VertexDeclarationManager();
 
-  IVertexDeclaration* GetVertexDeclaration(uint VertexSignature);
-  void FreeVertexDeclarations();
+	IVertexDeclaration*	GetVertexDeclaration( const uint VertexSignature );
+	void				FreeVertexDeclarations();
 
- private:
-  Map<uint, IVertexDeclaration*> m_VertexDeclarations;
-  IRenderer* m_Renderer;
+private:
+	Map< uint, IVertexDeclaration* >	m_VertexDeclarations;
+	IRenderer*							m_Renderer;
 };
 
 #endif

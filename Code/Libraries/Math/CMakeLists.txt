@@ -1,64 +1,35 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.0)
 
 include_directories(../Core/src)
- 
+
 set(math_src
-src/aabb.cpp
-src/aabb.h
-src/angles.cpp
-src/angles.h
-src/box2d.cpp
-src/box2d.h
-src/collisioninfo.cpp
-src/collisioninfo.h
-src/collisioninfo2d.cpp
-src/collisioninfo2d.h
-src/collisionmesh.cpp
-src/collisionmesh.h
-src/collisiontriangle.cpp
-src/collisiontriangle.h
-src/crypto.cpp
-src/crypto.h
-src/cylinder.cpp
-src/cylinder.h
-src/ellipsoid.cpp
-src/ellipsoid.h
-src/frustum.cpp
-src/frustum.h
-src/hsv.cpp
-src/hsv.h
-src/line.cpp
-src/line.h
-src/mathfunc.cpp
-src/mathfunc.h
-src/matrix.cpp
-src/matrix.h
-src/noise.cpp
-src/noise.h
-src/plane.cpp
-src/plane.h
-src/quat.cpp
-src/quat.h
-src/random.cpp
-src/random.h
-src/ray.cpp
-src/ray.h
-src/segment.cpp
-src/segment.h
-src/segment2d.cpp
-src/segment2d.h
-src/sphere.cpp
-src/sphere.h
-src/triangle.cpp
-src/triangle.h
-src/triangle2d.cpp
-src/triangle2d.h
-src/vector.cpp
-src/vector.h
-src/vector2.cpp
-src/vector2.h
-src/vector4.cpp
-src/vector4.h
+	src/aabb.cpp
+	src/angles.cpp
+	src/box2d.cpp
+	src/collisioninfo.cpp
+	src/collisioninfo2d.cpp
+	src/convexhull.cpp
+	src/crypto.cpp
+	src/cylinder.cpp
+	src/ellipsoid.cpp
+	src/frustum.cpp
+	src/hsv.cpp
+	src/line.cpp
+	src/mathfunc.cpp
+	src/matrix.cpp
+	src/noise.cpp
+	src/plane.cpp
+	src/quat.cpp
+	src/random.cpp
+	src/ray.cpp
+	src/segment.cpp
+	src/segment2d.cpp
+	src/sphere.cpp
+	src/triangle.cpp
+	src/triangle2d.cpp
+	src/vector.cpp
+	src/vector2.cpp
+	src/vector4.cpp
 )
 
 add_library(Math ${math_src})

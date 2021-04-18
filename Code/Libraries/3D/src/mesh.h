@@ -7,12 +7,11 @@
 #include "matrix.h"
 #include "3d.h"
 #include "aabb.h"
-#include "collisionmesh.h"
 #include "simplestring.h"
 #include "vector4.h"
-#include "irradiancevolumes.h"
 #include "animationstate.h"
 #include "array.h"
+#include "map.h"
 
 class BoneArray;
 class IVertexBuffer;
@@ -26,119 +25,123 @@ class IBoneModifier;
 // Get*/Set* functions on EVERYTHING, so I
 // guess it's okay for now.
 
-class Mesh {
- public:
-  // Serves as default constructor
-  Mesh(IVertexBuffer* pVertexBuffer = NULL,
-       IVertexDeclaration* pVertexDeclaration = NULL,
-       IIndexBuffer* pIndexBuffer = NULL, BoneArray* pBones = NULL);
-  virtual ~Mesh();
+class Mesh
+{
+public:
+	// Serves as default constructor
+	Mesh(	IVertexBuffer* pVertexBuffer = NULL,
+			IVertexDeclaration* pVertexDeclaration = NULL,
+			IIndexBuffer* pIndexBuffer = NULL,
+			BoneArray* pBones = NULL );
+	virtual ~Mesh();
 
-  void Initialize(IVertexBuffer* pVertexBuffer,
-                  IVertexDeclaration* pVertexDeclaration,
-                  IIndexBuffer* pIndexBuffer, BoneArray* pBones);
+	void			Initialize( IVertexBuffer* pVertexBuffer, IVertexDeclaration* pVertexDeclaration, IIndexBuffer* pIndexBuffer, BoneArray* pBones );
 
-  void Reinitialize(IVertexBuffer* pVertexBuffer,
-                    IVertexDeclaration* pVertexDeclaration,
-                    IIndexBuffer* pIndexBuffer, BoneArray* pBones);
-  void Reinitialize(
-      Mesh* pMesh);  // Assigns this mesh's buffers, but no other properties
+	void			SetVertexDeclaration( IVertexDeclaration* const pVertexDeclaration );
 
-  void SetVertexDeclaration(IVertexDeclaration* const pVertexDeclaration);
+	Matrix			GetConcatenatedTransforms();
 
-  Matrix GetConcatenatedTransforms();
+	ITexture*		GetTexture( unsigned int Stage ) const;
+	void			SetTexture( unsigned int Stage, ITexture* const Texture );
 
-  ITexture* GetTexture(unsigned int Stage) const;
-  void SetTexture(unsigned int Stage, ITexture* Texture);
+	bool			SupportsTexture( const uint Stage ) const;
+	bool			SupportsAlphaBlend() const;
 
-  IShaderProgram* GetShaderProgram() const;
+	IShaderProgram*	GetShaderProgram() const;
 
-  const Material& GetMaterial() const { return m_Material; }
-  void SetMaterialDefinition(const SimpleString& DefinitionName,
-                             IRenderer* const pRenderer);
+	const Material&	GetMaterial() const { return m_Material; }
+	void			SetMaterialDefinition( const SimpleString& DefinitionName, IRenderer* const pRenderer );
 
-  uint GetMaterialFlags() const;
-  void SetMaterialFlags(unsigned int Flags, unsigned int Mask = MAT_ALL);
-  void SetMaterialFlag(unsigned int Flag, bool Set);
+	bool			HasMultiPassMaterials() const { return m_MultiPassMaterials.Size() > 0; }
+	const Material&	GetMultiPassMaterial( const uint Index ) const { return m_MultiPassMaterials[ Index ]; }
+	Material&		GetMultiPassMaterial( const uint Index ) { return m_MultiPassMaterials[ Index ]; }
+	void			ClearMultiPassMaterials() { m_MultiPassMaterials.Clear(); }
+	void			AddMultiPassMaterialDefinition( const SimpleString& DefinitionName, IRenderer* const pRenderer );
 
-  bool IsAnimated() const;
-  void Tick(float DeltaTime);
-  void CopyAnimationsFrom(Mesh* const pMesh);
-  void SuppressAnimEvents(const bool Suppress);
-  void PlayAnimation(const HashedString& AnimationName,
-                     AnimationState::SPlayAnimationParams& PlayParams);
-  void SetAnimation(int AnimationIndex,
-                    AnimationState::SPlayAnimationParams& PlayParams);
-  void StopAnimation();
-  const Animation* GetPlayingAnimation() const;
-  Animation* GetAnimation(const SimpleString& Name) const;
-  void AddAnimationListener(const SAnimationListener& AnimationListener);
-  void RemoveAnimationListener(const SAnimationListener& AnimationListener);
-  void UpdateBones();  // This only applies updates if the matrices have been
-                       // marked dirty, so it can be called as often as needed
-  void AddBoneModifier(IBoneModifier* pBoneModifier);
-  void GetAnimationVelocity(Vector& OutVelocity, Angles& OutRotationalVelocity);
+	uint			GetMaterialFlags() const;
+	void			SetMaterialFlags( unsigned int Flags, unsigned int Mask = MAT_ALL );
+	void			SetMaterialFlag( unsigned int Flag, bool Set );
 
-  // Accessors used to serialize animation state
-  int GetAnimationIndex() const;
-  float GetAnimationTime() const;
-  void SetAnimationTime(const float AnimationTime);
-  float GetAnimationPlayRate() const;
-  void SetAnimationPlayRate(const float AnimationPlayRate);
-  AnimationState::EAnimationEndBehavior GetAnimationEndBehavior() const;
+	const HashedString&	GetBucket() const { return m_Material.GetBucket(); }
+	void				SetBucket( const HashedString& PrescribedBucket ) { m_Material.SetBucket( PrescribedBucket ); }
+	bool			IsAnimated() const;
+	void			Tick( const float DeltaTime );
+	void			CopyAnimationsFrom( Mesh* const pMesh );
+	void			SuppressAnimEvents( const bool Suppress );
+	void			PlayAnimation( const HashedString& AnimationName, AnimationState::SPlayAnimationParams& PlayParams );
+	void			SetAnimation( int AnimationIndex, AnimationState::SPlayAnimationParams& PlayParams );
+	void			StopAnimation();
+	const Animation*	GetPlayingAnimation() const;
+	Animation*		GetAnimation( const SimpleString& Name ) const;
+	void			AddAnimationListener( const SAnimationListener& AnimationListener );
+	void			RemoveAnimationListener( const SAnimationListener& AnimationListener );
+	void			UpdateBones();	// This only applies updates if the matrices have been marked dirty, so it can be called as often as needed
+	bool			AreBonesUpdated() const { return !m_DirtyBoneMatrices; }
+	void			AddBoneModifier( IBoneModifier* pBoneModifier );
+	void			GetAnimationVelocity( Vector& OutVelocity, Angles& OutRotationalVelocity );
 
-  // Blend current irradiance volume to a target volume over time
-  void BlendIrradianceVolume(const IrradianceVolumes& Volumes, float DeltaTime,
-                             const Vector& Location,
-                             const Vector4& ConstantTerm = Vector4(0.0f, 0.0f,
-                                                                   0.0f, 0.0f));
-  void SetIrradianceVolume(const IrradianceVolumes& Volumes,
-                           const Vector& Location,
-                           const Vector4& ConstantTerm = Vector4(0.0f, 0.0f,
-                                                                 0.0f, 0.0f));
+	// Accessors used to serialize animation state
+	int				GetAnimationIndex() const;
+	float			GetAnimationTime() const;
+	void			SetAnimationTime( const float AnimationTime );
+	float			GetAnimationPlayRate() const;
+	void			SetAnimationPlayRate( const float AnimationPlayRate );
+	AnimationState::EAnimationEndBehavior GetAnimationEndBehavior() const;
 
-  // Get the location to use when sorting alpha list
-  virtual Vector GetSortLocation();
+	// Get the location to use when sorting alpha list
+	virtual Vector	GetSortLocation();
 
- public:
-  IVertexBuffer* m_VertexBuffer;
-  IVertexDeclaration* m_VertexDeclaration;
-  IIndexBuffer* m_IndexBuffer;
-  BoneArray* m_Bones;
+	uint			GetNumVertices() const;
+	void			SetNumVertices( const uint NumVertices );
+	uint			GetNumIndices() const;
+	void			SetNumIndices( const uint NumIndices );
 
-  Material m_Material;
-  bool m_MutableVisible;
+	const AABB&		GetAABB() const { return m_AABB; }
+	void			SetAABB( const AABB& Bounds );
+	void			RecomputeAABB();
 
-  Vector m_Location;  // Could just store a world matrix and avoid recomputing
-  Vector m_Scale;     // it every time, but this prevents some matrix drift...
-  Angles m_Rotation;
+	const Vector4&	GetPixelShaderConstant( const HashedString& Name ) const;
+	void			SetPixelShaderConstant( const HashedString& Name, const Vector4& Value );
 
-  Matrix* m_BoneMatrices;
-  bool m_DirtyBoneMatrices;
-  Array<IBoneModifier*> m_BoneModifiers;
+// ELDTODO: Make private
+public:
+	IVertexBuffer*		m_VertexBuffer;
+	IVertexDeclaration*	m_VertexDeclaration;
+	IIndexBuffer*		m_IndexBuffer;
+	BoneArray*			m_Bones;			// Static animation data (i.e., the rig or armature)
 
-  // TODO: Use different kinds of bounds as needed
-  AABB m_AABB;
+	Material		m_Material;				// NOTE: Always used for sorting into buckets, even when we have multiple passes
+	Array<Material>	m_MultiPassMaterials;	// Only used for multiple passes so we don't pay the array pointer dereference in the common case
 
-  // TODO: Maybe move some of these more specific members into subclasses?
+	Vector			m_Location;
+	Vector			m_Scale;
+	Angles			m_Rotation;
 
-  // Not a pointer because CollisionMesh is such a lightweight class
-  CollisionMesh m_CollisionMesh;
+	// ELDNOTE: Crude optimization for things that don't move; avoid redundant matrix multiplies in GetConcatenatedTransforms.
+	Vector			m_CACHED_Location;
+	Vector			m_CACHED_Scale;
+	Angles			m_CACHED_Rotation;
+	Matrix			m_PreconcatenatedTransform;
 
-  // Likewise not a pointer because it's lightweight
-  AnimationState m_AnimationState;
+	Matrix*					m_BoneMatrices;
+	bool					m_DirtyBoneMatrices;
+	Array< IBoneModifier* >	m_BoneModifiers;
 
-  SIrradianceVolume m_IrradianceVolume;
+	AABB			m_AABB;
+	AABB			m_OriginalAABB;	// Stored so we can recompute the bounds for a moving mesh from this. Only required when RecomputeAABB is used.
 
-  Vector4 m_ConstantColor;  // Used for fonts, drop shadows, etc.
+	AnimationState	m_AnimationState;
+
+	Vector4			m_ConstantColor;	// Mainly used for UI multiply color
+	Map<HashedString, Vector4> m_PixelShaderConstants;	// Instead of continuing to add hacky extensions like m_ConstantColorB, let meshes store arbitrary things for SDPs to query
 
 #if BUILD_DEV
-  bool m_IsDebugMesh;  // For automatically deleting debug lines and boxes
+	bool			m_IsDebugMesh;	// For automatically deleting debug lines and boxes
 #endif
 
 #if BUILD_DEBUG
-  SimpleString m_Name;
+	SimpleString	m_Name;
 #endif
 };
 
-#endif  // MESH_H
+#endif // MESH_H

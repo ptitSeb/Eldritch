@@ -1,14 +1,26 @@
 #include "core.h"
 #include "gl2vertexdeclaration.h"
 
-GL2VertexDeclaration::GL2VertexDeclaration() : m_VertexSignature(0) {}
-
-GL2VertexDeclaration::~GL2VertexDeclaration() {}
-
-void GL2VertexDeclaration::Initialize(uint VertexSignature) {
-  m_VertexSignature = VertexSignature;
+GL2VertexDeclaration::GL2VertexDeclaration()
+:	m_VertexSignature( 0 )
+{
 }
 
-void* GL2VertexDeclaration::GetDeclaration() { return nullptr; }
+GL2VertexDeclaration::~GL2VertexDeclaration()
+{
+}
 
-uint GL2VertexDeclaration::GetSignature() { return m_VertexSignature; }
+void GL2VertexDeclaration::Initialize( uint VertexSignature )
+{
+	m_VertexSignature = VertexSignature;
+}
+
+void* GL2VertexDeclaration::GetDeclaration()
+{
+	return NULL;
+}
+
+uint GL2VertexDeclaration::GetSignature()
+{
+	return m_VertexSignature;
+}

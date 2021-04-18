@@ -4,84 +4,90 @@
 #include "wbeventmanager.h"
 
 RodinBTNodeSendEvent::RodinBTNodeSendEvent()
-    : m_EventName(),
-      m_QueueEvent(false),
-      m_DispatchDelay(0.0f),
-      m_RecipientPE(),
-      m_Parameters() {}
-
-RodinBTNodeSendEvent::~RodinBTNodeSendEvent() {}
-
-void RodinBTNodeSendEvent::InitializeFromDefinition(
-    const SimpleString& DefinitionName) {
-  MAKEHASH(DefinitionName);
-
-  STATICHASH(EventName);
-  m_EventName = ConfigManager::GetHash(sEventName, "", sDefinitionName);
-
-  STATICHASH(QueueEvent);
-  m_QueueEvent = ConfigManager::GetBool(sQueueEvent, false, sDefinitionName);
-
-  STATICHASH(DispatchDelay);
-  m_DispatchDelay =
-      ConfigManager::GetFloat(sDispatchDelay, 0.0f, sDefinitionName);
-
-  STATICHASH(Recipient);
-  const SimpleString RecipientDef =
-      ConfigManager::GetString(sRecipient, "", sDefinitionName);
-  m_RecipientPE.InitializeFromDefinition(RecipientDef);
-
-  STATICHASH(NumParameters);
-  const uint NumParameters =
-      ConfigManager::GetInt(sNumParameters, 0, sDefinitionName);
-  for (uint ParameterIndex = 0; ParameterIndex < NumParameters;
-       ++ParameterIndex) {
-    const HashedString Name = ConfigManager::GetSequenceHash(
-        "Parameter%dName", ParameterIndex, HashedString::NullString,
-        sDefinitionName);
-    const SimpleString ValuePEDef = ConfigManager::GetSequenceString(
-        "Parameter%dValue", ParameterIndex, "", sDefinitionName);
-
-    SNamedParameter& Parameter = m_Parameters.PushBack();
-
-    Parameter.m_Name = Name;
-    Parameter.m_ValuePE.InitializeFromDefinition(ValuePEDef);
-  }
+:	m_EventName()
+,	m_QueueEvent( false )
+,	m_DispatchDelay( 0.0f )
+,	m_DispatchTicks( 0 )
+,	m_RecipientPE()
+,	m_Parameters()
+{
 }
 
-RodinBTNode::ETickStatus RodinBTNodeSendEvent::Tick(float DeltaTime) {
-  Unused(DeltaTime);
+RodinBTNodeSendEvent::~RodinBTNodeSendEvent()
+{
+}
 
-  WBEntity* const pEntity = GetEntity();
+void RodinBTNodeSendEvent::InitializeFromDefinition( const SimpleString& DefinitionName )
+{
+	MAKEHASH( DefinitionName );
 
-  WBEvent Event;
+	STATICHASH( EventName );
+	m_EventName = ConfigManager::GetHash( sEventName, "", sDefinitionName );
 
-  Event.SetEventName(m_EventName);
+	STATICHASH( DispatchDelay );
+	m_DispatchDelay = ConfigManager::GetFloat( sDispatchDelay, 0.0f, sDefinitionName );
 
-  if (pEntity) {
-    pEntity->AddContextToEvent(Event);
-  }
+	STATICHASH( DispatchTicks );
+	m_DispatchTicks = ConfigManager::GetInt( sDispatchTicks, 0, sDefinitionName );
 
-  WBParamEvaluator::SPEContext PEContext;
-  PEContext.m_Entity = pEntity;
+	const bool DefaultQueue = ( m_DispatchDelay > 0.0f ) || ( m_DispatchTicks > 0 );
+	STATICHASH( QueueEvent );
+	m_QueueEvent = ConfigManager::GetBool( sQueueEvent, DefaultQueue, sDefinitionName );
 
-  const uint NumParameters = m_Parameters.Size();
-  for (uint ParameterIndex = 0; ParameterIndex < NumParameters;
-       ++ParameterIndex) {
-    SNamedParameter& Parameter = m_Parameters[ParameterIndex];
-    Parameter.m_ValuePE.Evaluate(PEContext);
-    Event.Set(Parameter.m_Name, Parameter.m_ValuePE);
-  }
+	STATICHASH( Recipient );
+	const SimpleString RecipientDef = ConfigManager::GetString( sRecipient, "", sDefinitionName );
+	m_RecipientPE.InitializeFromDefinition( RecipientDef );
 
-  m_RecipientPE.Evaluate(PEContext);
+	STATICHASH( NumParameters );
+	const uint NumParameters = ConfigManager::GetInt( sNumParameters, 0, sDefinitionName );
+	for( uint ParameterIndex = 0; ParameterIndex < NumParameters; ++ParameterIndex )
+	{
+		const HashedString Name = ConfigManager::GetSequenceHash( "Parameter%dName", ParameterIndex, HashedString::NullString, sDefinitionName );
+		const SimpleString ValuePEDef = ConfigManager::GetSequenceString( "Parameter%dValue", ParameterIndex, "", sDefinitionName );
 
-  if (m_QueueEvent) {
-    WBWorld::GetInstance()->GetEventManager()->QueueEvent(
-        Event, m_RecipientPE.GetEntity(), m_DispatchDelay);
-  } else {
-    WBWorld::GetInstance()->GetEventManager()->DispatchEvent(
-        Event, m_RecipientPE.GetEntity());
-  }
+		SNamedParameter& Parameter = m_Parameters.PushBack();
 
-  return ETS_Success;
+		Parameter.m_Name = Name;
+		Parameter.m_ValuePE.InitializeFromDefinition( ValuePEDef );
+	}
+}
+
+RodinBTNode::ETickStatus RodinBTNodeSendEvent::Tick( const float DeltaTime )
+{
+	Unused( DeltaTime );
+
+	WBEntity* const pEntity = GetEntity();
+
+	WBEvent Event;
+
+	Event.SetEventName( m_EventName );
+
+	if( pEntity )
+	{
+		pEntity->AddContextToEvent( Event );
+	}
+
+	WBParamEvaluator::SPEContext PEContext;
+	PEContext.m_Entity = pEntity;
+
+	const uint NumParameters = m_Parameters.Size();
+	for( uint ParameterIndex = 0; ParameterIndex < NumParameters; ++ParameterIndex )
+	{
+		SNamedParameter& Parameter = m_Parameters[ ParameterIndex ];
+		Parameter.m_ValuePE.Evaluate( PEContext );
+		Event.Set( Parameter.m_Name, Parameter.m_ValuePE );
+	}
+
+	m_RecipientPE.Evaluate( PEContext );
+
+	if( m_QueueEvent )
+	{
+		WBWorld::GetInstance()->GetEventManager()->QueueEvent( Event, m_RecipientPE.GetEntity(), m_DispatchDelay, m_DispatchTicks );
+	}
+	else
+	{
+		WBWorld::GetInstance()->GetEventManager()->DispatchEvent( Event, m_RecipientPE.GetEntity() );
+	}
+
+	return ETS_Success;
 }

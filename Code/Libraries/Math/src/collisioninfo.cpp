@@ -1,68 +1,58 @@
 #include "core.h"
 #include "collisioninfo.h"
-#include "collisionmesh.h"
 
 CollisionInfo::CollisionInfo()
-    : m_CollideWorld(false),
-      m_CollideEntities(false),
-      m_CollideNonBlockingEntities(false),
-      m_UseCompositeCollision(false),
-      m_StopAtAnyCollision(false),
-      m_CollidingEntity(nullptr),
-      m_TargetEntity(nullptr),
-      m_CollisionMeshFlags(CMF_Default),
-      m_UserFlags(0),
-      m_Collision(false),
-      m_Plane(),
-      m_Intersection(),
-      m_HitT(1.0f)  // 30 Mar 2013: Changed from 0 to 1 so a trace that doesn't
-                    // collide has a max T. Shouldn't cause problems, but just
-                    // in case.
-      ,
-      m_HitEntity(nullptr),
-      m_HitMesh(nullptr),
-      m_HitName(HashedString::NullString) {}
-
-void CollisionInfo::ResetInParameters() {
-  m_CollideWorld = false;
-  m_CollideEntities = false;
-  m_CollideNonBlockingEntities = false;
-  m_UseCompositeCollision = false;
-  m_StopAtAnyCollision = false;
-  m_CollidingEntity = nullptr;
-  m_TargetEntity = nullptr;
-  m_CollisionMeshFlags = CMF_Default;
-  m_UserFlags = 0;
+:	m_In_CollideWorld( false )
+,	m_In_CollideEntities( false )
+,	m_In_StopAtAnyCollision( false )
+,	m_In_CollidingEntity( NULL )
+,	m_In_UserFlags( 0 )
+,	m_Out_Collision( false )
+,	m_Out_Plane()
+,	m_Out_Intersection()
+,	m_Out_HitT( 1.0f )	// 30 Mar 2013: Changed from 0 to 1 so a trace that doesn't collide has a max T. Shouldn't cause problems, but just in case.
+,	m_Out_HitEntity( NULL )
+,	m_Out_HitName( HashedString::NullString )
+,	m_Out_UserFlags( 0 )
+{
 }
 
-void CollisionInfo::ResetOutParameters() {
-  m_Collision = false;
-  m_Plane = Plane();
-  m_Intersection = Vector();
-  m_HitT = 1.0f;
-  m_HitEntity = nullptr;
-  m_HitMesh = nullptr;
-  m_HitName = HashedString::NullString;
+void CollisionInfo::ResetInParameters()
+{
+	m_In_CollideWorld		= false;
+	m_In_CollideEntities	= false;
+	m_In_StopAtAnyCollision	= false;
+	m_In_CollidingEntity	= NULL;
+	m_In_UserFlags			= 0;
 }
 
-void CollisionInfo::CopyInParametersFrom(const CollisionInfo& OtherInfo) {
-  m_CollideWorld = OtherInfo.m_CollideWorld;
-  m_CollideEntities = OtherInfo.m_CollideEntities;
-  m_CollideNonBlockingEntities = OtherInfo.m_CollideNonBlockingEntities;
-  m_UseCompositeCollision = OtherInfo.m_UseCompositeCollision;
-  m_StopAtAnyCollision = OtherInfo.m_StopAtAnyCollision;
-  m_CollidingEntity = OtherInfo.m_CollidingEntity;
-  m_TargetEntity = OtherInfo.m_TargetEntity;
-  m_CollisionMeshFlags = OtherInfo.m_CollisionMeshFlags;
-  m_UserFlags = OtherInfo.m_UserFlags;
+void CollisionInfo::ResetOutParameters()
+{
+	m_Out_Collision		= false;
+	m_Out_Plane			= Plane();
+	m_Out_Intersection	= Vector();
+	m_Out_HitT			= 1.0f;
+	m_Out_HitEntity		= NULL;
+	m_Out_HitName		= HashedString::NullString;
+	m_Out_UserFlags		= 0;
 }
 
-void CollisionInfo::CopyOutParametersFrom(const CollisionInfo& OtherInfo) {
-  m_Collision = OtherInfo.m_Collision;
-  m_Plane = OtherInfo.m_Plane;
-  m_Intersection = OtherInfo.m_Intersection;
-  m_HitT = OtherInfo.m_HitT;
-  m_HitEntity = OtherInfo.m_HitEntity;
-  m_HitMesh = OtherInfo.m_HitMesh;
-  m_HitName = OtherInfo.m_HitName;
+void CollisionInfo::CopyInParametersFrom( const CollisionInfo& OtherInfo )
+{
+	m_In_CollideWorld		= OtherInfo.m_In_CollideWorld;
+	m_In_CollideEntities	= OtherInfo.m_In_CollideEntities;
+	m_In_StopAtAnyCollision	= OtherInfo.m_In_StopAtAnyCollision;
+	m_In_CollidingEntity	= OtherInfo.m_In_CollidingEntity;
+	m_In_UserFlags			= OtherInfo.m_In_UserFlags;
+}
+
+void CollisionInfo::CopyOutParametersFrom( const CollisionInfo& OtherInfo )
+{
+	m_Out_Collision		= OtherInfo.m_Out_Collision;
+	m_Out_Plane			= OtherInfo.m_Out_Plane;
+	m_Out_Intersection	= OtherInfo.m_Out_Intersection;
+	m_Out_HitT			= OtherInfo.m_Out_HitT;
+	m_Out_HitEntity		= OtherInfo.m_Out_HitEntity;
+	m_Out_HitName		= OtherInfo.m_Out_HitName;
+	m_Out_UserFlags		= OtherInfo.m_Out_UserFlags;
 }

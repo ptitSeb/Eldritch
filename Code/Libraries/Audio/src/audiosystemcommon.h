@@ -10,58 +10,55 @@
 
 class SoundManager;
 
-class AudioSystemCommon : public IAudioSystem {
- public:
-  AudioSystemCommon();
-  virtual ~AudioSystemCommon();
+class AudioSystemCommon : public IAudioSystem
+{
+public:
+	AudioSystemCommon();
+	virtual ~AudioSystemCommon();
 
-  virtual void Tick(float DeltaTime, bool GamePaused);
+	virtual void					Tick( const float DeltaTime, bool GamePaused );
 
-  virtual SoundManager* GetSoundManager();
+	virtual SoundManager*			GetSoundManager();
 
-  virtual ISound* GetSound(const SimpleString& DefinitionName);
+	virtual ISound*					GetSound( const SimpleString& DefinitionName );
 
-  virtual void AddSoundInstance(ISoundInstance* pSoundInstance);
-  virtual void RemoveSoundInstance(ISoundInstance* pSoundInstance);
-  virtual bool IsValid(ISoundInstance* pSoundInstance) const;
-  virtual void FreeSoundInstances();
+	virtual void					AddSoundInstance( ISoundInstance* pSoundInstance );
+	virtual void					RemoveSoundInstance( ISoundInstance* pSoundInstance );
+	virtual bool					IsValid( ISoundInstance* pSoundInstance ) const;
+	virtual void					FreeSoundInstances();
 
-  virtual void Set3DListener(const Sound3DListener* const pListener) {
-    m_Sound3DListener = pListener;
-  }
-  virtual const Sound3DListener* Get3DListener() const {
-    return m_Sound3DListener;
-  }
+	virtual void					Set3DListener( const Sound3DListener* const pListener ) { m_Sound3DListener = pListener; }
+	virtual const Sound3DListener*	Get3DListener() const { return m_Sound3DListener; }
 
-  virtual ISoundInstance* CreateSoundInstance(
-      const SimpleString& DefinitionName);
+	virtual ISoundInstance*			CreateSoundInstance( ISound* const pSound );
+	virtual ISoundInstance*			CreateSoundInstance( const SimpleString& DefinitionName );
 
-  virtual float GetMasterVolume() const { return m_MasterVolume; }
-  virtual void SetMasterVolume(const float Volume) { m_MasterVolume = Volume; }
+	virtual bool					GetGlobalMute() const { return m_GlobalMute; }
+	virtual void					SetGlobalMute( const bool Mute ) { m_GlobalMute = Mute; }
 
-  virtual float GetCategoryVolume(const HashedString& Category) const;
-  virtual void SetCategoryVolume(const HashedString& Category, float Volume,
-                                 float InterpolationTime);
+	virtual float					GetMasterVolume() const { return GetGlobalMute() ? 0.0f : m_MasterVolume; }
+	virtual void					SetMasterVolume( const float Volume ) { m_MasterVolume = Volume; }
 
-  virtual void RegisterInstanceDeleteCallback(
-      const SInstanceDeleteCallback& Callback);
-  virtual void UnregisterInstanceDeleteCallback(
-      const SInstanceDeleteCallback& Callback);
+	virtual float					GetCategoryVolume( const HashedString& Category ) const;
+	virtual void					SetCategoryVolume( const HashedString& Category, float Volume, float InterpolationTime );
 
- protected:
-  SimpleString GetRandomSource(const SimpleString& DefinitionName,
-                               const SimpleString& ArchetypeName) const;
-  void FreeSoundInstance(ISoundInstance* pSoundInstance);
+	virtual void					RegisterInstanceDeleteCallback( const SInstanceDeleteCallback& Callback );
+	virtual void					UnregisterInstanceDeleteCallback( const SInstanceDeleteCallback& Callback );
 
-  SoundManager* m_SoundManager;
-  const Sound3DListener* m_Sound3DListener;
+protected:
+	SimpleString					GetRandomSource( const SimpleString& DefinitionName );
+	void							FreeSoundInstance( ISoundInstance* pSoundInstance );
 
-  Set<ISoundInstance*> m_SoundInstances;
-  Array<SInstanceDeleteCallback> m_InstanceDeleteCallbacks;
-  float m_MasterVolume;
-  Map<HashedString, Interpolator<float> > m_CategoryVolumes;
-  Array<HashedString>
-      m_PauseCategories;  // Categories that pause/unpause with the game
+	SoundManager*							m_SoundManager;
+	const Sound3DListener*					m_Sound3DListener;
+
+	Set<ISoundInstance*>					m_SoundInstances;
+	Array<SInstanceDeleteCallback>			m_InstanceDeleteCallbacks;
+	float									m_MasterVolume;
+	bool									m_GlobalMute;
+	Map<HashedString, Interpolator<float> >	m_CategoryVolumes;
+	Array<HashedString>						m_PauseCategories;		// Categories that pause/unpause with the game
+	Map<HashedString, uint>					m_LastRandomSources;	// Prevent repeats from random sources by tracking the last one
 };
 
-#endif  // AUDIOSYSTEMCOMMON_H
+#endif // AUDIOSYSTEMCOMMON_H

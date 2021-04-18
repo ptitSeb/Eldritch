@@ -1,11 +1,11 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.0)
 
 include_directories(../../Libraries/Core/src)
 
 link_directories(${CMAKE_SOURCE_DIR}/Libraries/Core/)
 
 set(Checksum_src
-src/main.cpp
+	src/main.cpp
 )
 
 add_executable(Checksum ${Checksum_src})

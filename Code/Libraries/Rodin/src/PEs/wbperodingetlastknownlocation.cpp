@@ -5,47 +5,49 @@
 #include "Components/wbcomprodinknowledge.h"
 
 WBPERodinGetLastKnownLocation::WBPERodinGetLastKnownLocation()
-    : m_EntityPE(nullptr) {}
-
-WBPERodinGetLastKnownLocation::~WBPERodinGetLastKnownLocation() {
-  SafeDelete(m_EntityPE);
+:	m_EntityPE( NULL )
+{
 }
 
-/*virtual*/ void WBPERodinGetLastKnownLocation::InitializeFromDefinition(
-    const SimpleString& DefinitionName) {
-  MAKEHASH(DefinitionName);
-
-  STATICHASH(Entity);
-  m_EntityPE = WBParamEvaluatorFactory::Create(
-      ConfigManager::GetString(sEntity, "", sDefinitionName));
+WBPERodinGetLastKnownLocation::~WBPERodinGetLastKnownLocation()
+{
+	SafeDelete( m_EntityPE );
 }
 
-/*virtual*/ void WBPERodinGetLastKnownLocation::Evaluate(
-    const WBParamEvaluator::SPEContext& Context,
-    WBParamEvaluator::SEvaluatedParam& EvaluatedParam) const {
-  ASSERT(Context.m_Entity);
+/*virtual*/ void WBPERodinGetLastKnownLocation::InitializeFromDefinition( const SimpleString& DefinitionName )
+{
+	MAKEHASH( DefinitionName );
 
-  WBParamEvaluator::SEvaluatedParam Value;
-  m_EntityPE->Evaluate(Context, Value);
+	STATICHASH( Entity );
+	m_EntityPE = WBParamEvaluatorFactory::Create( ConfigManager::GetString( sEntity, "", sDefinitionName ) );
+}
 
-  WBEntity* const pKnowledgeEntity = Value.GetEntity();
+/*virtual*/ void WBPERodinGetLastKnownLocation::Evaluate( const WBParamEvaluator::SPEContext& Context, WBParamEvaluator::SEvaluatedParam& EvaluatedParam ) const
+{
+	ASSERT( Context.m_Entity );
 
-  if (!pKnowledgeEntity) {
-    return;
-  }
+	WBParamEvaluator::SEvaluatedParam Value;
+	m_EntityPE->Evaluate( Context, Value );
 
-  WBCompRodinKnowledge* const pKnowledge =
-      GET_WBCOMP(Context.m_Entity, RodinKnowledge);
-  if (!pKnowledge) {
-    return;
-  }
+	WBEntity* const pKnowledgeEntity = Value.GetEntity();
 
-  Vector LastKnownLocation;
-  if (!pKnowledge->GetLastKnownLocationFor(pKnowledgeEntity,
-                                           LastKnownLocation)) {
-    return;
-  }
+	if( !pKnowledgeEntity )
+	{
+		return;
+	}
 
-  EvaluatedParam.m_Type = WBParamEvaluator::EPT_Vector;
-  EvaluatedParam.m_Vector = LastKnownLocation;
+	WBCompRodinKnowledge* const pKnowledge = GET_WBCOMP( Context.m_Entity, RodinKnowledge );
+	if( !pKnowledge )
+	{
+		return;
+	}
+
+	Vector LastKnownLocation;
+	if( !pKnowledge->GetLastKnownLocationFor( pKnowledgeEntity, LastKnownLocation ) )
+	{
+		return;
+	}
+
+	EvaluatedParam.m_Type	= WBParamEvaluator::EPT_Vector;
+	EvaluatedParam.m_Vector	= LastKnownLocation;
 }

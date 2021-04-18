@@ -3,18 +3,19 @@
 
 #include "wbaction.h"
 
-class WBActionUIPushScreen : public WBAction {
- public:
-  WBActionUIPushScreen();
-  virtual ~WBActionUIPushScreen();
+class WBActionUIPushScreen : public WBAction
+{
+public:
+	WBActionUIPushScreen();
+	virtual ~WBActionUIPushScreen();
 
-  DEFINE_WBACTION_FACTORY(UIPushScreen);
+	DEFINE_WBACTION_FACTORY( UIPushScreen );
 
-  virtual void InitializeFromDefinition(const SimpleString& DefinitionName);
-  virtual void Execute();
+	virtual void	InitializeFromDefinition( const SimpleString& DefinitionName );
+	virtual void	Execute();
 
- private:
-  HashedString m_ScreenName;  // Config
+private:
+	HashedString	m_ScreenName;	// Config
 };
 
-#endif  // WBACTIONUIPUSHSCREEN_H
+#endif // WBACTIONUIPUSHSCREEN_H

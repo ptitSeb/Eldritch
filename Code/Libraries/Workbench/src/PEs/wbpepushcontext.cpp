@@ -5,45 +5,46 @@
 #include "wbparamevaluatorfactory.h"
 #include "wbactionstack.h"
 
-WBPEPushContext::WBPEPushContext() : m_EntityPE(nullptr) {}
-
-WBPEPushContext::~WBPEPushContext() { SafeDelete(m_EntityPE); }
-
-/*virtual*/ void WBPEPushContext::InitializeFromDefinition(
-    const SimpleString& DefinitionName) {
-  WBPEUnaryOp::InitializeFromDefinition(DefinitionName);
-
-  MAKEHASH(DefinitionName);
-
-  STATICHASH(EntityPE);
-  m_EntityPE = WBParamEvaluatorFactory::Create(
-      ConfigManager::GetString(sEntityPE, "", sDefinitionName));
+WBPEPushContext::WBPEPushContext()
+:	m_EntityPE( NULL )
+{
 }
 
-/*virtual*/ void WBPEPushContext::Evaluate(
-    const WBParamEvaluator::SPEContext& Context,
-    WBParamEvaluator::SEvaluatedParam& EvaluatedParam) const {
-  if (!Context.m_Entity) {
-    return;
-  }
+WBPEPushContext::~WBPEPushContext()
+{
+	SafeDelete( m_EntityPE );
+}
 
-  WBParamEvaluator::SEvaluatedParam Value;
-  m_EntityPE->Evaluate(Context, Value);
+/*virtual*/ void WBPEPushContext::InitializeFromDefinition( const SimpleString& DefinitionName )
+{
+	WBPEUnaryOp::InitializeFromDefinition( DefinitionName );
 
-  ASSERT(Value.m_Type == WBParamEvaluator::EPT_Entity);
+	MAKEHASH( DefinitionName );
 
-  WBEntity* const pContextEntity = Value.m_Entity.Get();
-  if (!pContextEntity) {
-    return;
-  }
+	STATICHASH( EntityPE );
+	m_EntityPE = WBParamEvaluatorFactory::Create( ConfigManager::GetString( sEntityPE, "", sDefinitionName ) );
+}
 
-  WBEvent ContextEvent;
-  pContextEntity->AddContextToEvent(ContextEvent);
+/*virtual*/ void WBPEPushContext::Evaluate( const WBParamEvaluator::SPEContext& Context, WBParamEvaluator::SEvaluatedParam& EvaluatedParam ) const
+{
+	WBParamEvaluator::SEvaluatedParam Value;
+	m_EntityPE->Evaluate( Context, Value );
 
-  WBParamEvaluator::SPEContext NewContext;
-  NewContext.m_Entity = pContextEntity;
+	ASSERT( Value.m_Type == WBParamEvaluator::EPT_Entity );
 
-  WBActionStack::Push(ContextEvent);
-  m_Input->Evaluate(NewContext, EvaluatedParam);
-  WBActionStack::Pop();
+	WBEntity* const pContextEntity = Value.m_Entity.Get();
+	if( !pContextEntity )
+	{
+		return;
+	}
+
+	WBEvent ContextEvent;
+	pContextEntity->AddContextToEvent( ContextEvent );
+
+	WBParamEvaluator::SPEContext NewContext;
+	NewContext.m_Entity = pContextEntity;
+
+	WBActionStack::Push( ContextEvent, pContextEntity );
+	m_Input->Evaluate( NewContext, EvaluatedParam );
+	WBActionStack::Pop();
 }

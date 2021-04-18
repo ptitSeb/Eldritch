@@ -5,37 +5,57 @@
 #include "irenderer.h"
 #include "packstream.h"
 #include "meshfactory.h"
-#include "file.h"
+#include "fileutil.h"
 
 #include <memory.h>
 
-DynamicMeshManager* DynamicMeshManager::m_Instance = nullptr;
+DynamicMeshManager* DynamicMeshManager::m_Instance = NULL;
 
-DynamicMeshManager::DynamicMeshManager() : m_Meshes() {}
+DynamicMeshManager::DynamicMeshManager()
+:	m_Meshes() {}
 
-DynamicMeshManager::~DynamicMeshManager() { FreeMeshes(); }
-
-DynamicMeshManager* DynamicMeshManager::GetInstance() {
-  if (!m_Instance) {
-    m_Instance = new DynamicMeshManager;
-  }
-  return m_Instance;
+DynamicMeshManager::~DynamicMeshManager()
+{
+	FreeMeshes();
 }
 
-void DynamicMeshManager::DeleteInstance() { SafeDelete(m_Instance); }
-
-void DynamicMeshManager::FreeMeshes() {
-  FOR_EACH_MAP(Iter, m_Meshes, HashedString, Mesh*) { SafeDelete(*Iter); }
-  m_Meshes.Clear();
+DynamicMeshManager* DynamicMeshManager::GetInstance()
+{
+	if( !m_Instance )
+	{
+		m_Instance = new DynamicMeshManager;
+	}
+	return m_Instance;
 }
 
-Mesh* DynamicMeshManager::GetMesh(MeshFactory* pFactory, const char* Filename) {
-  HashedString HashedFilename(Filename);
+void DynamicMeshManager::DeleteInstance()
+{
+	SafeDelete( m_Instance );
+}
 
-  if (!m_Meshes[HashedFilename]) {
-    m_Meshes[HashedFilename] =
-        pFactory->Read(PackStream(Filename), Filename, nullptr, nullptr);
-  }
+void DynamicMeshManager::FreeMeshes()
+{
+	FOR_EACH_MAP( Iter, m_Meshes, HashedString, Mesh* )
+	{
+		SafeDelete( *Iter );
+	}
+	m_Meshes.Clear();
+}
 
-  return m_Meshes[HashedFilename];
+Mesh* DynamicMeshManager::GetOrCreateMesh( const char* Filename, MeshFactory* pFactory, MeshFactory::SReadMeshCallback Callback /*= MeshFactory::SReadMeshCallback()*/ )
+{
+	const HashedString HashedFilename( Filename );
+	Map<HashedString, Mesh*>::Iterator MeshIter = m_Meshes.Search( HashedFilename );
+	if( MeshIter.IsNull() )
+	{
+		MeshIter = m_Meshes.Insert( HashedFilename, pFactory->Read( PackStream( Filename ), Filename, NULL, NULL, Callback ) );
+	}
+	return ( MeshIter.IsValid() ) ? MeshIter.GetValue() : NULL;
+}
+
+Mesh* DynamicMeshManager::GetMesh( const char* Filename ) const
+{
+	const HashedString HashedFilename( Filename );
+	Map<HashedString, Mesh*>::Iterator MeshIter = m_Meshes.Search( Filename );
+	return ( MeshIter.IsValid() ) ? MeshIter.GetValue() : NULL;
 }

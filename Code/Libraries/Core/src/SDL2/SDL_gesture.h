@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2018 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -25,14 +25,15 @@
  *  Include file for SDL gesture event handling.
  */
 
-#ifndef _SDL_gesture_h
-#define _SDL_gesture_h
+#ifndef SDL_gesture_h_
+#define SDL_gesture_h_
 
 #include "SDL_stdinc.h"
 #include "SDL_error.h"
 #include "SDL_video.h"
 
 #include "SDL_touch.h"
+
 
 #include "begin_code.h"
 /* Set up for C function definitions, even when using C++ */
@@ -51,28 +52,29 @@ typedef Sint64 SDL_GestureID;
  */
 extern DECLSPEC int SDLCALL SDL_RecordGesture(SDL_TouchID touchId);
 
+
 /**
  *  \brief Save all currently loaded Dollar Gesture templates
  *
  *
  */
-extern DECLSPEC int SDLCALL SDL_SaveAllDollarTemplates(SDL_RWops *src);
+extern DECLSPEC int SDLCALL SDL_SaveAllDollarTemplates(SDL_RWops *dst);
 
 /**
  *  \brief Save a currently loaded Dollar Gesture template
  *
  *
  */
-extern DECLSPEC int SDLCALL
-    SDL_SaveDollarTemplate(SDL_GestureID gestureId, SDL_RWops *src);
+extern DECLSPEC int SDLCALL SDL_SaveDollarTemplate(SDL_GestureID gestureId,SDL_RWops *dst);
+
 
 /**
  *  \brief Load Dollar Gesture templates from a file
  *
  *
  */
-extern DECLSPEC int SDLCALL
-    SDL_LoadDollarTemplates(SDL_TouchID touchId, SDL_RWops *src);
+extern DECLSPEC int SDLCALL SDL_LoadDollarTemplates(SDL_TouchID touchId, SDL_RWops *src);
+
 
 /* Ends C function definitions when using C++ */
 #ifdef __cplusplus
@@ -80,6 +82,6 @@ extern DECLSPEC int SDLCALL
 #endif
 #include "close_code.h"
 
-#endif /* _SDL_gesture_h */
+#endif /* SDL_gesture_h_ */
 
 /* vi: set ts=4 sw=4 expandtab: */

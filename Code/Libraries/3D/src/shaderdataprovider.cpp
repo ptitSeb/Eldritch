@@ -1,4 +1,6 @@
 #include "core.h"
 #include "shaderdataprovider.h"
 
-ShaderDataProvider::~ShaderDataProvider() {}
+ShaderDataProvider::~ShaderDataProvider()
+{
+}

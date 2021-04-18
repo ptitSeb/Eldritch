@@ -4,30 +4,35 @@
 #include "wbcomponent.h"
 #include "wbentityref.h"
 
-class WBCompOwner : public WBComponent {
- public:
-  WBCompOwner();
-  virtual ~WBCompOwner();
+class WBCompOwner : public WBComponent
+{
+public:
+	WBCompOwner();
+	virtual ~WBCompOwner();
 
-  DEFINE_WBCOMP(Owner, WBComponent);
+	DEFINE_WBCOMP( Owner, WBComponent );
 
-  virtual int GetTickOrder() { return ETO_NoTick; }
+	virtual void		Initialize();
 
-  virtual void HandleEvent(const WBEvent& Event);
+	virtual int			GetTickOrder() { return ETO_NoTick; }
 
-  virtual uint GetSerializationSize();
-  virtual void Save(const IDataStream& Stream);
-  virtual void Load(const IDataStream& Stream);
+	virtual void		HandleEvent( const WBEvent& Event );
 
-  virtual void Report() const;
+	virtual uint		GetSerializationSize();
+	virtual void		Save( const IDataStream& Stream );
+	virtual void		Load( const IDataStream& Stream );
 
-  void SetOwner(WBEntity* const pNewOwner);
-  WBEntity* GetOwner() const;
+#if BUILD_DEV
+	virtual void		Report() const;
+#endif
 
-  static WBEntity* GetTopmostOwner(WBEntity* pEntity);
+	void				SetOwner( WBEntity* const pOwner );
+	WBEntity*			GetOwner() const;
 
- private:
-  WBEntityRef m_Owner;
+	static WBEntity*	GetTopmostOwner( WBEntity* pEntity );
+
+private:
+	WBEntityRef			m_Owner;
 };
 
-#endif  // WBCOMPOWNER_H
+#endif // WBCOMPOWNER_H

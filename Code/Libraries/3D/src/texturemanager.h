@@ -4,37 +4,50 @@
 #include "map.h"
 #include "hashedstring.h"
 
-#define DEFAULT_TEXTURE "Textures/default.dds"
-#define DEFAULT_NORMAL "Textures/default_NORMAL.dds"
-#define DEFAULT_SPEC "Textures/default_SPEC.dds"
+// ELDTODO: Replace this stuff, it's getting to be too project-aware
+#define DEFAULT_TEXTURE	"Textures/default.dds"
+#define DEFAULT_ALBEDO	"Textures/default.dds"
+#define DEFAULT_NORMAL	"Textures/default_NORMAL.dds"
+#define DEFAULT_SPEC	"Textures/default_SPEC.dds"
 
 class IRenderer;
 class ITexture;
 
-class TextureManager {
- public:
-  TextureManager(IRenderer* Renderer);
-  ~TextureManager();
+class TextureManager
+{
+public:
+	TextureManager( IRenderer* Renderer );
+	~TextureManager();
 
-  // Should be sorted from least to most permanent
-  enum ETextureLife {
-    ETL_Null,
-    ETL_World,      // For environments and characters, only persist for a level
-    ETL_Permanent,  // For fonts, UI, etc.
-  };
+	// Should be sorted from least to most permanent
+	enum ETextureLife
+	{
+		ETL_Null,
+		ETL_World,		// For environments and characters, only persist for a level
+		ETL_Permanent,	// For fonts, UI, etc.
+	};
 
-  struct SManagedTexture {
-    SManagedTexture() : m_Texture(NULL), m_Life(ETL_Null) {}
-    ITexture* m_Texture;
-    ETextureLife m_Life;
-  };
+	struct SManagedTexture
+	{
+		SManagedTexture()
+		:	m_Texture( NULL )
+		,	m_Life( ETL_Null )
+		{
+		}
 
-  void FreeTextures(ETextureLife Life);
-  ITexture* GetTexture(const char* Filename, ETextureLife Life = ETL_Permanent);
+		ITexture*		m_Texture;
+		ETextureLife	m_Life;
+	};
 
- private:
-  Map<HashedString, SManagedTexture> m_TextureTable;
-  IRenderer* m_Renderer;
+	void		FreeTextures( ETextureLife Life );
+	ITexture*	GetTexture( const char* Filename, const ETextureLife Life = ETL_Permanent, const bool NoMips = false );
+	ITexture*	GetTextureNoMips( const char* Filename ) { return GetTexture( Filename, ETL_Permanent, true ); }
+	ITexture*	GetCubemap( const SimpleString& CubemapDef, const ETextureLife Life = ETL_Permanent, const bool NoMips = false );
+	ITexture*	GetCubemapNoMips( const SimpleString& CubemapDef ) { return GetCubemap( CubemapDef, ETL_Permanent, true ); }
+
+private:
+	Map<HashedString, SManagedTexture>	m_TextureTable;
+	IRenderer*							m_Renderer;
 };
 
-#endif  // TEXTUREMANAGER_H
+#endif // TEXTUREMANAGER_H

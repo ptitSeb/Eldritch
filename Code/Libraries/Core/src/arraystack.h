@@ -3,43 +3,66 @@
 
 #include "array.h"
 
-// Should be functionally equivalent to Stack, but using a non-shrinking array
-// instead of a list.
+// Should be functionally equivalent to Stack, but using a non-shrinking array instead of a list.
 // Better for heap performance!
 
-template <class C>
-class ArrayStack {
- private:
-  Array<C> m_Array;
+template<class C> class ArrayStack
+{
+private:
+	Array<C>		m_Array;
 
- public:
-  ArrayStack(Allocator* pAllocator = NULL) : m_Array(pAllocator) {
-    m_Array.SetDeflate(false);
-  }
+public:
+	ArrayStack( Allocator* pAllocator = NULL )
+		:	m_Array( pAllocator )
+	{
+		m_Array.SetDeflate( false );
+	}
 
-  ArrayStack(const ArrayStack& Other, Allocator* pAllocator = NULL)
-      : m_Array(Other.m_Array, pAllocator) {
-    m_Array.SetDeflate(false);
-  }
+	ArrayStack( const ArrayStack& Other, Allocator* pAllocator = NULL )
+		:	m_Array( Other.m_Array, pAllocator )
+	{
+		m_Array.SetDeflate( false );
+	}
+	
+	~ArrayStack()
+	{
+	}
 
-  ~ArrayStack() {}
+	ArrayStack& operator=( const ArrayStack& Other )
+	{
+		m_Array = Other.m_Array;
+		return *this;
+	}
 
-  ArrayStack& operator=(const ArrayStack& Other) {
-    m_Array = Other.m_Array;
-    return *this;
-  }
+	void Push( const C& Item )
+	{
+		m_Array.PushBack( Item );
+	}
 
-  void Push(const C& Item) { m_Array.PushBack(Item); }
+	void Pop()
+	{
+		m_Array.PopBack();
+	}
 
-  void Pop() { m_Array.PopBack(); }
+	C& Top()
+	{
+		return m_Array[ m_Array.Size() - 1 ];
+	}
 
-  C& Top() { return m_Array[m_Array.Size() - 1]; }
+	void Clear()
+	{
+		m_Array.Clear();
+	}
 
-  void Clear() { m_Array.Clear(); }
+	uint Size()
+	{
+		return m_Array.Size();
+	}
 
-  uint Size() { return m_Array.Size(); }
-
-  bool Empty() { return m_Array.Size() == 0; }
+	bool Empty()
+	{
+		return m_Array.Size() == 0;
+	}
 };
 
-#endif  // ARRAYSTACK_H
+#endif // ARRAYSTACK_H

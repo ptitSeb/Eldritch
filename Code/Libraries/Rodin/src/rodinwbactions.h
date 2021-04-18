@@ -4,6 +4,6 @@
 
 #else
 
-ADDWBACTIONFACTORY(RodinBlackboardWrite);
+ADDWBACTIONFACTORY( RodinBlackboardWrite );
 
 #endif

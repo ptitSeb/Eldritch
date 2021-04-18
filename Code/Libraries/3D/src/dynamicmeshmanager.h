@@ -4,6 +4,7 @@
 #include "map.h"
 #include "hashedstring.h"
 #include "material.h"
+#include "meshfactory.h"
 
 class IVertexBuffer;
 class IIndexBuffer;
@@ -16,21 +17,23 @@ class Mesh;
 // around so that the vertex buffers can be shared and aren't
 // automatically freed when every instance is deleted.
 
-class DynamicMeshManager {
- private:
-  DynamicMeshManager();
-  ~DynamicMeshManager();
+class DynamicMeshManager
+{
+private:
+	DynamicMeshManager();
+	~DynamicMeshManager();
 
- public:
-  static DynamicMeshManager* GetInstance();
-  static void DeleteInstance();
+public:
+	static DynamicMeshManager*	GetInstance();
+	static void					DeleteInstance();
 
-  void FreeMeshes();
-  Mesh* GetMesh(MeshFactory* pFactory, const char* Filename);
+	void						FreeMeshes();
+	Mesh*						GetOrCreateMesh( const char* Filename, MeshFactory* pFactory, MeshFactory::SReadMeshCallback Callback = MeshFactory::SReadMeshCallback() );
+	Mesh*						GetMesh( const char* Filename ) const;
 
-  Map<HashedString, Mesh*> m_Meshes;
+	Map<HashedString, Mesh*>	m_Meshes;
 
-  static DynamicMeshManager* m_Instance;
+	static DynamicMeshManager*	m_Instance;
 };
 
-#endif  // DYNAMICMESHMANAGER_H
+#endif // DYNAMICMESHMANAGER_H

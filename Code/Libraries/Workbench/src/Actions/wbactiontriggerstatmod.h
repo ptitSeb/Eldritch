@@ -3,20 +3,21 @@
 
 #include "wbaction.h"
 
-class WBActionTriggerStatMod : public WBAction {
- public:
-  WBActionTriggerStatMod();
-  virtual ~WBActionTriggerStatMod();
+class WBActionTriggerStatMod : public WBAction
+{
+public:
+	WBActionTriggerStatMod();
+	virtual ~WBActionTriggerStatMod();
 
-  DEFINE_WBACTION_FACTORY(TriggerStatMod);
+	DEFINE_WBACTION_FACTORY( TriggerStatMod );
 
-  virtual void InitializeFromDefinition(const SimpleString& DefinitionName);
+	virtual void	InitializeFromDefinition( const SimpleString& DefinitionName );
 
-  virtual void Execute();
+	virtual void	Execute();
 
- private:
-  HashedString m_StatModEvent;
-  bool m_Trigger;  // If false, untrigger (defaults to true)
+private:
+	HashedString	m_StatModEvent;
+	bool			m_Trigger;	// If false, untrigger (defaults to true)
 };
 
-#endif  // WBACTIONTRIGGERSTATMOD_H
+#endif // WBACTIONTRIGGERSTATMOD_H

@@ -6,18 +6,19 @@
 
 class IDataStream;
 
-class GL2VertexShader : public IVertexShader {
- public:
-  GL2VertexShader();
-  virtual ~GL2VertexShader();
+class GL2VertexShader : public IVertexShader
+{
+public:
+	GL2VertexShader();
+	virtual ~GL2VertexShader();
 
-  virtual void* GetHandle() { return &m_VertexShader; }
-  virtual bool GetRegister(const HashedString& Parameter, uint& Register) const;
+	virtual void*	GetHandle() { return &m_VertexShader; }
+	virtual bool	GetRegister( const HashedString& Parameter, uint& Register ) const;
 
-  void Initialize(const IDataStream& Stream);
+	void			Initialize( const IDataStream& Stream );
 
- private:
-  GLuint m_VertexShader;
+private:
+	GLuint	m_VertexShader;
 };
 
-#endif  // GL2VERTEXSHADER_H
+#endif // GL2VERTEXSHADER_H

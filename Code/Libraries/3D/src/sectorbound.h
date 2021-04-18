@@ -4,15 +4,16 @@
 class Vector;
 class Plane;
 
-class SectorBound {
- public:
-  SectorBound();
-  ~SectorBound();
+class SectorBound
+{
+public:
+	SectorBound();
+	~SectorBound();
 
-  bool Contains(const Vector& Location);
+	bool	Contains( const Vector& Location );
 
-  uint m_NumPlanes;
-  Plane* m_Planes;
+	uint	m_NumPlanes;
+	Plane*	m_Planes;
 };
 
-#endif  // SECTORBOUND_H
+#endif // SECTORBOUND_H

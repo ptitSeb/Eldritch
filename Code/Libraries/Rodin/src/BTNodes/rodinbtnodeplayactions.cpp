@@ -5,39 +5,29 @@
 #include "wbactionstack.h"
 #include "wbevent.h"
 
-RodinBTNodePlayActions::RodinBTNodePlayActions() : m_Actions() {}
-
-RodinBTNodePlayActions::~RodinBTNodePlayActions() {
-  const uint NumActions = m_Actions.Size();
-  for (uint ActionsIndex = 0; ActionsIndex < NumActions; ++ActionsIndex) {
-    SafeDelete(m_Actions[ActionsIndex]);
-  }
+RodinBTNodePlayActions::RodinBTNodePlayActions()
+:	m_Actions()
+{
 }
 
-void RodinBTNodePlayActions::InitializeFromDefinition(
-    const SimpleString& DefinitionName) {
-  WBActionFactory::InitializeActionArray(DefinitionName, m_Actions);
+RodinBTNodePlayActions::~RodinBTNodePlayActions()
+{
+	WBActionFactory::ClearActionArray( m_Actions );
 }
 
-RodinBTNode::ETickStatus RodinBTNodePlayActions::Tick(float DeltaTime) {
-  Unused(DeltaTime);
+void RodinBTNodePlayActions::InitializeFromDefinition( const SimpleString& DefinitionName )
+{
+	WBActionFactory::InitializeActionArray( DefinitionName, m_Actions );
+}
 
-  WBEntity* const pEntity = GetEntity();
+RodinBTNode::ETickStatus RodinBTNodePlayActions::Tick( const float DeltaTime )
+{
+	Unused( DeltaTime );
 
-  WBEvent BTNodePlayActionsEvent;
-  STATIC_HASHED_STRING(BTNodePlayActionsEvent);
-  BTNodePlayActionsEvent.SetEventName(sBTNodePlayActionsEvent);
-  pEntity->AddContextToEvent(BTNodePlayActionsEvent);
+	WBEntity* const pEntity = GetEntity();
+	WB_MAKE_EVENT( BTNodePlayActionsEvent, pEntity );
 
-  const uint NumActions = m_Actions.Size();
-  for (uint ActionIndex = 0; ActionIndex < NumActions; ++ActionIndex) {
-    WBAction* const pAction = m_Actions[ActionIndex];
-    ASSERT(pAction);
+	WBActionFactory::ExecuteActionArray( m_Actions, WB_AUTO_EVENT( BTNodePlayActionsEvent ), pEntity );
 
-    WBActionStack::Push(BTNodePlayActionsEvent);
-    pAction->Execute();
-    WBActionStack::Pop();
-  }
-
-  return ETS_Success;
+	return ETS_Success;
 }

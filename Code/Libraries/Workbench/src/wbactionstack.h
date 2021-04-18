@@ -5,15 +5,23 @@
 // To simplify a bunch of code, this just reuses WBEvents as the stack frame.
 
 class WBEvent;
+class WBEntity;
 
-namespace WBActionStack {
-void Initialize();
-void ShutDown();
+namespace WBActionStack
+{
+	void Initialize();
+	void ShutDown();
 
-void Push(const WBEvent& Event);
-void Pop();
+	void Push( const WBEvent& Event, WBEntity* const pActingEntity );
+	void Pop();
 
-const WBEvent& Top();
+	const WBEvent&	TopEvent();
+	WBEntity*		TopActingEntity();
+
+	// HACKHACK
+	void			PushReactionsSelf( WBEntity* const pReactionsSelf );
+	void			PopReactionsSelf();
+	const WBEntity*	TopReactionsSelf();
 }
 
-#endif  // WBACTIONSTACK_H
+#endif // WBACTIONSTACK_H

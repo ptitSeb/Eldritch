@@ -3,16 +3,19 @@
 
 #include "wbpeunaryop.h"
 
-class WBPEGetName : public WBPEUnaryOp {
- public:
-  WBPEGetName();
-  virtual ~WBPEGetName();
+class WBPEGetName : public WBPEUnaryOp
+{
+public:
+	WBPEGetName();
+	virtual ~WBPEGetName();
 
-  DEFINE_WBPE_FACTORY(GetName);
+	DEFINE_WBPE_FACTORY( GetName );
 
-  virtual void Evaluate(
-      const WBParamEvaluator::SPEContext& Context,
-      WBParamEvaluator::SEvaluatedParam& EvaluatedParam) const;
+	virtual void	InitializeFromDefinition( const SimpleString& DefinitionName );
+	virtual void	Evaluate( const WBParamEvaluator::SPEContext& Context, WBParamEvaluator::SEvaluatedParam& EvaluatedParam ) const;
+
+private:
+	bool	m_UniqueName;
 };
 
-#endif  // WBPEGETNAME_H
+#endif // WBPEGETNAME_H
