@@ -8,11 +8,20 @@
 	{
 	case ERTF_Unknown:
 		return 0;
+#ifdef HAVE_GLES
+	case ERTF_X8R8G8B8:
+	case ERTF_A8R8G8B8:
+	case ERTF_A16B16G16R16:
+	case ERTF_A16B16G16R16F:
+	case ERTF_A32B32G32R32F:
+	case ERTF_R32F:
+	case ERTF_R32G32F:
+		return GL_RGBA;
+#else
 	case ERTF_X8R8G8B8:
 		return GL_RGBA8;	// Meh?
 	case ERTF_A8R8G8B8:
 		return GL_RGBA8;
-#ifndef HAVE_GLES
 	case ERTF_A16B16G16R16:
 		return GL_RGBA16;
 	case ERTF_A16B16G16R16F:
