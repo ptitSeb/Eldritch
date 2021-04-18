@@ -53,6 +53,28 @@ static inline byte* GLES_ConvertBGRA2RGBA( int Width, int Height, const byte* te
 	}
 	return ret;
 }
+static inline byte* GLES_ConvertRGBA32F2RGBA8( int Width, int Height, const byte* texture )
+{
+	if( !texture ) return NULL;
+	
+	byte*			ret = (byte*)malloc( Width * Height * 4 );
+	const GLfloat*	tex = (const GLfloat*)texture;
+	GLuint*			dest = (GLuint*)ret;
+	for( int i = 0; i < Height; i++ )
+	{
+		for( int j = 0; j < Width; j++ )
+		{
+#ifdef __amigaos4__
+			*dest = ( (GLuint)( tex[0]*255 ) << 24 ) | ( (GLuint)( tex[1]*255 ) << 16 ) | ( (GLuint)( tex[2]*255 ) << 8 ) | (GLuint)( tex[3]*255 );
+#else
+			*dest = ( (GLuint)( tex[3]*255 ) << 24 ) | ( (GLuint)( tex[2]*255 ) << 16 ) | ( (GLuint)( tex[1]*255 ) << 8 ) | (GLuint)( tex[0]*255 );
+#endif
+			tex += 4;
+			++dest;
+		}
+	}
+	return ret;
+}
 static inline void *uncompressDXTc( GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, const void *data )
 {
 	// uncompress a DXTc image
@@ -105,7 +127,7 @@ static GLenum GLImageFormat[] =
 	0,
 	GL_RGBA8,
 #ifdef HAVE_GLES
-	0,
+	0x8814,	// GL_RGBA32F
 #else
 	GL_RGBA32F,
 #endif
@@ -121,9 +143,6 @@ static GLenum GLImageFormat[] =
 	GLGUARD_ACTIVETEXTURE;
 	GLGUARD_BINDTEXTURE;
 
-#ifdef HAVE_GLES
-	CHECKDESC( TextureData.m_Format == 2, "Invalid GLES format GL_RGBA32F" );
-#endif
 	const uint		MipLevels	= TextureData.m_MipChain.Size();
 	const GLenum	Format		= GLImageFormat[ TextureData.m_Format ];
 	const GLint		Border		= 0;
@@ -152,16 +171,9 @@ static GLenum GLImageFormat[] =
 		if( Compressed )
 		{
 #ifdef HAVE_GLES
-			if( Format == GL_RGBA8 )
-			{
-				void* Temp = uncompressDXTc( Width, Height, Format, Mip.Size(), Mip.GetData() );
-				glTexImage2D( GL_TEXTURE_2D, MipLevel, GL_RGBA8, Width, Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, Temp );
-				free( Temp );
-			}
-			else
-			{
-				WARN;
-			}
+			void* Temp = uncompressDXTc( Width, Height, Format, Mip.Size(), Mip.GetData() );
+			glTexImage2D( GL_TEXTURE_2D, MipLevel, GL_RGBA, Width, Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, Temp );
+			free( Temp );
 #else
 			glCompressedTexImage2D( GL_TEXTURE_2D, MipLevel, Format, Width, Height, Border, Mip.Size(), Mip.GetData() );
 #endif
@@ -172,7 +184,13 @@ static GLenum GLImageFormat[] =
 			if( Format == GL_RGBA8 )
 			{
 				byte* Temp = GLES_ConvertBGRA2RGBA( Width, Height, Mip.GetData() );
-				glTexImage2D( GL_TEXTURE_2D, MipLevel, Format, Width, Height, Border, GL_RGBA, GL_UNSIGNED_BYTE, Temp );
+				glTexImage2D( GL_TEXTURE_2D, MipLevel, GL_RGBA, Width, Height, Border, GL_RGBA, GL_UNSIGNED_BYTE, Temp );
+				free( Temp );
+			}
+			else if( Format == 0x8814 )
+			{
+				byte* Temp = GLES_ConvertRGBA32F2RGBA8( Width, Height, Mip.GetData() );
+				glTexImage2D( GL_TEXTURE_2D, MipLevel, GL_RGBA, Width, Height, Border, GL_RGBA, GL_UNSIGNED_BYTE, Temp );
 				free( Temp );
 			}
 			else
