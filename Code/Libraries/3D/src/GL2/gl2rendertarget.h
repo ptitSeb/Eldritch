@@ -32,9 +32,7 @@ public:
 	static GLenum		GetGLFormat( const ERenderTargetFormat Format );
 
 private:
-#ifndef HAVE_GLES
 	void				CreateFBO();
-#endif
 
 	GLuint				m_FrameBufferObject;
 	Array<GLuint>		m_ColorTextureObjects;

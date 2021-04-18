@@ -106,6 +106,7 @@ GL2RenderTarget::~GL2RenderTarget()
 	{
 #ifdef HAVE_GLES
 		glDeleteRenderbuffers( 1, &m_FrameBufferObject );
+		GLERRORCHECK;
 #else
 		if( GLEW_ARB_framebuffer_object )
 		{
@@ -139,47 +140,38 @@ GL2RenderTarget::~GL2RenderTarget()
 	NPOT2POT( m_Width );
 	NPOT2POT( m_Height );
 
-	glGenFramebuffers( 1, &m_FrameBufferObject );
-	ASSERT( m_FrameBufferObject != 0 );
-	if ( Params.ColorFormat != ERTF_None ) {
-		glGenTextures( 1, &m_ColorTextureObject );
-		ASSERT( m_ColorTextureObject != 0 );
-		glBindTexture( GL_TEXTURE_2D, m_ColorTextureObject );
-		glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL );
-		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
-		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
-		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
-		m_ColorTexture = new GL2Texture( m_ColorTextureObject );
-		glBindTexture( GL_TEXTURE_2D, 0 );  // Unbind ?
+	if( Params.ColorFormat != ERTF_None )
+	{
+		GLGUARD_ACTIVETEXTURE;
+		GLGUARD_BINDTEXTURE;
+
+		glActiveTexture( GL_TEXTURE0 );
+
+		uint& ColorTextureObject = m_ColorTextureObjects.PushBack();
+
+		glGenTextures( 1, &ColorTextureObject );
+		ASSERT( ColorTextureObject != 0 );
+		glBindTexture( GL_TEXTURE_2D, ColorTextureObject );
+
+		const GLenum ColorFormat = GetGLFormat( Params.ColorFormat );
+		// The image format parameters don't necessarily match the color format,
+		// but it doesn't matter because we're not providing image data here.
+		glTexImage2D( GL_TEXTURE_2D, 0, ColorFormat, Params.Width, Params.Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL );
+		GLERRORCHECK;
+
+		m_ColorTextures.PushBack( new GL2Texture( ColorTextureObject ) );
 	}
-	if ( Params.DepthStencilFormat != ERTF_None ) {
+
+	if( Params.DepthStencilFormat != ERTF_None )
+	{
 		glGenRenderbuffers( 1, &m_DepthStencilRenderBufferObject );
 		ASSERT( m_DepthStencilRenderBufferObject != 0 );
 		glBindRenderbuffer( GL_RENDERBUFFER, m_DepthStencilRenderBufferObject );
-#if defined(PANDORA) || defined(__amigaos4__)
-		glRenderbufferStorage( GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, m_Width, m_Height );
-		glGenRenderbuffers( 1, &m_StencilRenderBufferObject );
-		glBindRenderbuffer( GL_RENDERBUFFER, m_StencilRenderBufferObject );
-		glRenderbufferStorage( GL_RENDERBUFFER, GL_STENCIL_INDEX8, m_Width, m_Height );
-#else
-		glRenderbufferStorage( GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, m_Width, m_Height );
-#endif
-		glBindRenderbuffer( GL_RENDERBUFFER, 0 );
+		const GLenum DepthStencilFormat = GetGLFormat( Params.DepthStencilFormat );
+		glRenderbufferStorage( GL_RENDERBUFFER, DepthStencilFormat, Params.Width, Params.Height );
 	}
-	glBindFramebuffer( GL_FRAMEBUFFER, m_FrameBufferObject );
-	glFramebufferTexture2D( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_ColorTextureObject, 0 );
-	glFramebufferRenderbuffer( GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_DepthStencilRenderBufferObject );
-#if defined(PANDORA) || defined(__amigaos4__)
-	glFramebufferRenderbuffer( GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_StencilRenderBufferObject );
-#else
-	glFramebufferRenderbuffer( GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_DepthStencilRenderBufferObject );
-#endif
-	const GLenum FrameBufferStatus = glCheckFramebufferStatus( GL_FRAMEBUFFER );
-	ASSERT( FrameBufferStatus == GL_FRAMEBUFFER_COMPLETE );
-	Unused( FrameBufferStatus );
-	glBindFramebuffer( GL_FRAMEBUFFER, 0 );
-	glBindFramebuffer( GL_FRAMEBUFFER, m_FrameBufferObject );
+
+	CreateFBO();
 #else
 	if( Params.ColorFormat != ERTF_None )
 	{
@@ -297,9 +289,28 @@ void GL2RenderTarget::Reset()
 	m_IsChild = true;
 }
 
-#ifndef HAVE_GLES
 void GL2RenderTarget::CreateFBO()
 {
+#ifdef HAVE_GLES
+	glGenFramebuffers( 1, &m_FrameBufferObject );
+	ASSERT( m_FrameBufferObject != 0 );
+	glBindFramebuffer( GL_FRAMEBUFFER, m_FrameBufferObject );
+	GLERRORCHECK;
+
+	FOR_EACH_ARRAY( TextureObjectIter, m_ColorTextureObjects, GLuint )
+	{
+		const uint		TextureIndex		= TextureObjectIter.GetIndex();
+		const GLuint	ColorTextureObject	= TextureObjectIter.GetValue();
+		glFramebufferTexture2D( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + TextureIndex, GL_TEXTURE_2D, ColorTextureObject, 0 );
+		glFramebufferRenderbuffer( GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_DepthStencilRenderBufferObject );
+		glFramebufferRenderbuffer( GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_DepthStencilRenderBufferObject );
+		GLERRORCHECK;
+	}
+
+	const GLenum FrameBufferStatus = glCheckFramebufferStatus( GL_FRAMEBUFFER );
+	ASSERT( FrameBufferStatus == GL_FRAMEBUFFER_COMPLETE );
+	Unused( FrameBufferStatus );
+#else
 	// FBOs were supported in GL 2.1 only by extension, but some newer drivers
 	// don't still support that extension. Use whichever is available.
 	ASSERT( GLEW_EXT_framebuffer_object || GLEW_ARB_framebuffer_object );
@@ -345,5 +356,5 @@ void GL2RenderTarget::CreateFBO()
 		ASSERT( FrameBufferStatus == GL_FRAMEBUFFER_COMPLETE_EXT );
 		Unused( FrameBufferStatus );
 	}
-}
 #endif
+}
