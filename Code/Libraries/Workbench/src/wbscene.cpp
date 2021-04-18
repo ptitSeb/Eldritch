@@ -105,16 +105,14 @@ void WBScene::AddEntity( WBEntity* const Entity, const uint EntitySceneHandle )
 {
 	CHECK_ITERATING_ENTITIES;
 
-	DEBUGASSERT( EntitySceneHandle <= m_LastEntitySceneHandle );
+	m_LastEntitySceneHandle = ( EntitySceneHandle > m_LastEntitySceneHandle) ? EntitySceneHandle : m_LastEntitySceneHandle;
 	DEBUGASSERT( m_Entities.Search( EntitySceneHandle ).IsNull() );
 
-	/* Really?
 	SEntityRef& EntityRef = m_Entities[ EntitySceneHandle ];
 	EntityRef.m_Entity = Entity;
 
 	Entity->SetSceneHandle( EntitySceneHandle );
 	Entity->SetScene( this );
-	*/
 
 	m_NumValidEntities++;
 }
