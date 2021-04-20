@@ -21,7 +21,6 @@ link_directories(${CMAKE_SOURCE_DIR}/Libraries/3D/)
 link_directories(${CMAKE_SOURCE_DIR}/Libraries/Core/)
 link_directories(${CMAKE_SOURCE_DIR}/Libraries/Rodin/)
 link_directories(${CMAKE_SOURCE_DIR}/Libraries/Workbench/)
-link_directories(/usr/local/lib)
 
 set(eld_src
 	src/Achievements/achievementmanager_steam.cpp
@@ -173,7 +172,7 @@ set(eld_src
 add_executable(Eld ${eld_src})
 
 if(GLES)
-	target_link_libraries(Eld Core Math 3D Audio Workbench Rodin UI Framework SDL2 GLESv2 openal)
+	target_link_libraries(Eld Math Workbench Core 3D Audio Rodin UI Framework SDL2 openal)
 else(GLES)
-	target_link_libraries(Eld Core Math 3D Audio Workbench Rodin UI Framework SDL2 GL GLEW openal)
+	target_link_libraries(Eld Math Workbench Core 3D Audio Rodin UI Framework SDL2 openal)
 endif(GLES)

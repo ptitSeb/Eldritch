@@ -19,6 +19,4 @@ set(audio_src
 )
 
 add_library(Audio ${audio_src})
-target_link_libraries(Audio
-	SoLoud
-)
+target_link_libraries(Audio SoLoud)
