@@ -1612,17 +1612,24 @@ Mesh* MeshFactory::Read(
 	{
 		Stream.Read( sizeof( SAnimDataPadded ) * Header.m_NumAnims, AnimDataPadded );
 #ifdef __amigaos4__
-		//m_Name[ANIM_NAME_LENGTH]: no need to swap this one
-		littleBigEndian( &Animations[ animIndex ].m_HashedName );
-		littleBigEndian( &Animations[ animIndex ].m_StartFrame );
-		littleBigEndian( &Animations[ animIndex ].m_Length );
-		//Array<AnimEvent*> m_AnimEvents; what is happening here???
-		littleBigEndian( &Animations[ animIndex ].m_Velocity.x );
-		littleBigEndian( &Animations[ animIndex ].m_Velocity.y );
-		littleBigEndian( &Animations[ animIndex ].m_Velocity.z );
-		littleBigEndian( &Animations[ animIndex ].m_RotationalVelocity.Pitch );
-		littleBigEndian( &Animations[ animIndex ].m_RotationalVelocity.Roll );
-		littleBigEndian( &Animations[ animIndex ].m_RotationalVelocity.Yaw );
+		for( int ii=0; ii<Header.m_NumAnims; ++ii )
+		{
+			littleBigEndian( &AnimDataPadded[ ii ].m_AnimData.m_HashedName );
+			littleBigEndian( &AnimDataPadded[ ii ].m_AnimData.m_Length );
+			littleBigEndian( &AnimDataPadded[ ii ].m_AnimData.m_StartFrame );
+			littleBigEndian( &AnimDataPadded[ ii ].m_PADDING_Array_ArrayPtr );
+			littleBigEndian( &AnimDataPadded[ ii ].m_PADDING_Array_Size );
+			littleBigEndian( &AnimDataPadded[ ii ].m_PADDING_Array_Capacity );
+			littleBigEndian( &AnimDataPadded[ ii ].m_PADDING_Array_Reserved );
+			littleBigEndian( &AnimDataPadded[ ii ].m_PADDING_Array_Deflate );
+			littleBigEndian( &AnimDataPadded[ ii ].m_PADDING_Array_AllocatorPtr );
+			littleBigEndian( &AnimDataPadded[ ii ].m_PADDING_Vector_X );
+			littleBigEndian( &AnimDataPadded[ ii ].m_PADDING_Vector_Y );
+			littleBigEndian( &AnimDataPadded[ ii ].m_PADDING_Vector_Z );
+			littleBigEndian( &AnimDataPadded[ ii ].m_PADDING_Angles_Pitch );
+			littleBigEndian( &AnimDataPadded[ ii ].m_PADDING_Angles_Roll );
+			littleBigEndian( &AnimDataPadded[ ii ].m_PADDING_Angles_Yaw );
+		}
 #endif
 	}
 
