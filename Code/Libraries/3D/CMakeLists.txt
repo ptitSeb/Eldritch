@@ -71,7 +71,7 @@ endif(GLES)
 add_library(3D ${3d_src})
 
 if(GLES)
-	target_link_libraries(3D Core Math)
+	target_link_libraries(3D Core Math GLESv2)
 else(GLES)
 	target_link_libraries(3D Core Math GL GLEW)
 endif(GLES)
