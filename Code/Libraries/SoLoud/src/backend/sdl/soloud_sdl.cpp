@@ -40,7 +40,15 @@ namespace SoLoud
 #if defined(_MSC_VER)
 #include "SDL.h"
 #else
-#include "SDL/SDL.h"
+#ifdef WITH_SDL
+#ifdef WITH_SDL2
+#error Cannot use both SDL and SDL2 backends as dynamic library
+#else
+#include <SDL/SDL.h>
+#endif
+#else
+#include <SDL2/SDL.h>
+#endif
 #endif
 #include <math.h>
 

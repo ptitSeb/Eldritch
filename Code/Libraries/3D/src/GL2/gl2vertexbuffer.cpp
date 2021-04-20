@@ -40,8 +40,8 @@ GL2VertexBuffer::GL2VertexBuffer()
 #if !defined(NO_VBO) && defined(HAVE_GLES)
 	if( !MapBufferInited )
 	{
-		glMapBuffer		= static_cast<PFNGLMAPBUFFEROESPROC>(eglGetProcAddress("glMapBufferOES"));
-		glUnmapBuffer	= static_cast<PFNGLUNMAPBUFFEROESPROC>(eglGetProcAddress("glUnmapBufferOES"));
+		glMapBuffer		= reinterpret_cast<PFNGLMAPBUFFEROESPROC>(eglGetProcAddress("glMapBufferOES"));		// Hmm...
+		glUnmapBuffer	= reinterpret_cast<PFNGLUNMAPBUFFEROESPROC>(eglGetProcAddress("glUnmapBufferOES"));	// Hmm...
 		MapBufferInited	= 1;
 	}
 #endif
