@@ -26,7 +26,15 @@ freely, subject to the following restrictions:
 #define WINDOWS_VERSION
 #include "SDL.h"
 #else
-#include "SDL/SDL.h"
+#ifdef WITH_SDL
+#ifdef WITH_SDL2
+#error Cannot use both SDL and SDL2 backends as dynamic library
+#else
+#include <SDL/SDL.h>
+#endif
+#else
+#include <SDL2/SDL.h>
+#endif
 #endif
 #include <math.h>
 
@@ -61,8 +69,8 @@ static void * openDll()
 	void * res;
 	res = dlopen("/Library/Frameworks/SDL2.framework/SDL2", RTLD_LAZY);
 	if (!res) res = dlopen("/Library/Frameworks/SDL.framework/SDL", RTLD_LAZY);
-	if (!res) res = dlopen("SDL2.so", RTLD_LAZY);
-	if (!res) res = dlopen("SDL.so", RTLD_LAZY);
+	if (!res) res = dlopen("libSDL2.so", RTLD_LAZY);
+	if (!res) res = dlopen("libSDL.so", RTLD_LAZY);
     return res;
 }
 
