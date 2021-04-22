@@ -117,7 +117,7 @@ byte* ConvertShader( byte* pBuffer )
 			if (newlin < semcol) { ++newptr; continue; }
 			*eqsign = '(';
 			*semcol = ')';
-			memmove(newptr + 8, newptr + 6, strlen(newptr + 6));
+			memmove(newptr + 8, newptr + 6, strlen(newptr + 6) + 1);
 			newptr[0] = '#';
 			newptr[1] = 'd';
 			newptr[2] = 'e';
