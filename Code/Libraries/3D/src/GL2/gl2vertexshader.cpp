@@ -6,44 +6,45 @@
 #include <cstdio>
 
 #ifdef PANDORA
-const char* SimplePixelShader = "#version 100\n\
-precision mediump float;\n\
-uniform vec4 Gamma; // Used as float\n\
-vec2 FixUV( vec2 UV )\n\
-{\n\
-return vec2( UV.x, 1.0 - UV.y );\n\
-}\n\
-\n\
-uniform sampler2D Texture0; // Diffuse\n\
-uniform sampler2D Texture1; // Color grading LUT\n\
-\n\
-varying vec2  PassUV;\n\
-\n\
-void main()\n\
-{\n\
-gl_FragColor = texture2D( Texture0, FixUV( PassUV ) );\n\
-}";
+const char* SimplePixelShader =
+	"#version 100\n"
+	"precision mediump float;\n"
+	"uniform vec4 Gamma; // Used as float\n"
+	"vec2 FixUV( vec2 UV )\n"
+	"{\n"
+	"\treturn vec2( UV.x, 1.0 - UV.y );\n"
+	"}\n"
+	"\n"
+	"uniform sampler2D Texture0; // Diffuse\n"
+	"uniform sampler2D Texture1; // Color grading LUT\n"
+	"\n"
+	"varying vec2      PassUV;\n"
+	"\n"
+	"void main()\n"
+	"{\n"
+	"\tgl_FragColor = texture2D( Texture0, FixUV( PassUV ) );\n"
+	"}";
 #endif
 
 byte* ConvertShader( byte* pBuffer )
 {
-	// printf( "Shader source:\n%s\n", pBuffer );
+	// printf( "\e[1mShader source:\e[m\n%s\n", (char*)pBuffer );
 	// first change the version header, and add default precision
-	byte* newptr;
-	newptr = (byte*)strstr( (char*)pBuffer, "#version" );
+	char* newptr;
+	newptr = strstr( (char*)pBuffer, "#version" );
 	if( !newptr )
 	{
-		newptr = pBuffer;
+		newptr = (char*)pBuffer;
 	}
 	else
 	{
 		while( *newptr != 0x0a ) ++newptr;
 	}
 	const char*	GLESHeader = "#version 100\nprecision mediump float;\n";
-	byte*		Tmp = new byte[ strlen( (char*)newptr ) + strlen( GLESHeader ) + 100 ];
-	strcat( strcpy( (char*)Tmp, GLESHeader ), (char*)newptr );
+	byte*		Tmp = new byte[ strlen( (char*)newptr ) + strlen( GLESHeader ) + 200 ];
+	strcat( strcpy( (char*)Tmp, GLESHeader ), newptr );
 	// now check to remove trailing "f" after float, as it's not supported too
-	newptr = Tmp;
+	newptr = (char*)Tmp;
 	int state = 0;
 	while (*newptr!=0x00) {
 		switch(state) {
@@ -54,7 +55,7 @@ byte* ConvertShader( byte* pBuffer )
 				state = 2; // <NaN> '.'
 			else if ((*newptr==' ') || (*newptr==0x0d) || (*newptr==0x0a) || (*newptr=='-') || (*newptr=='+') || (*newptr=='*') || (*newptr=='/') || (*newptr=='(') || (*newptr==')' || (*newptr=='>') || (*newptr=='<')))
 				state = 0; // separator
-			else 
+			else
 				state = 4; // something else
 			break;
 		case 1: // integer part
@@ -92,13 +93,45 @@ byte* ConvertShader( byte* pBuffer )
 		case 4:
 			if ((*newptr==' ') || (*newptr==0x0d) || (*newptr==0x0a) || (*newptr=='-') || (*newptr=='+') || (*newptr=='*') || (*newptr=='/') || (*newptr=='(') || (*newptr==')' || (*newptr=='>') || (*newptr=='<')))
 				state = 0; // separator
-			else      
+			else
 				state = 4;
 			break;
 		}
 		newptr++;
 	}
-	//printf( "New Shader source:\n%s\n", Tmp );
+
+	int openbr = 0;
+	newptr = (char*)Tmp;
+	//if (strlen(Tmp) < 10) return Tmp;
+	while (newptr[10]) {
+		if (*newptr == '{') {
+			++openbr;
+		} else if (*newptr == '}') {
+			--openbr;
+		} else if (!openbr && (!strncmp(newptr, "float ", 6) || !strncmp(newptr, "float\t", 6))) {
+			char *eqsign = strchr(newptr, '=');
+			char *semcol = strchr(newptr, ';');
+			char *newlin = strchr(newptr, '\n');
+			if (!eqsign || !semcol) break;
+			if (semcol < eqsign) { ++newptr; continue; }
+			if (newlin < semcol) { ++newptr; continue; }
+			*eqsign = '(';
+			*semcol = ')';
+			memmove(newptr + 8, newptr + 6, strlen(newptr + 6));
+			newptr[0] = '#';
+			newptr[1] = 'd';
+			newptr[2] = 'e';
+			newptr[3] = 'f';
+			newptr[4] = 'i';
+			newptr[5] = 'n';
+			newptr[6] = 'e';
+			newptr[7] = ' ';
+			newptr = semcol;
+		}
+		++newptr;
+	}
+
+	// printf( "\e[31;1mNew Shader source:\e[m\n%s\n", (char*)Tmp );
 #ifdef PANDORA
 	static int tested = 0;
 	static int revision = 5;
@@ -113,7 +146,7 @@ byte* ConvertShader( byte* pBuffer )
 			printf( "Pandora Model detected = %d\n", revision );
 		}
 	}
-	if ( ( revision == 2 ) && ( strstr( (const char*)Tmp, "gl_FragColor = Calibrate( ColorGrade( texture2D( Texture0" ) ) )
+	if ( ( revision == 2 ) && strstr( (const char*)Tmp, "gl_FragColor = Calibrate( ColorGrade( texture2D( Texture0" ) )
 	{
 		// only for CC model
 		//printf("Switched !!!\n");
