@@ -141,7 +141,7 @@ public:
 		float f;
 		Read( 4, &f );
 #ifdef __amigaos4__
-		littleBigEndian(&i);
+		littleBigEndian(&f);
 #endif
 		return f;
 	}

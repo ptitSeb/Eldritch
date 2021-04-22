@@ -9,7 +9,7 @@
 #include <shlobj.h>
 #endif
 
-#if BUILD_LINUX || BUILD_MAC
+#if BUILD_LINUX || BUILD_MAC || __amigaos4__
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/types.h>
