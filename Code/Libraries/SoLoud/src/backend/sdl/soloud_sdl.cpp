@@ -44,6 +44,7 @@ namespace SoLoud
 #ifdef WITH_SDL2
 #error Cannot use both SDL and SDL2 backends as dynamic library
 #else
+#error SDL backend doesn't compile (TODO)
 #include <SDL/SDL.h>
 #endif
 #else
