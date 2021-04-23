@@ -1462,7 +1462,7 @@ Mesh* MeshFactory::Read(
 	littleBigEndian( &Header.m_NumVertices );
 	littleBigEndian( &Header.m_NumIndices );
 	littleBigEndian( &Header.m_NumFrames );
-	littleBigEndian( &Header.m_NumCollisionTris );
+	littleBigEndian( &Header.m_PADDING_NumCollisionTris );
 	littleBigEndian( &Header.m_NumBones );
 	littleBigEndian( &Header.m_NumAnims );
 	littleBigEndian( &Header.m_NumMaterials );

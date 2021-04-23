@@ -5,9 +5,9 @@
 
 #include <new>	// Required for BUILD_LINUX, at least
 
-#if BUILD_LINUX
+#if BUILD_LINUX || __amigaos4__
 // For uintptr_t
-#include <stdint.h>
+#include <cstdint>
 #endif
 
 #if BUILD_DEBUG

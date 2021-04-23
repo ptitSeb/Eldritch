@@ -613,7 +613,7 @@ void MeshCompiler::Write( const IDataStream& Stream )
 	littleBigEndian( &tmp1.m_NumVertices );
 	littleBigEndian( &tmp1.m_NumIndices );
 	littleBigEndian( &tmp1.m_NumFrames );
-	littleBigEndian( &tmp1.m_NumCollisionTris );
+	littleBigEndian( &tmp1.m_PADDING_NumCollisionTris );
 	Stream.Write( sizeof( m_Header ), &tmp1 );
 #else
 	Stream.Write( sizeof( m_Header ), &m_Header );

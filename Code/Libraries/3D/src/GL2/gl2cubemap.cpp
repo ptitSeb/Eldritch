@@ -4,6 +4,7 @@
 #include "configmanager.h"
 #include "mathcore.h"
 #ifdef HAVE_GLES
+#include <cstdint>
 #include "decompress.h"
 #endif
 

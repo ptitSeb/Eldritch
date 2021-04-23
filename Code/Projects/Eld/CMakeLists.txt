@@ -168,11 +168,7 @@ set(eld_src
 	src/main.cpp
 	src/uiinputmapeld.cpp
 )
- 
+
 add_executable(Eld ${eld_src})
 
-if(GLES)
-	target_link_libraries(Eld Math Workbench Core 3D Audio Rodin UI Framework SDL2 openal)
-else(GLES)
-	target_link_libraries(Eld Math Workbench Core 3D Audio Rodin UI Framework SDL2 openal)
-endif(GLES)
+target_link_libraries(Eld Math Workbench Core 3D Audio Rodin UI Framework SDL2 openal)

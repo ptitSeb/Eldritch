@@ -48,16 +48,16 @@ public:
 
 	template<class C> inline void Write( const C& c ) const { Write( sizeof( C ), &c ); }
 #ifdef __amigaos4__
-	inline void WriteUInt8( uint8 i ) const { Write( 1, &i ); }
-	inline void WriteUInt16( uint16 i ) const { littleBigEndian( &i ); Write( 2, &i ); }
-	inline void WriteUInt32( uint32 i ) const { littleBigEndian( &i ); Write( 4, &i ); }
-	inline void WriteInt8( int8 i ) const { Write( 1, &i ); }
-	inline void WriteInt16( int16 i ) const { littleBigEndian( &i ); Write( 2, &i ); }
-	inline void WriteInt32( int32 i ) const { littleBigEndian( &i ); Write( 4, &i ); }
+	inline void WriteUInt8( c_uint8 i ) const { Write( 1, &i ); }
+	inline void WriteUInt16( c_uint16 i ) const { littleBigEndian( &i ); Write( 2, &i ); }
+	inline void WriteUInt32( c_uint32 i ) const { littleBigEndian( &i ); Write( 4, &i ); }
+	inline void WriteInt8( c_int8 i ) const { Write( 1, &i ); }
+	inline void WriteInt16( c_int16 i ) const { littleBigEndian( &i ); Write( 2, &i ); }
+	inline void WriteInt32( c_int32 i ) const { littleBigEndian( &i ); Write( 4, &i ); }
 	inline void WriteFloat( float f ) const { littleBigEndian( &f ); Write( 4, &f ); }
 	inline void WriteBool( bool b ) const { Write( 1, &b ); }
 	inline void WriteHashedString( const HashedString& h ) const {
-		uint32 f = h.GetHash();
+		c_uint32 f = h.GetHash();
 		WriteUInt32( f );
 	}
 #else
@@ -141,12 +141,19 @@ public:
 		float f;
 		Read( 4, &f );
 #ifdef __amigaos4__
-		littleBigEndian(&i);
+		littleBigEndian(&f);
 #endif
 		return f;
 	}
 	inline bool ReadBool() const { bool b; Read( 1, &b ); return b; }
-	inline HashedString ReadHashedString() const { HashedString h; Read( sizeof( HashedString ), &h ); return h; }
+	inline HashedString ReadHashedString() const {
+		HashedString h;
+		Read( sizeof( HashedString ), &h );
+#ifdef __amigaos4__
+		littleBigEndian( &h, sizeof( HashedString ) );
+#endif
+		return h;
+	}
 
 	inline SimpleString ReadString() const
 	{
