@@ -101,7 +101,9 @@ protected:
 #endif
 
 	// Initialization hooks for framework implementations
+#ifndef HAVE_GLES
 	virtual void	CreateSplashWindow( const uint WindowIcon, const char* const Title );
+#endif
 	virtual void	GetInitialWindowSize( uint& WindowWidth, uint& WindowHeight );
 	virtual void	GetInitialWindowTitle( SimpleString& WindowTitle );
 	virtual void	GetInitialWindowIcon( uint& WindowIcon );
@@ -126,7 +128,7 @@ protected:
 	WBEventManager*			m_EventManager;	// Event manager for framework only, not for game.
 	Display*				m_Display;
 	Window*					m_Window;
-#ifndef PANDORA
+#ifndef HAVE_GLES
 	Window*					m_SplashWindow;
 #endif
 	Keyboard*				m_Keyboard;

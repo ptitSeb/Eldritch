@@ -173,7 +173,7 @@ void Display::UpdateDisplay()
 	GetCurrentDisplayMode( CurrentWidth, CurrentHeight, CurrentRefreshRate );
 
 	STATICHASH( DisplayDepth );
-#ifdef USE_GLES
+#ifdef HAVE_GLES
 	const uint DisplayDepth = ConfigManager::GetInt( sDisplayDepth, 16 );
 #else
 	const uint DisplayDepth = ConfigManager::GetInt( sDisplayDepth, 32 );

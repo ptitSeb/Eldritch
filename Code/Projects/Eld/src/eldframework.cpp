@@ -599,7 +599,7 @@ ENotificationPosition GetSteamNoticePos( const HashedString& SteamNoticePosName 
 	}
 
 	// All done, show the window finally.
-#ifndef PANDORA
+#ifndef HAVE_GLES
 	SafeDelete( m_SplashWindow );
 #endif
 #if BUILD_WINDOWS_NO_SDL

@@ -59,7 +59,7 @@ Framework3D::Framework3D()
 :	m_EventManager( NULL )
 ,	m_Display( NULL )
 ,	m_Window( NULL )
-#ifndef PANDORA
+#ifndef HAVE_GLES
 ,	m_SplashWindow( NULL )
 #endif
 ,	m_Keyboard( NULL )
@@ -203,7 +203,7 @@ void Framework3D::Main()
 
 	STATICHASH( UseFixedFrameTime );
 	m_UseFixedFrameTime	= ConfigManager::GetBool( sUseFixedFrameTime, true, sFramework );
-#ifdef HAVE_GLES0
+#ifdef HAVE_GLES
 	m_UseFixedFrameTime = false;    // GLES hardware are less powerful than Desktop
 #endif
 
@@ -244,7 +244,9 @@ void Framework3D::Main()
 	GetInitialWindowSize( WindowWidth, WindowHeight );
 	GetInitialWindowTitle( WindowTitle );
 
+#ifndef HAVE_GLES
 	CreateSplashWindow( WindowIcon, WindowTitle.CStr() );
+#endif
 
 	m_Window = new Window;
 
@@ -333,7 +335,7 @@ void Framework3D::Main()
 
 	if( ShowWindowASAP() )
 	{
-#ifndef PANDORA
+#ifndef HAVE_GLES
 		SafeDelete( m_SplashWindow );
 #endif
 #if BUILD_WINDOWS_NO_SDL
@@ -359,13 +361,13 @@ void Framework3D::Main()
 	m_IsInitializing = false;
 }
 
+#ifndef HAVE_GLES
 void Framework3D::CreateSplashWindow( const uint WindowIcon, const char* const Title )
 {
 	XTRACE_FUNCTION;
 
 	STATICHASH( Framework );
 	STATICHASH( SplashImage );
-#ifndef PANDORA
 	const char* const	pSplashImage		= ConfigManager::GetString( sSplashImage, NULL, sFramework );
 	if( !pSplashImage )
 	{
@@ -412,8 +414,8 @@ void Framework3D::CreateSplashWindow( const uint WindowIcon, const char* const T
     {
     }
 #endif
-#endif
 }
+#endif
 
 /*virtual*/ void Framework3D::ShutDown()
 {
@@ -437,7 +439,7 @@ void Framework3D::CreateSplashWindow( const uint WindowIcon, const char* const T
 #endif
 
 	SafeDelete( m_Display );
-#ifndef PANDORA
+#ifndef HAVE_GLES
 	SafeDelete( m_SplashWindow );
 #endif
 	SafeDelete( m_Clock );
