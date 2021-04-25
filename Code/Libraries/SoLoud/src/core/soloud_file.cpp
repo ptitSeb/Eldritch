@@ -43,6 +43,9 @@ namespace SoLoud
 	{
 		unsigned short d = 0;
 		read((unsigned char*)&d, 2);
+#ifdef __amigaos4__
+		d = (d >> 8) | (d << 8);
+#endif
 		return d;
 	}
 
@@ -50,6 +53,9 @@ namespace SoLoud
 	{
 		unsigned int d = 0;
 		read((unsigned char*)&d, 4);
+#ifdef __amigaos4__
+		d = (d >> 24) | ((d >> 8) & 0xFF00) | ((d << 8) & 0xFF0000) | (d << 24);
+#endif
 		return d;
 	}
 
