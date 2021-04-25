@@ -111,6 +111,24 @@ int Surface::LoadBMP( const IDataStream& Stream )
 
 	Stream.Read( sizeof( SBitmapFileHeader ), &BMPFileHeader );
 	Stream.Read( sizeof( SBitmapInfoHeader ), &BMPInfoHeader );
+#ifdef __amigaos4__
+	littleBigEndian( &BMPFileHeader.m_Type );
+	littleBigEndian( &BMPFileHeader.m_Size );
+	littleBigEndian( &BMPFileHeader.m_Reserved1 );
+	littleBigEndian( &BMPFileHeader.m_Reserved2 );
+	littleBigEndian( &BMPFileHeader.m_OffsetBits );
+	littleBigEndian( &BMPInfoHeader.m_Size );
+	littleBigEndian( &BMPInfoHeader.m_Width );
+	littleBigEndian( &BMPInfoHeader.m_Height );
+	littleBigEndian( &BMPInfoHeader.m_Planes );
+	littleBigEndian( &BMPInfoHeader.m_BitCount );
+	littleBigEndian( &BMPInfoHeader.m_Compression );
+	littleBigEndian( &BMPInfoHeader.m_SizeImage );
+	littleBigEndian( &BMPInfoHeader.m_PixelsPerMeterX );
+	littleBigEndian( &BMPInfoHeader.m_PixelsPerMeterY );
+	littleBigEndian( &BMPInfoHeader.m_ColorUsed );
+	littleBigEndian( &BMPInfoHeader.m_ColorImportant );
+#endif
 
 	// Support extensions by reading whatever is available into header
 	SBitmapInfoHeaderExt	BMPInfoHeaderExt = { 0 };
@@ -121,6 +139,23 @@ int Surface::LoadBMP( const IDataStream& Stream )
 	if( Remaining > 0 )
 	{
 		Stream.Read( Min( SizeOfExt, Remaining ), &BMPInfoHeaderExt );
+#ifdef __amigaos4__
+	littleBigEndian( &BMPInfoHeaderExt.m_RedMask );
+	littleBigEndian( &BMPInfoHeaderExt.m_GreenMask );
+	littleBigEndian( &BMPInfoHeaderExt.m_BlueMask );
+	littleBigEndian( &BMPInfoHeaderExt.m_AlphaMask );
+	littleBigEndian( &BMPInfoHeaderExt.m_ColorSpaceType );
+	littleBigEndian( &BMPInfoHeaderExt.m_EndpointsX );
+	littleBigEndian( &BMPInfoHeaderExt.m_EndpointsY );
+	littleBigEndian( &BMPInfoHeaderExt.m_EndpointsZ );
+	littleBigEndian( &BMPInfoHeaderExt.m_GammaRed );
+	littleBigEndian( &BMPInfoHeaderExt.m_GammaGreen );
+	littleBigEndian( &BMPInfoHeaderExt.m_GammaBlue );
+	littleBigEndian( &BMPInfoHeaderExt.m_Intent );
+	littleBigEndian( &BMPInfoHeaderExt.m_ProfileData );
+	littleBigEndian( &BMPInfoHeaderExt.m_ProfileSize );
+	littleBigEndian( &BMPInfoHeaderExt.m_Reserved );
+#endif
 		Remaining -= SizeOfExt;
 		NeedsSwizzle = true;	// HACKHACK, see below
 
@@ -352,10 +387,19 @@ void Surface::SaveBMP( const IDataStream& Stream )
 	Header.m_Type		= 'MB';
 	Header.m_Size		= static_cast<uint>( 54 + Size );
 	Header.m_OffsetBits	= 54;
+#ifdef __amigaos4__
+	littleBigEndian( &m_BitmapInfo.m_Header.m_SizeImage );
+	littleBigEndian( &Header.m_Type );
+	littleBigEndian( &Header.m_Size );
+	littleBigEndian( &Header.m_OffsetBits );
+#endif
 
 	Stream.Write( sizeof( SBitmapFileHeader ), &Header );
 	Stream.Write( sizeof( SBitmapInfoHeader ), &m_BitmapInfo.m_Header );
 	Stream.Write( Size, m_pPixels );
+#ifdef __amigaos4__
+	littleBigEndian( &m_BitmapInfo.m_Header.m_SizeImage );
+#endif
 }
 
 // This assumes that both Surfaces are the same format and bit depth
